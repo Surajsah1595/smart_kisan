@@ -1,8 +1,842 @@
 import 'package:flutter/material.dart';
+import 'dart:async'; // For Timer
+
+// Base widget for shared parts (back button, logo, etc.)
+class ForgotPasswordBaseScreen extends StatelessWidget {
+  final Widget child;
+  final String title;
+  final bool showBackButton;
+
+  const ForgotPasswordBaseScreen({
+    Key? key,
+    required this.child,
+    required this.title,
+    this.showBackButton = true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Back Button
+                if (showBackButton)
+                  Container(
+                    height: 60,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.shade100,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Logo - Using Fp.png
+                Center(
+                  child: Container(
+                    width: 250,
+                    height: 200,
+                    child: Image.asset(
+                      'Fp.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20),
+
+                // Title
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontFamily: 'PT Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                SizedBox(height: 20),
+
+                // Child content
+                child,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 // ==============================================
-// LOGIN SCREEN
+// SCREEN 1: FORGOT PASSWORD REQUEST
 // ==============================================
+
+class ForgotPasswordScreen1 extends StatefulWidget {
+  @override
+  _ForgotPasswordScreen1State createState() => _ForgotPasswordScreen1State();
+}
+
+class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+
+  void _sendResetLink() {
+    if (_formKey.currentState!.validate()) {
+      print('Sending reset link to: ${_emailController.text}');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForgotPasswordScreen2(email: _emailController.text)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ForgotPasswordBaseScreen(
+      title: 'Forgot Password',
+      showBackButton: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Instruction text
+          Text(
+            'Enter the email address you used when you joined and we\'ll send you instructions to reset your password.',
+            textAlign: TextAlign.justify,
+            style: TextStyle(
+              color: Color(0xFF9A9595),
+              fontSize: 18,
+              fontFamily: 'PT Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+
+          SizedBox(height: 40),
+
+          // Email/Mobile field
+          Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Email / Mobile number',
+                  style: TextStyle(
+                    color: Color(0xFF333333),
+                    fontSize: 18,
+                    fontFamily: 'PT Sans',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Color(0xFFB0ABAB),
+                      ),
+                    ),
+                  ),
+                  child: TextFormField(
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email or mobile number';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter email or mobile number',
+                      hintStyle: TextStyle(
+                        color: Color(0xFF9A9595),
+                        fontSize: 16,
+                      ),
+                      errorStyle: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 40),
+
+          // Send Link/Code Button
+          Center(
+            child: GestureDetector(
+              onTap: _sendResetLink,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Color(0xFF2C7C48),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    'Send Link/Code',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 30),
+
+          // Problem section
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Having a Problem?',
+                  style: TextStyle(
+                    color: Color(0xFF696666),
+                    fontSize: 16,
+                    fontFamily: 'PT Sans',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(width: 5),
+                GestureDetector(
+                  onTap: () {
+                    print('Send Again tapped');
+                    _sendResetLink();
+                  },
+                  child: Text(
+                    'Send Again',
+                    style: TextStyle(
+                      color: Color(0xFF4BA26A),
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+}
+
+// ==============================================
+// SCREEN 2: VERIFY CODE
+// ==============================================
+
+class ForgotPasswordScreen2 extends StatefulWidget {
+  final String email;
+
+  ForgotPasswordScreen2({required this.email});
+
+  @override
+  _ForgotPasswordScreen2State createState() => _ForgotPasswordScreen2State();
+}
+
+class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
+  List<TextEditingController> _codeControllers = List.generate(4, (index) => TextEditingController());
+  List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+  int _timerSeconds = 60;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+    
+    // Setup focus node listeners
+    for (int i = 0; i < _focusNodes.length; i++) {
+      _focusNodes[i].addListener(() {
+        if (!_focusNodes[i].hasFocus && _codeControllers[i].text.isEmpty) {
+          if (i > 0) {
+            _focusNodes[i-1].requestFocus();
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    for (var controller in _codeControllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_timerSeconds > 0) {
+        setState(() {
+          _timerSeconds--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _verifyCode() {
+    String code = _codeControllers.map((controller) => controller.text).join();
+    if (code.length == 4) {
+      print('Verifying code: $code');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForgotPasswordScreen3()),
+      );
+    }
+  }
+
+  void _onCodeChanged(String value, int index) {
+    if (value.isNotEmpty) {
+      if (index < 3) {
+        _focusNodes[index + 1].requestFocus();
+      } else {
+        _focusNodes[index].unfocus();
+        _verifyCode();
+      }
+    }
+  }
+
+  String _formatTime() {
+    int minutes = _timerSeconds ~/ 60;
+    int seconds = _timerSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')} sec';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ForgotPasswordBaseScreen(
+      title: 'Verify code sent',
+      showBackButton: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Instruction text
+          Text(
+            'Enter 4-digits code sent to you at ${widget.email}',
+            textAlign: TextAlign.justify,
+            style: TextStyle(
+              color: Color(0xFF9A9595),
+              fontSize: 18,
+              fontFamily: 'PT Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+
+          SizedBox(height: 40),
+
+          // Code input fields
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(4, (index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  width: 60,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xFF34843C),
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextField(
+                    controller: _codeControllers[index],
+                    focusNode: _focusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 26,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    decoration: InputDecoration(
+                      counterText: '',
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (value) => _onCodeChanged(value, index),
+                  ),
+                );
+              }),
+            ),
+          ),
+
+          SizedBox(height: 20),
+
+          // Timer
+          Center(
+            child: Text(
+              _formatTime(),
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontFamily: 'PT Sans',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 40),
+
+          // Verify Button
+          Center(
+            child: GestureDetector(
+              onTap: _verifyCode,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Color(0xFF2C7C48),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    'Verify Code',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 30),
+
+          // Problem section
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Having a Problem?',
+                  style: TextStyle(
+                    color: Color(0xFF696666),
+                    fontSize: 16,
+                    fontFamily: 'PT Sans',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(width: 5),
+                GestureDetector(
+                  onTap: () {
+                    print('Send Again tapped');
+                    setState(() {
+                      _timerSeconds = 60;
+                      _startTimer();
+                      for (var controller in _codeControllers) {
+                        controller.clear();
+                      }
+                      _focusNodes[0].requestFocus();
+                    });
+                  },
+                  child: Text(
+                    'Send Again',
+                    style: TextStyle(
+                      color: Color(0xFF4BA26A),
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+}
+
+// ==============================================
+// SCREEN 3: NEW PASSWORD
+// ==============================================
+
+class ForgotPasswordScreen3 extends StatefulWidget {
+  @override
+  _ForgotPasswordScreen3State createState() => _ForgotPasswordScreen3State();
+}
+
+class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _newPasswordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+  bool _showNewPassword = false;
+  bool _showConfirmPassword = false;
+
+  void _createNewPassword() {
+    if (_formKey.currentState!.validate()) {
+      print('Creating new password');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForgotPasswordScreen4()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ForgotPasswordBaseScreen(
+      title: 'New Password',
+      showBackButton: true,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Instruction text
+            Text(
+              'Enter New Password',
+              style: TextStyle(
+                color: Color(0xFF8C8686),
+                fontSize: 18,
+                fontFamily: 'PT Sans',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            // New Password Field
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Color(0xFFB0ABAB),
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                controller: _newPasswordController,
+                obscureText: !_showNewPassword,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter new password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Enter new password',
+                  hintStyle: TextStyle(
+                    color: Color(0xFF9A9595),
+                    fontSize: 16,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showNewPassword ? Icons.visibility : Icons.visibility_off,
+                      color: Color(0xFF9A9595),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _showNewPassword = !_showNewPassword;
+                      });
+                    },
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red,
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'PT Sans',
+                ),
+              ),
+            ),
+
+            SizedBox(height: 30),
+
+            // Confirm Password Label
+            Text(
+              'Confirm New Password',
+              style: TextStyle(
+                color: Color(0xFF8C8686),
+                fontSize: 18,
+                fontFamily: 'PT Sans',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            // Confirm Password Field
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Color(0xFFB0ABAB),
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                controller: _confirmPasswordController,
+                obscureText: !_showConfirmPassword,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm new password';
+                  }
+                  if (value != _newPasswordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Confirm new password',
+                  hintStyle: TextStyle(
+                    color: Color(0xFF9A9595),
+                    fontSize: 16,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                      color: Color(0xFF9A9595),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _showConfirmPassword = !_showConfirmPassword;
+                      });
+                    },
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red,
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'PT Sans',
+                ),
+              ),
+            ),
+
+            SizedBox(height: 60),
+
+            // Create New Password Button
+            Center(
+              child: GestureDetector(
+                onTap: _createNewPassword,
+                child: Container(
+                  width: 250,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF2C7C48),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Create New Password',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'PT Sans',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==============================================
+// SCREEN 4: SUCCESS SCREEN
+// ==============================================
+
+class ForgotPasswordScreen4 extends StatefulWidget {
+  @override
+  _ForgotPasswordScreen4State createState() => _ForgotPasswordScreen4State();
+}
+
+class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
+  @override
+  void initState() {
+    super.initState();
+    // Automatically navigate to login after 3 seconds
+    Future.delayed(Duration(seconds: 3), () {
+      // Navigate back to login screen and remove all previous screens
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // Background
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white,
+          ),
+
+          // Success Dialog Overlay
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(0.37),
+          ),
+
+          // Success Dialog
+          Center(
+            child: Container(
+              width: 336,
+              height: 490,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Success icon with Fp.png
+                  Container(
+                    width: 176,
+                    height: 176,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF2C7C48),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        child: Image.asset(
+                          'Fp.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // Congratulations text
+                  Text(
+                    'Congratulations!',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  // Success message
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Your Account is ready to use. You will be redirected to the Login page in a few seconds.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'PT Sans',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 40),
+
+                  // Loading indicator
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2C7C48)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// LOGIN SCREEN
+
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -251,7 +1085,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     top: 555,
                     child: GestureDetector(
                       onTap: () {
-                        print('Forgot Password tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ForgotPasswordScreen1()),
+                        );
                       },
                       child: Text(
                         'Forgot Password?',

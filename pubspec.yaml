@@ -27,6 +27,7 @@ flutter:
     - assets/Ls.png
     - assets/Fb.png
     - assets/Google.png
+    - assets/Fp.png
 
 # Fonts Section
 fonts:
