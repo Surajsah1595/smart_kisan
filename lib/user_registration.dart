@@ -1250,7 +1250,7 @@ class PasscodeScreen extends StatefulWidget {
 }
 
 class _PasscodeScreenState extends State<PasscodeScreen> {
-  List<String> _passcode = ['1', '2', '3', '4'];
+  List<String> passcode = ['1', '2', '3', '4'];
   String _enteredPasscode = '';
 
   void _addDigit(String digit) {
@@ -1427,6 +1427,13 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // 1. Invisible Placeholder (This keeps the '0' in the middle)
+                      Opacity(
+                        opacity: 0.0, // This makes it invisible
+                        child: _buildNumberButton(''), 
+                      ),
+                      
+                      const SizedBox(width: 30), // Same spacing as other rows
                       _buildNumberButton('0'),
                       SizedBox(width: 30),
                       GestureDetector(
