@@ -768,6 +768,16 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _currentNavIndex = index;
         });
+        
+        // Handle navigation for Ask AI
+        if (index == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AskAIPage(),
+            ),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -795,6 +805,377 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Ask AI Page - Simplified and organized
+class AskAIPage extends StatelessWidget {
+  const AskAIPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // App Bar
+            _buildAppBar(context),
+            
+            // Quick Questions Section
+            _buildQuickQuestions(),
+            
+            // Chat Section
+            Expanded(
+              child: _buildChatSection(context),
+            ),
+            
+            // Input Section
+            _buildInputSection(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar(context) {
+    return Container(
+      height: 128,
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C7C48),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15, top: 42, right: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Back Button
+                  Container(
+                    height: 60,
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage())),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
+                        child: Icon(Icons.arrow_back, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                const Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Ask AI',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontFamily: 'Arimo',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    Text(
+                      'Your farming assistant',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 14,
+                        fontFamily: 'Arimo',
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                // Status indicator
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF05DF72),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickQuestions() {
+    final quickQuestions = [
+      {
+        'question': 'Best time to plant rice?',
+        'color': const Color(0xFFDCFCE7),
+        'textColor': const Color(0xFF008236),
+        'icon': Icons.agriculture,
+      },
+      {
+        'question': 'Identify this pest',
+        'color': const Color(0xFFFFE2E2),
+        'textColor': const Color(0xFFC10007),
+        'icon': Icons.bug_report,
+      },
+      {
+        'question': 'Irrigation schedule?',
+        'color': const Color(0xFFDBEAFE),
+        'textColor': const Color(0xFF1447E6),
+        'icon': Icons.water_drop,
+      },
+      {
+        'question': 'Weather forecast impact?',
+        'color': const Color(0xFFFFEDD4),
+        'textColor': const Color(0xFFCA3500),
+        'icon': Icons.cloud,
+      },
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Quick questions:',
+            style: TextStyle(
+              color: const Color(0xFF354152),
+              fontSize: 14,
+              fontFamily: 'Arimo',
+            ),
+          ),
+          const SizedBox(height: 12),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 168 / 64,
+            ),
+            itemCount: quickQuestions.length,
+            itemBuilder: (context, index) {
+              final question = quickQuestions[index];
+              return GestureDetector(
+                onTap: () {
+                  // Handle question tap
+                  _showQuestionDialog(context, question['question'] as String);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: question['color'] as Color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        question['icon'] as IconData,
+                        color: question['textColor'] as Color,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          question['question'] as String,
+                          style: TextStyle(
+                            color: question['textColor'] as Color,
+                            fontSize: 14,
+                            fontFamily: 'Arimo',
+                          ),
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          // AI Message
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7,
+              ),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFFE5E7EB),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDCFCE7),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.auto_awesome,
+                          size: 12,
+                          color: Color(0xFF008236),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'AI Assistant',
+                        style: TextStyle(
+                          color: const Color(0xFF697282),
+                          fontSize: 12,
+                          fontFamily: 'Arimo',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Hello! I'm your Smart Kisan AI assistant. How can I help you today?",
+                    style: TextStyle(
+                      color: const Color(0xFF101727),
+                      fontSize: 14,
+                      fontFamily: 'Arimo',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '10:00 AM',
+                    style: TextStyle(
+                      color: const Color(0xFF99A1AE),
+                      fontSize: 12,
+                      fontFamily: 'Arimo',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Add space for future messages
+          const Spacer(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Ask me anything...',
+                  hintStyle: TextStyle(
+                    color: const Color(0xFF101727).withOpacity(0.5),
+                    fontSize: 14,
+                    fontFamily: 'Arimo',
+                  ),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2C7C48),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.send,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showQuestionDialog(BuildContext context, String question) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'AI Response',
+          style: TextStyle(
+            color: const Color(0xFF2C7C48),
+            fontFamily: 'Arimo',
+          ),
+        ),
+        content: Text(
+          'You asked: "$question"\n\nThis feature will be connected to AI in the next phase of development.',
+          style: TextStyle(
+            fontFamily: 'Arimo',
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                color: Color(0xFF2C7C48),
+                fontFamily: 'Arimo',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
