@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
   
   Widget _buildAppBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
       decoration: BoxDecoration(
         color: _primaryGreen,
         boxShadow: [
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
           // Profile Section
           Container(
             width: 40,
-            height: 36,
+            height: 40,
             decoration: BoxDecoration(
               color: _white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Stack(
               children: [
-                const Center(child: Icon(Icons.notifications, color: Colors.white, size: 20)),
+                const Center(child: Icon(Icons.notifications, color: Colors.white, size: 30)),
                 Positioned(
                   right: 8,
                   top: 8,
@@ -180,14 +180,14 @@ class _HomePageState extends State<HomePage> {
           
           const SizedBox(width: 12),
           
-          // Menu Icon
+          // Settings Icon
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.menu, color: Colors.white, size: 20),
+            child: const Icon(Icons.settings, color: Colors.white, size: 30),
           ),
         ],
       ),
@@ -418,7 +418,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           
-          const SizedBox(height: 12),
+          const SizedBox(height: 15),
           
           // Second Row
           Row(

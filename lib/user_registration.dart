@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';// For Timer
-import 'package:smart_kisan/home_page.dart'; 
+import 'dart:async';
+import 'package:smart_kisan/home_page.dart';
 
-// Base widget for shared parts (back button, logo, etc.)
+// Base Screen
 class ForgotPasswordBaseScreen extends StatelessWidget {
   final Widget child;
   final String title;
@@ -22,65 +22,21 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back Button
-                if (showBackButton)
-                  Container(
-                    height: 60,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.shade100,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                // Logo - Using Fp.png
+                if (showBackButton) _buildBackButton(context),
                 Center(
                   child: Container(
                     width: 250,
                     height: 200,
-                    child: Image.asset(
-                      'Fp.png',
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.asset('Fp.png', fit: BoxFit.contain),
                   ),
                 ),
-
                 SizedBox(height: 20),
-
-                // Title
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontFamily: 'PT Sans',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-
+                Text(title, style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 SizedBox(height: 20),
-
-                // Child content
                 child,
               ],
             ),
@@ -89,28 +45,39 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildBackButton(BuildContext context) {
+    return Container(
+      height: 60,
+      alignment: Alignment.centerLeft,
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
+          child: Icon(Icons.arrow_back, color: Colors.black),
+        ),
+      ),
+    );
+  }
 }
 
-// ==============================================
-// SCREEN 1: FORGOT PASSWORD REQUEST
-// ==============================================
-
+// Screen 1: Forgot Password
 class ForgotPasswordScreen1 extends StatefulWidget {
   @override
   _ForgotPasswordScreen1State createState() => _ForgotPasswordScreen1State();
 }
 
 class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
 
   void _sendResetLink() {
     if (_formKey.currentState!.validate()) {
-      print('Sending reset link to: ${_emailController.text}');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ForgotPasswordScreen2(email: _emailController.text)),
-      );
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => ForgotPasswordScreen2(email: _emailController.text)
+      ));
     }
   }
 
@@ -118,83 +85,49 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
       title: 'Forgot Password',
-      showBackButton: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Instruction text
           Text(
             'Enter the email address you used when you joined and we\'ll send you instructions to reset your password.',
             textAlign: TextAlign.justify,
-            style: TextStyle(
-              color: Color(0xFF9A9595),
-              fontSize: 18,
-              fontFamily: 'PT Sans',
-              fontWeight: FontWeight.w400,
-            ),
+            style: TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
           ),
-
           SizedBox(height: 40),
-
-          // Email/Mobile field
           Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Email / Mobile number',
-                  style: TextStyle(
-                    color: Color(0xFF333333),
-                    fontSize: 18,
-                    fontFamily: 'PT Sans',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                Text('Email / Mobile number', style: TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
                 SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Color(0xFFB0ABAB),
-                      ),
-                    ),
-                  ),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                   child: TextFormField(
                     controller: _emailController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
                         return 'Please enter email or mobile number';
+                      }
+                      // Basic validation for email format
+                      if (!v.contains('@') && !RegExp(r'^[0-9]+$').hasMatch(v)) {
+                        return 'Please enter a valid email or mobile number';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter email or mobile number',
-                      hintStyle: TextStyle(
-                        color: Color(0xFF9A9595),
-                        fontSize: 16,
-                      ),
-                      errorStyle: TextStyle(
-                        fontSize: 12,
-                        color: Colors.red,
-                      ),
+                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                     ),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                    ),
+                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
               ],
             ),
           ),
-
           SizedBox(height: 40),
-
-          // Send Link/Code Button
           Center(
             child: GestureDetector(
               onTap: _sendResetLink,
@@ -208,54 +141,26 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
                 child: Center(
                   child: Text(
                     'Send Link/Code',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
             ),
           ),
-
           SizedBox(height: 30),
-
-          // Problem section
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Having a Problem?',
-                  style: TextStyle(
-                    color: Color(0xFF696666),
-                    fontSize: 16,
-                    fontFamily: 'PT Sans',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                Text('Having a Problem?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
                 SizedBox(width: 5),
                 GestureDetector(
-                  onTap: () {
-                    print('Send Again tapped');
-                    _sendResetLink();
-                  },
-                  child: Text(
-                    'Send Again',
-                    style: TextStyle(
-                      color: Color(0xFF4BA26A),
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  onTap: _sendResetLink,
+                  child: Text('Send Again', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
           ),
-
           SizedBox(height: 40),
         ],
       ),
@@ -263,13 +168,9 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   }
 }
 
-// ==============================================
-// SCREEN 2: VERIFY CODE
-// ==============================================
-
+// Screen 2: Verify Code
 class ForgotPasswordScreen2 extends StatefulWidget {
   final String email;
-
   ForgotPasswordScreen2({required this.email});
 
   @override
@@ -277,8 +178,8 @@ class ForgotPasswordScreen2 extends StatefulWidget {
 }
 
 class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
-  List<TextEditingController> _codeControllers = List.generate(4, (index) => TextEditingController());
-  List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
+  final _codeControllers = List.generate(4, (_) => TextEditingController());
+  final _focusNodes = List.generate(4, (_) => FocusNode());
   int _timerSeconds = 60;
   late Timer _timer;
 
@@ -286,14 +187,10 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   void initState() {
     super.initState();
     _startTimer();
-    
-    // Setup focus node listeners
     for (int i = 0; i < _focusNodes.length; i++) {
       _focusNodes[i].addListener(() {
-        if (!_focusNodes[i].hasFocus && _codeControllers[i].text.isEmpty) {
-          if (i > 0) {
-            _focusNodes[i-1].requestFocus();
-          }
+        if (!_focusNodes[i].hasFocus && _codeControllers[i].text.isEmpty && i > 0) {
+          _focusNodes[i-1].requestFocus();
         }
       });
     }
@@ -302,46 +199,36 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   @override
   void dispose() {
     _timer.cancel();
-    for (var controller in _codeControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
+    _codeControllers.forEach((c) => c.dispose());
+    _focusNodes.forEach((f) => f.dispose());
     super.dispose();
   }
 
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_timerSeconds > 0) {
-        setState(() {
-          _timerSeconds--;
-        });
-      } else {
-        timer.cancel();
-      }
+      if (_timerSeconds > 0) setState(() => _timerSeconds--);
+      else timer.cancel();
     });
   }
 
   void _verifyCode() {
-    String code = _codeControllers.map((controller) => controller.text).join();
+    String code = _codeControllers.map((c) => c.text).join();
     if (code.length == 4) {
-      print('Verifying code: $code');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ForgotPasswordScreen3()),
+      Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen3()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter the complete 4-digit code'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
 
   void _onCodeChanged(String value, int index) {
     if (value.isNotEmpty) {
-      if (index < 3) {
-        _focusNodes[index + 1].requestFocus();
-      } else {
-        _focusNodes[index].unfocus();
-        _verifyCode();
-      }
+      if (index < 3) _focusNodes[index + 1].requestFocus();
+      else _focusNodes[index].unfocus();
     }
   }
 
@@ -355,81 +242,44 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
       title: 'Verify code sent',
-      showBackButton: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Instruction text
           Text(
             'Enter 4-digits code sent to you at ${widget.email}',
             textAlign: TextAlign.justify,
-            style: TextStyle(
-              color: Color(0xFF9A9595),
-              fontSize: 18,
-              fontFamily: 'PT Sans',
-              fontWeight: FontWeight.w400,
-            ),
+            style: TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
           ),
-
           SizedBox(height: 40),
-
-          // Code input fields
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
-                  width: 60,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: Color(0xFF34843C),
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: TextField(
-                    controller: _codeControllers[index],
-                    focusNode: _focusNodes[index],
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    maxLength: 1,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    decoration: InputDecoration(
-                      counterText: '',
-                      border: InputBorder.none,
-                    ),
-                    onChanged: (value) => _onCodeChanged(value, index),
-                  ),
-                );
-              }),
+              children: List.generate(4, (index) => Container(
+                margin: EdgeInsets.symmetric(horizontal: 8),
+                width: 60,
+                height: 70,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 2, color: Color(0xFF34843C)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextField(
+                  controller: _codeControllers[index],
+                  focusNode: _focusNodes[index],
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  maxLength: 1,
+                  style: TextStyle(color: Colors.black, fontSize: 26, fontFamily: 'PT Sans'),
+                  decoration: InputDecoration(counterText: '', border: InputBorder.none),
+                  onChanged: (v) => _onCodeChanged(v, index),
+                ),
+              )),
             ),
           ),
-
           SizedBox(height: 20),
-
-          // Timer
           Center(
-            child: Text(
-              _formatTime(),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontFamily: 'PT Sans',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            child: Text(_formatTime(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'PT Sans')),
           ),
-
           SizedBox(height: 40),
-
-          // Verify Button
           Center(
             child: GestureDetector(
               onTap: _verifyCode,
@@ -443,61 +293,33 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                 child: Center(
                   child: Text(
                     'Verify Code',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
             ),
           ),
-
           SizedBox(height: 30),
-
-          // Problem section
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Having a Problem?',
-                  style: TextStyle(
-                    color: Color(0xFF696666),
-                    fontSize: 16,
-                    fontFamily: 'PT Sans',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                Text('Having a Problem?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
                 SizedBox(width: 5),
                 GestureDetector(
                   onTap: () {
-                    print('Send Again tapped');
                     setState(() {
                       _timerSeconds = 60;
                       _startTimer();
-                      for (var controller in _codeControllers) {
-                        controller.clear();
-                      }
+                      _codeControllers.forEach((c) => c.clear());
                       _focusNodes[0].requestFocus();
                     });
                   },
-                  child: Text(
-                    'Send Again',
-                    style: TextStyle(
-                      color: Color(0xFF4BA26A),
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  child: Text('Send Again', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
           ),
-
           SizedBox(height: 40),
         ],
       ),
@@ -505,29 +327,21 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   }
 }
 
-// ==============================================
-// SCREEN 3: NEW PASSWORD
-// ==============================================
-
+// Screen 3: New Password
 class ForgotPasswordScreen3 extends StatefulWidget {
   @override
   _ForgotPasswordScreen3State createState() => _ForgotPasswordScreen3State();
 }
 
 class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-  bool _showNewPassword = false;
-  bool _showConfirmPassword = false;
+  final _formKey = GlobalKey<FormState>();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _showNewPassword = false, _showConfirmPassword = false;
 
   void _createNewPassword() {
     if (_formKey.currentState!.validate()) {
-      print('Creating new password');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ForgotPasswordScreen4()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen4()));
     }
   }
 
@@ -535,149 +349,73 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
       title: 'New Password',
-      showBackButton: true,
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Instruction text
-            Text(
-              'Enter New Password',
-              style: TextStyle(
-                color: Color(0xFF8C8686),
-                fontSize: 18,
-                fontFamily: 'PT Sans',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-
-            SizedBox(height: 8),
-
-            // New Password Field
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: 1,
-                    color: Color(0xFFB0ABAB),
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                controller: _newPasswordController,
-                obscureText: !_showNewPassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter new password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Enter new password',
-                  hintStyle: TextStyle(
-                    color: Color(0xFF9A9595),
-                    fontSize: 16,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showNewPassword ? Icons.visibility : Icons.visibility_off,
-                      color: Color(0xFF9A9595),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _showNewPassword = !_showNewPassword;
-                      });
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Enter New Password', style: TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                SizedBox(height: 8),
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  child: TextFormField(
+                    controller: _newPasswordController,
+                    obscureText: !_showNewPassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Please enter new password';
+                      if (value.length < 6) return 'Password must be at least 6 characters';
+                      return null;
                     },
-                  ),
-                  errorStyle: TextStyle(
-                    fontSize: 12,
-                    color: Colors.red,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Enter new password',
+                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      suffixIcon: IconButton(
+                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                        onPressed: () => setState(() => _showNewPassword = !_showNewPassword),
+                      ),
+                    ),
+                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'PT Sans',
-                ),
-              ),
+              ],
             ),
-
             SizedBox(height: 30),
-
-            // Confirm Password Label
-            Text(
-              'Confirm New Password',
-              style: TextStyle(
-                color: Color(0xFF8C8686),
-                fontSize: 18,
-                fontFamily: 'PT Sans',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-
-            SizedBox(height: 8),
-
-            // Confirm Password Field
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: 1,
-                    color: Color(0xFFB0ABAB),
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: !_showConfirmPassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please confirm new password';
-                  }
-                  if (value != _newPasswordController.text) {
-                    return 'Passwords do not match';
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Confirm new password',
-                  hintStyle: TextStyle(
-                    color: Color(0xFF9A9595),
-                    fontSize: 16,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                      color: Color(0xFF9A9595),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _showConfirmPassword = !_showConfirmPassword;
-                      });
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Confirm New Password', style: TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                SizedBox(height: 8),
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: !_showConfirmPassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Please confirm new password';
+                      if (value != _newPasswordController.text) return 'Passwords do not match';
+                      return null;
                     },
-                  ),
-                  errorStyle: TextStyle(
-                    fontSize: 12,
-                    color: Colors.red,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Confirm new password',
+                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      suffixIcon: IconButton(
+                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                        onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
+                      ),
+                    ),
+                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'PT Sans',
-                ),
-              ),
+              ],
             ),
-
             SizedBox(height: 60),
-
-            // Create New Password Button
             Center(
               child: GestureDetector(
                 onTap: _createNewPassword,
@@ -691,18 +429,12 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
                   child: Center(
                     child: Text(
                       'Create New Password',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'PT Sans',
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
               ),
             ),
-
             SizedBox(height: 40),
           ],
         ),
@@ -711,10 +443,7 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
   }
 }
 
-// ==============================================
-// SCREEN 4: SUCCESS SCREEN
-// ==============================================
-
+// Screen 4: Success
 class ForgotPasswordScreen4 extends StatefulWidget {
   @override
   _ForgotPasswordScreen4State createState() => _ForgotPasswordScreen4State();
@@ -724,10 +453,8 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
   @override
   void initState() {
     super.initState();
-    // Automatically navigate to login after 3 seconds
     Future.delayed(Duration(seconds: 3), () {
-      // Navigate back to login screen and remove all previous screens
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
     });
   }
 
@@ -737,21 +464,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Background
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.white,
-          ),
-
-          // Success Dialog Overlay
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.black.withOpacity(0.37),
-          ),
-
-          // Success Dialog
+          Container(color: Colors.black.withOpacity(0.37)),
           Center(
             child: Container(
               width: 336,
@@ -759,73 +472,36 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, spreadRadius: 2)],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Success icon with Fp.png
                   Container(
                     width: 176,
                     height: 176,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF2C7C48),
-                      shape: BoxShape.circle,
-                    ),
+                    decoration: BoxDecoration(color: Color(0xFF2C7C48), shape: BoxShape.circle),
                     child: Center(
                       child: Container(
                         width: 150,
                         height: 150,
-                        child: Image.asset(
-                          'Fp.png',
-                          fit: BoxFit.contain,
-                        ),
+                        child: Image.asset('Fp.png', fit: BoxFit.contain),
                       ),
                     ),
                   ),
-
                   SizedBox(height: 30),
-
-                  // Congratulations text
-                  Text(
-                    'Congratulations!',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
+                  Text('Congratulations!', style: TextStyle(fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                   SizedBox(height: 20),
-
-                  // Success message
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       'Your Account is ready to use. You will be redirected to the Login page in a few seconds.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'PT Sans',
-                        fontWeight: FontWeight.w400,
-                      ),
+                      style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                     ),
                   ),
-
                   SizedBox(height: 40),
-
-                  // Loading indicator
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2C7C48)),
-                  ),
+                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Color(0xFF2C7C48))),
                 ],
               ),
             ),
@@ -836,24 +512,47 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
   }
 }
 
-// LOGIN SCREEN
-
-
+// Login Screen
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _showPassword = false;
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      print('Login with email: ${_emailController.text}');
-      // TODO: Implement login logic
+      // Validate email format
+      if (!_emailController.text.contains('@')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please enter a valid email address'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Validate password length
+      if (_passwordController.text.length < 6) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Password must be at least 6 characters'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // If all validations pass, navigate to home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomePage(isNewUser: false, userName: 'Farmer')),
+      );
     }
   }
 
@@ -863,443 +562,200 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Stack(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Back Button
-                  Positioned(
-                    left: 20,
-                    top: 20,
+                  Container(
+                    height: 60,
+                    alignment: Alignment.centerLeft,
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                      onTap: () => Navigator.pop(context),
                       child: Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade100,
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
+                        child: Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
-
-                  // Logo Image (Ls.png)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 78,
+                  // Logo
+                  Center(
                     child: Container(
                       width: 207.50,
                       height: 173.16,
-                      child: Image.asset(
-                        'Ls.png',
-                        fit: BoxFit.contain,
-                      ),
+                      child: Image.asset('Ls.png', fit: BoxFit.contain),
                     ),
                   ),
-
-                  // Title
-                  Positioned(
-                    left: 35,
-                    top: 280,
-                    child: SizedBox(
-                      width: 100,
-                      height: 50,
-                      child: Text(
-                        'Log In',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 32,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Subtitle
-                  Positioned(
-                    left: 33,
-                    top: 330,
-                    child: SizedBox(
-                      width: 203,
-                      height: 20,
-                      child: Text(
-                        'please Log in to continue',
-                        style: TextStyle(
-                          color: Color(0xFFB0ABAB),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Email Field Container
-                  Positioned(
-                    left: 30,
-                    right: 30,
-                    top: 380,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Email',
-                          style: TextStyle(
-                            color: Color(0xFF9A9595),
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Color(0xFFB0ABAB),
-                              ),
-                            ),
-                          ),
-                          child: TextFormField(
-                            controller: _emailController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter your email',
-                              hintStyle: TextStyle(
-                                color: Color(0xFF9A9595),
-                                fontSize: 16,
-                              ),
-                              errorStyle: TextStyle(
-                                fontSize: 12,
-                                color: Colors.red,
-                              ),
-                            ),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'PT Sans',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Password Field Container
-                  Positioned(
-                    left: 30,
-                    right: 30,
-                    top: 470,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Password',
-                          style: TextStyle(
-                            color: Color(0xFF9A9595),
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Color(0xFFB0ABAB),
-                              ),
-                            ),
-                          ),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: !_showPassword,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              if (value.length < 6) {
-                                return 'Password must be at least 6 characters';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter your password',
-                              hintStyle: TextStyle(
-                                color: Color(0xFF9A9595),
-                                fontSize: 16,
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _showPassword ? Icons.visibility : Icons.visibility_off,
-                                  color: Color(0xFF9A9595),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _showPassword = !_showPassword;
-                                  });
-                                },
-                              ),
-                              errorStyle: TextStyle(
-                                fontSize: 12,
-                                color: Colors.red,
-                              ),
-                            ),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'PT Sans',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Forgot Password
-                  Positioned(
-                    right: 30,
-                    top: 555,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ForgotPasswordScreen1()),
-                        );
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Color(0xFF4BA26A),
-                          fontSize: 14,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Login Button
-                  Positioned(
-                    left: 30,
-                    right: 30,
-                    top: 600,
-                    child: GestureDetector(
-                      onTap: () {
-                        // Navigate to HomePage for existing user
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(
-                              isNewUser: false, // Existing user
-                              userName: 'Farmer', // Default name for login
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
+                  SizedBox(height: 40),
+                  Text('Log In', style: TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  SizedBox(height: 10),
+                  Text('please Log in to continue', style: TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
+                  SizedBox(height: 30),
+                  // Email Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Email', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      SizedBox(height: 8),
+                      Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF2B7B48),
-                          borderRadius: BorderRadius.circular(10),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        child: TextFormField(
+                          controller: _emailController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Enter your email',
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  // Password Field
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      SizedBox(height: 8),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        child: TextFormField(
+                          controller: _passwordController,
+                          obscureText: !_showPassword,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Enter your password',
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            suffixIcon: IconButton(
+                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                              onPressed: () => setState(() => _showPassword = !_showPassword),
+                            ),
+                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  // Forgot Password
+                  GestureDetector(
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen1())),
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Color(0xFF4BA26A), fontSize: 14, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  // Login Button
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF2B7B48),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: _login,
                         child: Center(
                           child: Text(
                             'Log in',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'PT Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
                     ),
                   ),
-
-                  // Fingerprint Login Button
-                  Positioned(
-                    left: 30,
-                    right: 30,
-                    top: 660,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FingerprintScreen()),
-                        );
-                      },
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF2B7B48),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                  SizedBox(height: 20),
+                  // Fingerprint Button
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF2B7B48),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FingerprintScreen())),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.fingerprint,
-                              color: Colors.white,
-                              size: 20,
-                            ),
+                            Icon(Icons.fingerprint, color: Colors.white, size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Tap to login with Fingerprint',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'PT Sans',
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-
-                  // Divider with "or sign in with" text
-                  Positioned(
-                    left: 30,
-                    right: 30,
-                    top: 730,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Color(0xFFB0ABAB),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Text(
-                            'or sign in with',
-                            style: TextStyle(
-                              color: Color(0xFF262626),
-                              fontSize: 16,
-                              fontFamily: 'PT Sans',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Color(0xFFB0ABAB),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(height: 40),
+                  // Divider
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: Text('or sign in with', style: TextStyle(color: Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
+                      ),
+                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                    ],
                   ),
-
-                  // Social Login Buttons
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 780,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            print('Login with Facebook');
-                          },
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('Fb.png'),
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 40),
-                        GestureDetector(
-                          onTap: () {
-                            print('Login with Google');
-                          },
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('Google.png'),
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(height: 20),
+                  // Social Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => print('Login with Facebook'),
+                        child: Container(width: 60, height: 60, child: Image.asset('Fb.png', fit: BoxFit.contain)),
+                      ),
+                      SizedBox(width: 40),
+                      GestureDetector(
+                        onTap: () => print('Login with Google'),
+                        child: Container(width: 60, height: 60, child: Image.asset('Google.png', fit: BoxFit.contain)),
+                      ),
+                    ],
                   ),
-
-                  // Sign up link at bottom
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Don\'t have an account?',
-                          style: TextStyle(
-                            color: Color(0xFF696666),
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => SignupScreen()),
-                            );
-                          },
-                          child: Text(
-                            'sign up',
-                            style: TextStyle(
-                              color: Color(0xFF4BA26A),
-                              fontSize: 16,
-                              fontFamily: 'PT Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(height: 20),
+                  // Sign Up Link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Don\'t have an account?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                      SizedBox(width: 5),
+                      GestureDetector(
+                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignupScreen())),
+                        child: Text('sign up', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
@@ -1310,34 +766,78 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ==============================================
-// SIGNUP SCREEN
-// ==============================================
-
+// Signup Screen
 class SignupScreen extends StatefulWidget {
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _mobileController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-  bool _showPassword = false;
-  bool _showConfirmPassword = false;
+  final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _mobileController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _showPassword = false, _showConfirmPassword = false;
 
   void _signup() {
     if (_formKey.currentState!.validate()) {
-      print('Sign up with:');
-      print('First Name: ${_firstNameController.text}');
-      print('Last Name: ${_lastNameController.text}');
-      print('Mobile: ${_mobileController.text}');
-      print('Email: ${_emailController.text}');
-      // TODO: Implement signup logic
+      // Validate email format
+      if (!_emailController.text.contains('@')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please enter a valid email address'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Validate mobile number (basic check)
+      if (!RegExp(r'^[0-9]{10,15}$').hasMatch(_mobileController.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please enter a valid mobile number (10-15 digits)'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Validate password length
+      if (_passwordController.text.length < 6) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Password must be at least 6 characters'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Validate password match
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Passwords do not match'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // If all validations pass, navigate to home
+      String firstName = _firstNameController.text.trim();
+      String lastName = _lastNameController.text.trim();
+      String userName = '$firstName $lastName'.trim();
+      if (userName.isEmpty) userName = 'Farmer';
+      
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomePage(isNewUser: true, userName: userName)),
+      );
     }
   }
 
@@ -1347,106 +847,49 @@ class _SignupScreenState extends State<SignupScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 30),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Form(
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back Button - Fixed
+                  // Back Button
                   Container(
                     height: 60,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
-                          );
-                        },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.shade100,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
-                        ),
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
+                        child: Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
-
                   // Logo
                   Center(
                     child: Container(
                       width: 150,
                       height: 150,
-                      child: Image.asset(
-                        'Ls.png',
-                        fit: BoxFit.contain,
-                      ),
+                      child: Image.asset('Ls.png', fit: BoxFit.contain),
                     ),
                   ),
-
                   SizedBox(height: 20),
-
-                  // Title
-                  Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 32,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
+                  Text('Sign Up', style: TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                   SizedBox(height: 10),
-
-                  // Subtitle
-                  Text(
-                    'create an account to continue',
-                    style: TextStyle(
-                      color: Color(0xFFB0ABAB),
-                      fontSize: 16,
-                      fontFamily: 'PT Sans',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-
+                  Text('create an account to continue', style: TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
                   SizedBox(height: 30),
-
-                  // First Name Field
+                  // First Name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'First Name',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('First Name', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _firstNameController,
                           validator: (value) {
@@ -1458,50 +901,23 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your first name',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Last Name Field
+                  // Last Name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Last Name',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('Last Name', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _lastNameController,
                           validator: (value) {
@@ -1513,50 +929,23 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your last name',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Mobile Number Field
+                  // Mobile Number
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Mobile Number',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 15,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      Text('Mobile Number', style: TextStyle(color: Color(0xFF9A9595), fontSize: 15, fontFamily: 'Poppins')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _mobileController,
                           keyboardType: TextInputType.phone,
@@ -1564,58 +953,28 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your mobile number';
                             }
-                            if (value.length < 10) {
-                              return 'Please enter a valid mobile number';
-                            }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your mobile number',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Email Field
+                  // Email
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Email',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('Email', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -1623,58 +982,28 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
-                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your email',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Password Field
+                  // Password
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Password',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _passwordController,
                           obscureText: !_showPassword,
@@ -1682,69 +1011,32 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
                             }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your password',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(
-                                _showPassword ? Icons.visibility : Icons.visibility_off,
-                                color: Color(0xFF9A9595),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _showPassword = !_showPassword;
-                                });
-                              },
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
+                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                              onPressed: () => setState(() => _showPassword = !_showPassword),
                             ),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Confirm Password Field
+                  // Confirm Password
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Confirm Password',
-                        style: TextStyle(
-                          color: Color(0xFF9A9595),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('Confirm Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1,
-                              color: Color(0xFFB0ABAB),
-                            ),
-                          ),
-                        ),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: !_showConfirmPassword,
@@ -1752,197 +1044,85 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please confirm your password';
                             }
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match';
-                            }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Confirm your password',
-                            hintStyle: TextStyle(
-                              color: Color(0xFF9A9595),
-                              fontSize: 16,
-                            ),
+                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(
-                                _showConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                                color: Color(0xFF9A9595),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _showConfirmPassword = !_showConfirmPassword;
-                                });
-                              },
-                            ),
-                            errorStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.red,
+                              icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                              onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
                             ),
                           ),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                          ),
+                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 40),
-
                   // Sign Up Button
-                  GestureDetector(
-                    onTap: () {
-                      // Get user's name from form
-                      String firstName = _firstNameController.text.trim();
-                      String lastName = _lastNameController.text.trim();
-                      String userName = '$firstName $lastName'.trim();
-                      
-                      if (userName.isEmpty) {
-                        userName = 'Farmer'; // Default name
-                      }
-                      
-                      // Navigate to HomePage for new user
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(
-                            isNewUser: true, // New user
-                            userName: userName,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF2C7C48),
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF2C7C48),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Sign Up',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w700,
+                        onTap: _signup,
+                        child: Center(
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
                     ),
                   ),
-
                   SizedBox(height: 30),
-
-                  // Divider with "or sign up with" text
+                  // Divider
                   Row(
                     children: [
-                      Expanded(
-                        child: Divider(
-                          color: Color(0xFFB0ABAB),
-                          thickness: 1,
-                        ),
-                      ),
+                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(
-                          'or sign up with',
-                          style: TextStyle(
-                            color: Color(0xFF262626),
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                        child: Text('or sign up with', style: TextStyle(color: Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
                       ),
-                      Expanded(
-                        child: Divider(
-                          color: Color(0xFFB0ABAB),
-                          thickness: 1,
-                        ),
-                      ),
+                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
                     ],
                   ),
-
                   SizedBox(height: 20),
-
-                  // Social Signup Buttons
+                  // Social Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          print('Sign up with Facebook');
-                        },
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('Fb.png'),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
+                        onTap: () => print('Sign up with Facebook'),
+                        child: Container(width: 60, height: 60, child: Image.asset('Fb.png', fit: BoxFit.contain)),
                       ),
                       SizedBox(width: 40),
                       GestureDetector(
-                        onTap: () {
-                          print('Sign up with Google');
-                        },
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('Google.png'),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
+                        onTap: () => print('Sign up with Google'),
+                        child: Container(width: 60, height: 60, child: Image.asset('Google.png', fit: BoxFit.contain)),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 30),
-
-                  // Login link
+                  // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Already have an account?',
-                        style: TextStyle(
-                          color: Color(0xFF696666),
-                          fontSize: 16,
-                          fontFamily: 'PT Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      Text('Already have an account?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
                       SizedBox(width: 5),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
-                          );
-                        },
-                        child: Text(
-                          'Log in',
-                          style: TextStyle(
-                            color: Color(0xFF4BA26A),
-                            fontSize: 16,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                        child: Text('Log in', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 40),
                 ],
               ),
@@ -1954,152 +1134,64 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-// ==============================================
-// FINGERPRINT SCREEN
-// ==============================================
-
-class FingerprintScreen extends StatefulWidget {
-  @override
-  _FingerprintScreenState createState() => _FingerprintScreenState();
-}
-
-class _FingerprintScreenState extends State<FingerprintScreen> {
+// Fingerprint Screen
+class FingerprintScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF2C7C48),
       body: SafeArea(
         child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: [
-              // Back Button - Fixed
+              // Back Button
               Container(
                 height: 60,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ),
-                    ),
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
+                    child: Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
-              // Title
-              Text(
-                'Security Fingerprint',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
+              Text('Security Fingerprint', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               SizedBox(height: 60),
-
-              // Fingerprint Circle
               GestureDetector(
-                onTap: () {
-                  print('Fingerprint scanned');
-                  // TODO: Implement fingerprint authentication
-                  // Navigate to main app on success
-                },
+                onTap: () => print('Fingerprint scanned'),
                 child: Container(
                   width: 200,
                   height: 200,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 2,
-                      color: Colors.white,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.fingerprint,
-                    color: Colors.white,
-                    size: 80,
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 2, color: Colors.white)),
+                  child: Icon(Icons.fingerprint, color: Colors.white, size: 80),
                 ),
               ),
-
               SizedBox(height: 60),
-
-              // Instruction 1
-              Text(
-                'Use fingerprint to access',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
+              Text('Use fingerprint to access', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               SizedBox(height: 10),
-
-              // Instruction 2
-              Text(
-                'Use Your Fingerprint To Access Quickly.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontFamily: 'League Spartan',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-
+              Text('Use Your Fingerprint To Access Quickly.', style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
               Spacer(),
-
-              // Use Passcode Button
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => PasscodeScreen()),
-                  );
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PasscodeScreen()));
                 },
                 child: Container(
                   width: double.infinity,
                   height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
                   child: Center(
                     child: Text(
                       'Use Passcode',
-                      style: TextStyle(
-                        color: Color(0xFF2C7C48),
-                        fontSize: 18,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
               ),
-
               SizedBox(height: 40),
             ],
           ),
@@ -2109,60 +1201,38 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
   }
 }
 
-// ==============================================
-// PASSCODE SCREEN
-// ==============================================
-
+// Passcode Screen
 class PasscodeScreen extends StatefulWidget {
   @override
   _PasscodeScreenState createState() => _PasscodeScreenState();
 }
 
 class _PasscodeScreenState extends State<PasscodeScreen> {
-  List<String> passcode = ['1', '2', '3', '4'];
   String _enteredPasscode = '';
 
   void _addDigit(String digit) {
     if (_enteredPasscode.length < 4) {
-      setState(() {
-        _enteredPasscode += digit;
-      });
-
-      if (_enteredPasscode.length == 4) {
-        _checkPasscode();
-      }
+      setState(() => _enteredPasscode += digit);
+      if (_enteredPasscode.length == 4) _checkPasscode();
     }
   }
 
   void _removeDigit() {
     if (_enteredPasscode.isNotEmpty) {
-      setState(() {
-        _enteredPasscode = _enteredPasscode.substring(0, _enteredPasscode.length - 1);
-      });
+      setState(() => _enteredPasscode = _enteredPasscode.substring(0, _enteredPasscode.length - 1));
     }
   }
 
   void _checkPasscode() {
-    if (_enteredPasscode == '1234') { // Default passcode for testing
-      print('Passcode correct! Navigating to main app...');
+    if (_enteredPasscode == '1234') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Passcode correct!'),
-          backgroundColor: Colors.green,
-        ),
+        SnackBar(content: Text('Passcode correct!'), backgroundColor: Colors.green)
       );
-      // TODO: Navigate to main app
-      // Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Incorrect passcode. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Incorrect passcode. Please try again.'), backgroundColor: Colors.red)
       );
-      setState(() {
-        _enteredPasscode = '';
-      });
+      setState(() => _enteredPasscode = '');
     }
   }
 
@@ -2172,193 +1242,114 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
       backgroundColor: Color(0xFF2C7C48),
       body: SafeArea(
         child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: [
-              // Back Button - Fixed
+              // Back Button
               Container(
                 height: 60,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ),
-                    ),
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
+                    child: Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
-
-              // Title
-              Text(
-                'Passcode',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
+              Text('Passcode', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               SizedBox(height: 80),
-
-              // Enter PassCode Text
-              Text(
-                'Enter PassCode',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
+              Text('Enter PassCode', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               SizedBox(height: 30),
-
-              // Passcode Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: index < _enteredPasscode.length ? Colors.white : Colors.white.withOpacity(0.3),
-                    ),
-                  );
-                }),
+                children: List.generate(4, (i) => Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: i < _enteredPasscode.length ? Colors.white : Colors.white.withOpacity(0.3),
+                  ),
+                )),
               ),
-
               SizedBox(height: 60),
-
-              // Number Pad
-              Column(
-                children: [
-                  // Row 1: 1 2 3
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildNumberButton('1'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('2'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('3'),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-
-                  // Row 2: 4 5 6
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildNumberButton('4'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('5'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('6'),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-
-                  // Row 3: 7 8 9
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildNumberButton('7'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('8'),
-                      SizedBox(width: 30),
-                      _buildNumberButton('9'),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-
-                  // Row 4: 0 and backspace
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // 1. Invisible Placeholder (This keeps the '0' in the middle)
-                      Opacity(
-                        opacity: 0.0, // This makes it invisible
-                        child: _buildNumberButton(''), 
-                      ),
-                      
-                      const SizedBox(width: 30), // Same spacing as other rows
-                      _buildNumberButton('0'),
-                      SizedBox(width: 30),
-                      GestureDetector(
-                        onTap: _removeDigit,
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 3,
-                              color: Colors.white,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.backspace,
-                            color: Colors.white,
-                            size: 24,
+              Expanded(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildNumberButton('1'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('2'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('3'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildNumberButton('4'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('5'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('6'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildNumberButton('7'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('8'),
+                        SizedBox(width: 30),
+                        _buildNumberButton('9'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Opacity(opacity: 0.0, child: _buildNumberButton('')),
+                        SizedBox(width: 30),
+                        _buildNumberButton('0'),
+                        SizedBox(width: 30),
+                        GestureDetector(
+                          onTap: _removeDigit,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 3, color: Colors.white)),
+                            child: Icon(Icons.backspace, color: Colors.white, size: 24),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-
-              Spacer(),
-
-              // Submit Button
               GestureDetector(
                 onTap: () {
-                  if (_enteredPasscode.length == 4) {
-                    _checkPasscode();
-                  }
+                  if (_enteredPasscode.length == 4) _checkPasscode();
                 },
                 child: Container(
                   width: 150,
                   height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
                   child: Center(
                     child: Text(
                       'Submit',
-                      style: TextStyle(
-                        color: Color(0xFF2C7C48),
-                        fontSize: 18,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
               ),
-
               SizedBox(height: 40),
             ],
           ),
@@ -2373,22 +1364,11 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
       child: Container(
         width: 60,
         height: 60,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            width: 3,
-            color: Colors.white,
-          ),
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 3, color: Colors.white)),
         child: Center(
           child: Text(
             digit,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
           ),
         ),
       ),
