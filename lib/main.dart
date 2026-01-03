@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart'; 
+import 'package:smart_kisan/welcome_screen.dart';
+import 'package:smart_kisan/home_page.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +16,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        // If you don't have Arimo font yet, use this:
-        fontFamily: 'Roboto', // Fallback font
+        fontFamily: 'Roboto',
         useMaterial3: true,
       ),
-      home: WelcomeScreen(),
+      home:  WelcomeScreen(),
+      
+      // Add routes for navigation
+      routes: {
+        '/home': (context) => HomePage(
+          isNewUser: false,
+          userName: 'Farmer',
+        ),
+      },
     );
   }
 }

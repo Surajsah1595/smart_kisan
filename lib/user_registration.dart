@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // For Timer
+import 'dart:async';// For Timer
+import 'package:smart_kisan/home_page.dart'; 
 
 // Base widget for shared parts (back button, logo, etc.)
 class ForgotPasswordBaseScreen extends StatelessWidget {
@@ -1108,7 +1109,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     right: 30,
                     top: 600,
                     child: GestureDetector(
-                      onTap: _login,
+                      onTap: () {
+                        // Navigate to HomePage for existing user
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(
+                              isNewUser: false, // Existing user
+                              userName: 'Farmer', // Default name for login
+                            ),
+                          ),
+                        );
+                      },
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
@@ -1781,7 +1793,27 @@ class _SignupScreenState extends State<SignupScreen> {
 
                   // Sign Up Button
                   GestureDetector(
-                    onTap: _signup,
+                    onTap: () {
+                      // Get user's name from form
+                      String firstName = _firstNameController.text.trim();
+                      String lastName = _lastNameController.text.trim();
+                      String userName = '$firstName $lastName'.trim();
+                      
+                      if (userName.isEmpty) {
+                        userName = 'Farmer'; // Default name
+                      }
+                      
+                      // Navigate to HomePage for new user
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                            isNewUser: true, // New user
+                            userName: userName,
+                          ),
+                        ),
+                      );
+                    },
                     child: Container(
                       width: double.infinity,
                       height: 50,
