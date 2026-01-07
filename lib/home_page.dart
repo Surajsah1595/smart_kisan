@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'scan_page.dart';
+import 'location_page.dart';
+import 'crop_advisory.dart';
+import 'pest_disease_help.dart';
+import 'weather_page.dart';
+import 'water_optimization.dart';
 
 class HomePage extends StatefulWidget {
   final bool isNewUser;
@@ -337,38 +343,79 @@ class _HomePageState extends State<HomePage> {
         itemCount: features.length,
         itemBuilder: (context, index) {
           final feature = features[index];
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: const Alignment(0.24, 0.00),
-                end: const Alignment(0.76, 1.00),
-                colors: [feature['color1'] as Color, feature['color2'] as Color],
-              ),
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: _black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(feature['icon'] as IconData, color: _white, size: 32),
-                const SizedBox(height: 8),
-                Text(
-                  feature['title'] as String,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: _white,
-                    fontSize: 12,
-                    fontFamily: 'Arimo',
-                    fontWeight: FontWeight.w700,
+          return GestureDetector(
+            onTap: () {
+              // Handle navigation for Crop Advisory
+              if (feature['title'] == 'Crop Advisory') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CropAdvisoryScreen(),
                   ),
+                );
+              }
+              // Handle navigation for Pest & Disease Help
+              if (feature['title'] == 'Pest & Disease Help') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PestDiseaseHelpScreen(),
+                  ),
+                );
+              }
+              // ADD THIS FOR WATER OPTIMIZATION
+              if (feature['title'] == 'Water Optimization') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WaterOptimizationScreen(),
+                  ),
+                );
+              }
+                // Handle navigation for Weather Card Page
+              if (feature['title'] == 'Weather Forecast') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WeatherPage(),
+                  ),
+                );
+              }
+            },
+
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: const Alignment(0.24, 0.00),
+                  end: const Alignment(0.76, 1.00),
+                  colors: [feature['color1'] as Color, feature['color2'] as Color],
                 ),
-              ],
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: _black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(feature['icon'] as IconData, color: _white, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    feature['title'] as String,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _white,
+                      fontSize: 12,
+                      fontFamily: 'Arimo',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -769,12 +816,26 @@ class _HomePageState extends State<HomePage> {
           _currentNavIndex = index;
         });
         
-        // Handle navigation for Ask AI
+        // Handle navigation for different tabs
         if (index == 1) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AskAIPage(),
+              builder: (context) => const AskAIPage(),
+            ),
+          );
+        } else if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ScanPage(isNewUser: widget.isNewUser),
+            ),
+          );
+        } else if (index == 3) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LocationPage(),
             ),
           );
         }
@@ -870,7 +931,7 @@ class AskAIPage extends StatelessWidget {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-                        child: Icon(Icons.arrow_back, color: Colors.black),
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
