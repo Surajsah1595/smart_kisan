@@ -5,6 +5,8 @@ import 'crop_advisory.dart';
 import 'pest_disease_help.dart';
 import 'weather_page.dart';
 import 'water_optimization.dart';
+import 'notification.dart';
+import 'settings.dart';
 
 class HomePage extends StatefulWidget {
   final bool isNewUser;
@@ -158,42 +160,60 @@ class _HomePageState extends State<HomePage> {
           
           const Spacer(),
           
-          // Notification Icon
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Stack(
-              children: [
-                const Center(child: Icon(Icons.notifications, color: Colors.white, size: 30)),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _errorRed,
-                      borderRadius: BorderRadius.circular(4),
+          //notification part
+          
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Stack(
+                children: [
+                  const Center(child: Icon(Icons.notifications, color: Colors.white, size: 30)),
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _errorRed, // Keep your existing _errorRed color
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          
+
           const SizedBox(width: 12),
           
           // Settings Icon
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+          // Replace the Settings Icon container with this:
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.settings, color: Colors.white, size: 30),
             ),
-            child: const Icon(Icons.settings, color: Colors.white, size: 30),
           ),
         ],
       ),
