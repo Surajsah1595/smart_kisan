@@ -9,6 +9,7 @@ import 'notification.dart';
 import 'settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'weather_service.dart';
 
 class HomePage extends StatefulWidget {
   final bool isNewUser;
@@ -28,6 +29,11 @@ class _HomePageState extends State<HomePage> {
   int _currentNavIndex = 0;
   String displayName = '';
 
+  // Weather State
+  final WeatherService _weatherService = WeatherService();
+  Map<String, dynamic>? _homeWeatherData;
+  bool _loadingWeather = true;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +41,28 @@ class _HomePageState extends State<HomePage> {
     displayName = widget.userName;
     // Try to fetch the latest name from database
     _fetchUserName();
+    _fetchHomeWeather(); // Fetch weather when app starts
+
+  }
+
+  // Fetch Weather for Home Card
+  Future<void> _fetchHomeWeather() async {
+    try {
+      final data = await _weatherService.getCurrentWeather();
+      if (mounted) {
+        setState(() {
+          _homeWeatherData = data;
+          _loadingWeather = false;
+        });
+      }
+    } catch (e) {
+      print("Home Weather Error: $e");
+      if (mounted) {
+        setState(() {
+          _loadingWeather = false;
+        });
+      }
+    }
   }
 
   Future<void> _fetchUserName() async {
@@ -144,6 +172,7 @@ class _HomePageState extends State<HomePage> {
         color: _primaryGreen,
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: _black.withOpacity(0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
@@ -157,6 +186,7 @@ class _HomePageState extends State<HomePage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
+              // ignore: deprecated_member_use
               color: _white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -186,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Text(
-                'Kathmandu, Nepal',
+                _homeWeatherData != null ? _homeWeatherData!['name'] : 'Locating...',
                 style: TextStyle(
                   color: _lightText,
                   fontSize: 11,
@@ -236,7 +266,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 12),
           
           // Settings Icon
-          // Replace the Settings Icon container with this:
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -259,88 +288,118 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildWeatherCard() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _primaryGreen,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _white.withOpacity(0.2), width: 1.5),
-      ),
-      child: Column(
-        children: [
-          // Weather Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: _white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
+    // Default values (if loading or error)
+    String temp = '--';
+    String condition = 'Loading...';
+    String humidity = '--';
+    String wind = '--';
+    String advice = 'Fetching weather...';
+
+    if (!_loadingWeather && _homeWeatherData != null) {
+      double t = (_homeWeatherData!['main']['temp'] as num).toDouble();
+      temp = t.round().toString();
+      condition = _homeWeatherData!['weather'][0]['main'];
+      humidity = "${_homeWeatherData!['main']['humidity']}%";
+      wind = "${(_homeWeatherData!['wind']['speed'] * 3.6).round()} km/h"; // m/s to km/h
+      
+      // Dynamic Advice logic
+      if (condition.toLowerCase().contains('rain')) {
+        advice = 'Rain expected. Delay fertilizers.';
+      } else if (t > 30) {
+        advice = 'High heat. Water crops extra today.';
+      } else if (t < 10) {
+        advice = 'Cold warning. Protect seedlings.';
+      } else {
+        advice = 'Good conditions for field work.';
+      }
+    }
+
+    return GestureDetector(
+      onTap: () {
+        // Navigate to full weather page
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeatherPage()));
+      },
+      child: Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _primaryGreen,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: _white.withOpacity(0.2), width: 1.5),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: _white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(Icons.cloud, color: Colors.white, size: 16),
                     ),
-                    child: const Icon(Icons.cloud, color: Colors.white, size: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Today',
-                        style: TextStyle(
-                          color: _white,
-                          fontSize: 12,
-                          fontFamily: 'Arimo',
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Current Weather',
+                          style: TextStyle(
+                            color: _white,
+                            fontSize: 12,
+                            fontFamily: 'Arimo',
+                          ),
                         ),
-                      ),
-                      Text(
-                        '28°C • Partly Cloudy',
-                        style: TextStyle(
-                          color: _white,
-                          fontSize: 14,
-                          fontFamily: 'Arimo',
+                        Text(
+                          '$temp°C • $condition',
+                          style: TextStyle(
+                            color: _white,
+                            fontSize: 14,
+                            fontFamily: 'Arimo',
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              
-              // Weather Alert
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _warningYellow,
-                  borderRadius: BorderRadius.circular(8),
+                      ],
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'Light rain expected',
-                  style: TextStyle(
-                    color: const Color(0xFF733E0A),
-                    fontSize: 12,
-                    fontFamily: 'Arimo',
+                
+                // Advice Box
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _warningYellow,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    advice,
+                    style: TextStyle(
+                      color: const Color(0xFF733E0A),
+                      fontSize: 12,
+                      fontFamily: 'Arimo',
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 12),
-          
-          // Weather Metrics
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildWeatherMetric(Icons.water_drop, 'Humidity', '68%'),
-              _buildWeatherMetric(Icons.air, 'Wind', '12 km/h'),
-              _buildWeatherMetric(Icons.visibility, 'Visibility', '8 km'),
-              _buildWeatherMetric(Icons.thermostat, 'Feels Like', '26°C'),
-            ],
-          ),
-        ],
+              ],
+            ),
+            
+            const SizedBox(height: 12),
+            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildWeatherMetric(Icons.water_drop, 'Humidity', humidity),
+                _buildWeatherMetric(Icons.air, 'Wind', wind),
+                _buildWeatherMetric(Icons.visibility, 'Visibility', _loadingWeather ? '--' : 'Good'),
+                _buildWeatherMetric(Icons.thermostat, 'Feels Like', _loadingWeather ? '--' : '${(_homeWeatherData!['main']['feels_like'] as num).round()}°C'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -350,6 +409,7 @@ class _HomePageState extends State<HomePage> {
       width: 80,
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: _white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(8),
       ),
@@ -435,7 +495,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => WeatherPage(),
+                    builder: (context) => const WeatherPage(),
                   ),
                 );
               }
