@@ -32,7 +32,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('sk.jpg'),
+          image: const AssetImage('assets/sk.jpg'),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),
         ),
@@ -51,7 +51,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       width: 172,
                       height: 172,
                       margin: EdgeInsets.only(bottom: 10),
-                      child: Image.asset('Logo.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/Logo.png', fit: BoxFit.contain),
                     ),
                     _buildText('Smart Kisan', 48, FontWeight.w700),
                     SizedBox(height: 20),
@@ -106,7 +106,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Container(
                 width: 159,
                 height: 153,
-                child: Image.asset('Onboarding3.png', fit: BoxFit.contain),
+                child: Image.asset('assets/Onboarding3.png', fit: BoxFit.contain),
               ),
             ),
             Positioned(left: 91, top: 314, child: _buildTitle('Choose Your Language', 284)),
@@ -131,17 +131,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget _buildOnboardingScreen(int index) {
     final data = [
       {
-        'image': 'Onboarding1.png',
+        'image': 'assets/Onboarding1.png',
         'title': 'Monitoring soil and plant',
         'desc': 'We aim to use optical (VIR) sensing to observe the fields and make timely crop management decisions.',
       },
       {
-        'image': 'Onboarding2.png',
+        'image': 'assets/Onboarding2.png',
         'title': 'Crop Selection',
         'desc': 'Our project can use AI & Machine learning to select the best crop according to the land and water resources.',
       },
       {
-        'image': 'Onboarding3.png',
+        'image': 'assets/Onboarding3.png',
         'title': 'Improve agriculture precision',
         'desc': 'We will use satellite imagery, image processing, deep learning, computer vision, and remote sensing to detect changes in the field and crops and solve the problems whenever they pop.',
       },

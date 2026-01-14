@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "455474853473",
+    "project_id": "smartkisan-b2edf",
+    "storage_bucket": "smartkisan-b2edf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455474853473:android:8923532f4b219ab0b9dc20",
+        "android_client_info": {
+          "package_name": "com.example.smart_kisan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCElIhxr05TRZLEImCpEJ-5tKuxWloA8WY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

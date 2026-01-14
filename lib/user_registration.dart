@@ -1,6 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:smart_kisan/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';// To check session
+import 'auth_service.dart';
+import 'package:local_auth/local_auth.dart';// For Fingerprint
+import 'package:flutter/services.dart';  // For PlatformException
 
 // Base Screen
 class ForgotPasswordBaseScreen extends StatelessWidget {
@@ -31,7 +36,7 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
                   child: Container(
                     width: 250,
                     height: 200,
-                    child: Image.asset('Fp.png', fit: BoxFit.contain),
+                    child: Image.asset('assets/Fp.png', fit: BoxFit.contain),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -73,11 +78,20 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
-  void _sendResetLink() {
+    void _sendResetLink() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (_) => ForgotPasswordScreen2(email: _emailController.text)
-      ));
+      try {
+        await AuthService.instance.sendPasswordResetEmail(_emailController.text.trim());
+        
+        // Skip OTP screens and go straight to Success
+        Navigator.push(context, MaterialPageRoute(
+          builder: (_) => ForgotPasswordScreen4()
+        ));
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'Error sending link'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -99,7 +113,7 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Email / Mobile number', style: TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
+                Text('Email ID', style: TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
                 SizedBox(height: 8),
                 Container(
                   height: 50,
@@ -108,17 +122,17 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
                     controller: _emailController,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return 'Please enter email or mobile number';
+                        return 'Please enter email id ';
                       }
                       // Basic validation for email format
                       if (!v.contains('@') && !RegExp(r'^[0-9]+$').hasMatch(v)) {
-                        return 'Please enter a valid email or mobile number';
+                        return 'Please enter a valid email id';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Enter email or mobile number',
+                      hintText: 'Enter email id ',
                       hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                     ),
                     style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
@@ -485,7 +499,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
                       child: Container(
                         width: 150,
                         height: 150,
-                        child: Image.asset('Fp.png', fit: BoxFit.contain),
+                        child: Image.asset('assets/Fp.png', fit: BoxFit.contain),
                       ),
                     ),
                   ),
@@ -495,7 +509,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Your Account is ready to use. You will be redirected to the Login page in a few seconds.',
+                      'A password reset link has been sent to your email. Please check your inbox (and spam), click the link to reset your password, and then login here.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                     ),
@@ -524,34 +538,88 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _showPassword = false;
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      // Validate email format
-      if (!_emailController.text.contains('@')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please enter a valid email address'),
-            backgroundColor: Colors.red,
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    // Local validation
+    if (!_emailController.text.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email address'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show loading spinner
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final user = await AuthService.instance.signInWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      Navigator.of(context).pop(); // close loading dialog
+
+      if (user != null) {
+        String userName = user.displayName ?? 'Farmer';
+        if (userName.trim().isEmpty) userName = 'Farmer';
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HomePage(
+              isNewUser: false,
+              userName: userName,
+            ),
           ),
         );
-        return;
+      }
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
+
+      String message = 'Login failed';
+      if (e.code == 'user-not-found') {
+        message = 'No user found with this email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Incorrect password.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is invalid.';
       }
 
-      // Validate password length
-      if (_passwordController.text.length < 6) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Password must be at least 6 characters'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // If all validations pass, navigate to home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomePage(isNewUser: false, userName: 'Farmer')),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
+    } catch (e) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('An unexpected error occurred. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -563,7 +631,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Form(
               key: _formKey,
               child: Column(
@@ -578,33 +646,66 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-                        child: Icon(Icons.arrow_back, color: Colors.black),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade100,
+                        ),
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
                   // Logo
                   Center(
-                    child: Container(
-                      width: 207.50,
+                    child: SizedBox(
+                      width: 207.5,
                       height: 173.16,
-                      child: Image.asset('Ls.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/Ls.png', fit: BoxFit.contain),
                     ),
                   ),
-                  SizedBox(height: 40),
-                  Text('Log In', style: TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
-                  SizedBox(height: 10),
-                  Text('please Log in to continue', style: TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Log In',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 32,
+                      fontFamily: 'PT Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'please Log in to continue',
+                    style: TextStyle(
+                      color: Color(0xFFB0ABAB),
+                      fontSize: 16,
+                      fontFamily: 'PT Sans',
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
                   // Email Field
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Email', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      const Text(
+                        'Email',
+                        style: TextStyle(
+                          color: Color(0xFF9A9595),
+                          fontSize: 16,
+                          fontFamily: 'PT Sans',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 1,
+                              color: Color(0xFFB0ABAB),
+                            ),
+                          ),
+                        ),
                         child: TextFormField(
                           controller: _emailController,
                           validator: (value) {
@@ -613,26 +714,47 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your email',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(
+                              color: Color(0xFF9A9595),
+                              fontSize: 16,
+                            ),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'PT Sans',
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
                   // Password Field
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      const Text(
+                        'Password',
+                        style: TextStyle(
+                          color: Color(0xFF9A9595),
+                          fontSize: 16,
+                          fontFamily: 'PT Sans',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 1,
+                              color: Color(0xFFB0ABAB),
+                            ),
+                          ),
+                        ),
                         child: TextFormField(
                           controller: _passwordController,
                           obscureText: !_showPassword,
@@ -645,32 +767,57 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter your password',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: const TextStyle(
+                              color: Color(0xFF9A9595),
+                              fontSize: 16,
+                            ),
                             suffixIcon: IconButton(
-                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
-                              onPressed: () => setState(() => _showPassword = !_showPassword),
+                              icon: Icon(
+                                _showPassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: const Color(0xFF9A9595),
+                              ),
+                              onPressed: () => setState(
+                                () => _showPassword = !_showPassword,
+                              ),
                             ),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'PT Sans',
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+
                   // Forgot Password
                   GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen1())),
-                    child: Text(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ForgotPasswordScreen1(),
+                      ),
+                    ),
+                    child: const Text(
                       'Forgot Password?',
-                      style: TextStyle(color: Color(0xFF4BA26A), fontSize: 14, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        color: Color(0xFF4BA26A),
+                        fontSize: 14,
+                        fontFamily: 'PT Sans',
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
                   // Login Button
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFF2B7B48),
+                      color: const Color(0xFF2B7B48),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
@@ -678,84 +825,159 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: _login,
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             'Log in',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'PT Sans',
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  // Fingerprint Button
+                  const SizedBox(height: 20),
+
+                  // Fingerprint Button (still dummy, backend later)
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFF2B7B48),
+                      color: const Color(0xFF2B7B48),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FingerprintScreen())),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FingerprintScreen(),
+                          ),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.fingerprint, color: Colors.white, size: 20),
+                          children: const [
+                            Icon(Icons.fingerprint,
+                                color: Colors.white, size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Tap to login with Fingerprint',
-                              style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'PT Sans',
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
+
                   // Divider
                   Row(
-                    children: [
-                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                    children: const [
+                      Expanded(
+                        child: Divider(color: Color(0xFFB0ABAB)),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Text('or sign in with', style: TextStyle(color: Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
+                        child: Text(
+                          'or sign in with',
+                          style: TextStyle(
+                            color: Color(0xFF262626),
+                            fontSize: 16,
+                            fontFamily: 'PT Sans',
+                          ),
+                        ),
                       ),
-                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                      Expanded(
+                        child: Divider(color: Color(0xFFB0ABAB)),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  // Social Buttons
+                  const SizedBox(height: 20),
+
+                  // Social Buttons 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () => print('Login with Facebook'),
-                        child: Container(width: 60, height: 60, child: Image.asset('Fb.png', fit: BoxFit.contain)),
-                      ),
-                      SizedBox(width: 40),
-                      GestureDetector(
-                        onTap: () => print('Login with Google'),
-                        child: Container(width: 60, height: 60, child: Image.asset('Google.png', fit: BoxFit.contain)),
+                        onTap: () async {
+                          // Show loading
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => const Center(child: CircularProgressIndicator()),
+                          );
+
+                          final user = await AuthService.instance.signInWithGoogle();
+
+                          Navigator.of(context).pop(); // Close loading
+
+                          if (user != null) {
+                            String userName = user.displayName ?? 'Farmer';
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => HomePage(isNewUser: false, userName: userName),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Google Sign-In failed or cancelled')),
+                            );
+                          }
+                        },
+                        child: SizedBox(
+                          width: 60, 
+                          height: 60, 
+                          child: Image.asset('assets/Google.png', fit: BoxFit.contain)
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
                   // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Don\'t have an account?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(width: 5),
+                      const Text(
+                        'Don\'t have an account?',
+                        style: TextStyle(
+                          color: Color(0xFF696666),
+                          fontSize: 16,
+                          fontFamily: 'PT Sans',
+                        ),
+                      ),
+                      const SizedBox(width: 5),
                       GestureDetector(
-                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignupScreen())),
-                        child: Text('sign up', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                        onTap: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SignupScreen(),
+                          ),
+                        ),
+                        child: const Text(
+                          'sign up',
+                          style: TextStyle(
+                            color: Color(0xFF4BA26A),
+                            fontSize: 16,
+                            fontFamily: 'PT Sans',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -769,6 +991,7 @@ class _LoginScreenState extends State<LoginScreen> {
 // Signup Screen
 class SignupScreen extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _SignupScreenState createState() => _SignupScreenState();
 }
 
@@ -782,61 +1005,116 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _showPassword = false, _showConfirmPassword = false;
 
-  void _signup() {
-    if (_formKey.currentState!.validate()) {
-      // Validate email format
-      if (!_emailController.text.contains('@')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please enter a valid email address'),
-            backgroundColor: Colors.red,
+  void _signup() async {
+    print('Signup: start');
+    if (!_formKey.currentState!.validate()) return;
+
+    // Local validation (keep your existing checks)
+    if (!_emailController.text.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email address'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!RegExp(r'^[0-9]{10,15}$').hasMatch(_mobileController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid mobile number (10-15 digits)'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    print('Signup: dialog shown');
+
+    try {
+      final user = await AuthService.instance.signUpWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phone: _mobileController.text.trim(),
+      );
+
+      print('Signup: signUpWithEmail returned ${user?.uid}');
+      Navigator.of(context).pop(); // close loading dialog
+      print('Signup: dialog closed');
+
+      if (user != null) {
+        String userName = user.displayName ?? '';
+        if (userName.trim().isEmpty) {
+          final firstName = _firstNameController.text.trim();
+          final lastName = _lastNameController.text.trim();
+          userName = ('$firstName $lastName').trim().isEmpty
+              ? 'Farmer'
+              : '$firstName $lastName';
+        }
+        print('Signup: navigating to HomePage');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                HomePage(isNewUser: true, userName: userName),
           ),
         );
-        return;
+      }
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop(); // close loading dialog
+
+      print('SIGNUP ERROR: code=${e.code}, message=${e.message}');
+
+      String message = 'Failed to sign up';
+      if (e.code == 'email-already-in-use') {
+        message = 'This email is already in use. Please log in instead.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is invalid.';
+      } else if (e.code == 'weak-password') {
+        message = 'The password is too weak.';
       }
 
-      // Validate mobile number (basic check)
-      if (!RegExp(r'^[0-9]{10,15}$').hasMatch(_mobileController.text)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Please enter a valid mobile number (10-15 digits)'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Validate password length
-      if (_passwordController.text.length < 6) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Password must be at least 6 characters'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Validate password match
-      if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Passwords do not match'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // If all validations pass, navigate to home
-      String firstName = _firstNameController.text.trim();
-      String lastName = _lastNameController.text.trim();
-      String userName = '$firstName $lastName'.trim();
-      if (userName.isEmpty) userName = 'Farmer';
-      
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomePage(isNewUser: true, userName: userName)),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
+    } catch (e) {
+      Navigator.of(context).pop();
+      print('Signup: unexpected error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('An unexpected error occurred. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -873,7 +1151,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Container(
                       width: 150,
                       height: 150,
-                      child: Image.asset('Ls.png', fit: BoxFit.contain),
+                      child: Image.asset('assets/Ls.png', fit: BoxFit.contain),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -1100,13 +1378,37 @@ class _SignupScreenState extends State<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () => print('Sign up with Facebook'),
-                        child: Container(width: 60, height: 60, child: Image.asset('Fb.png', fit: BoxFit.contain)),
-                      ),
-                      SizedBox(width: 40),
-                      GestureDetector(
-                        onTap: () => print('Sign up with Google'),
-                        child: Container(width: 60, height: 60, child: Image.asset('Google.png', fit: BoxFit.contain)),
+                        onTap: () async {
+                          // Show loading
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => const Center(child: CircularProgressIndicator()),
+                          );
+
+                          final user = await AuthService.instance.signInWithGoogle();
+
+                          Navigator.of(context).pop(); // Close loading
+
+                          if (user != null) {
+                            String userName = user.displayName ?? 'Farmer';
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => HomePage(isNewUser: false, userName: userName),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Google Sign-In failed or cancelled')),
+                            );
+                          }
+                        },
+                        child: SizedBox(
+                          width: 60, 
+                          height: 60, 
+                          child: Image.asset('assets/Google.png', fit: BoxFit.contain)
+                        ),
                       ),
                     ],
                   ),
@@ -1135,14 +1437,96 @@ class _SignupScreenState extends State<SignupScreen> {
 }
 
 // Fingerprint Screen
-class FingerprintScreen extends StatelessWidget {
+class FingerprintScreen extends StatefulWidget {
+  @override
+  _FingerprintScreenState createState() => _FingerprintScreenState();
+}
+
+class _FingerprintScreenState extends State<FingerprintScreen> {
+  final LocalAuthentication auth = LocalAuthentication();
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb) {
+      //Future.delayed(Duration(milliseconds: 500), _authenticate);
+    }
+  }
+
+  Future<void> _authenticate() async {
+    // 1. WEB CHECK: Stop immediately if running on a browser
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Fingerprint login is only available on Mobile Apps.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    bool authenticated = false;
+    try {
+      // 1. Check if device supports fingerprint
+      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
+      final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+
+      if (!canAuthenticate) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fingerprint not supported on this device')),
+        );
+        return;
+      }
+
+      // 2. Scan Fingerprint
+      authenticated = await auth.authenticate(
+        localizedReason: 'Scan your fingerprint to login',
+        options: const AuthenticationOptions( // This class exists in v2.2.0+
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+    } on PlatformException catch (e) {
+      print("Fingerprint Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.message}')),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    if (authenticated) {
+      // 3. Check if Firebase Session exists
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Success! Go to Home
+        String userName = user.displayName ?? 'Farmer';
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage(isNewUser: false, userName: userName)),
+        );
+      } else {
+        // Fingerprint OK, but App Session Expired
+        ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(
+             content: Text('Session expired. Please login with Password first.'),
+             backgroundColor: Colors.orange,
+           ),
+        );
+        // Optional: Go back to login
+        Navigator.pop(context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C7C48),
+      backgroundColor: const Color(0xFF2C7C48),
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: [
               // Back Button
@@ -1154,28 +1538,39 @@ class FingerprintScreen extends StatelessWidget {
                   child: Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
-                    child: Icon(Icons.arrow_back, color: Colors.white),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle, 
+                      color: Colors.white.withOpacity(0.2)
+                    ),
+                    child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Text('Security Fingerprint', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-              SizedBox(height: 60),
+              const SizedBox(height: 20),
+              const Text('Security Fingerprint', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              const SizedBox(height: 60),
+              
+              // Fingerprint Icon (Tap to Scan)
               GestureDetector(
-                onTap: () => print('Fingerprint scanned'),
+                onTap: _authenticate,
                 child: Container(
                   width: 200,
                   height: 200,
-                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 2, color: Colors.white)),
-                  child: Icon(Icons.fingerprint, color: Colors.white, size: 80),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, 
+                    border: Border.all(width: 2, color: Colors.white)
+                  ),
+                  child: const Icon(Icons.fingerprint, color: Colors.white, size: 80),
                 ),
               ),
-              SizedBox(height: 60),
-              Text('Use fingerprint to access', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-              SizedBox(height: 10),
-              Text('Use Your Fingerprint To Access Quickly.', style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
-              Spacer(),
+              const SizedBox(height: 60),
+              const Text('Use fingerprint to access', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              const SizedBox(height: 10),
+              const Text('Tap the icon above to scan.', style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
+              
+              const Spacer(),
+              
+              // Switch to Passcode Button
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PasscodeScreen()));
@@ -1184,7 +1579,7 @@ class FingerprintScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Use Passcode',
                       style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
@@ -1192,7 +1587,7 @@ class FingerprintScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -1209,11 +1604,15 @@ class PasscodeScreen extends StatefulWidget {
 
 class _PasscodeScreenState extends State<PasscodeScreen> {
   String _enteredPasscode = '';
+  final String _correctPasscode = '1234'; // Hardcoded for now
 
   void _addDigit(String digit) {
     if (_enteredPasscode.length < 4) {
       setState(() => _enteredPasscode += digit);
-      if (_enteredPasscode.length == 4) _checkPasscode();
+      if (_enteredPasscode.length == 4) {
+        // Wait small amount so user sees the 4th dot fill
+        Future.delayed(const Duration(milliseconds: 100), _checkPasscode);
+      }
     }
   }
 
@@ -1224,13 +1623,32 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
   }
 
   void _checkPasscode() {
-    if (_enteredPasscode == '1234') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passcode correct!'), backgroundColor: Colors.green)
-      );
+    if (_enteredPasscode == _correctPasscode) {
+      // 1. PIN Matches, Check Session
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+         // 2. Session Valid -> Home
+        String userName = user.displayName ?? 'Farmer';
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Welcome back!'), backgroundColor: Colors.green)
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage(isNewUser: false, userName: userName)),
+          (route) => false,
+        );
+      } else {
+        // 3. Session Invalid -> Error
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Session expired. Login with Email first.'), backgroundColor: Colors.orange)
+        );
+        setState(() => _enteredPasscode = '');
+      }
     } else {
+      // Wrong PIN
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Incorrect passcode. Please try again.'), backgroundColor: Colors.red)
+        const SnackBar(content: Text('Incorrect passcode. Try 1234.'), backgroundColor: Colors.red)
       );
       setState(() => _enteredPasscode = '');
     }
@@ -1239,10 +1657,10 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C7C48),
+      backgroundColor: const Color(0xFF2C7C48),
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: [
               // Back Button
@@ -1255,19 +1673,21 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
-                    child: Icon(Icons.arrow_back, color: Colors.white),
+                    child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Text('Passcode', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-              SizedBox(height: 80),
-              Text('Enter PassCode', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-              SizedBox(height: 30),
+              const SizedBox(height: 20),
+              const Text('Passcode', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              const SizedBox(height: 80),
+              const Text('Enter PassCode', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              const SizedBox(height: 30),
+              
+              // Dots
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(4, (i) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
@@ -1276,7 +1696,9 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   ),
                 )),
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
+              
+              // Numpad
               Expanded(
                 child: Column(
                   children: [
@@ -1284,49 +1706,50 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildNumberButton('1'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('2'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('3'),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildNumberButton('4'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('5'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('6'),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildNumberButton('7'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('8'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         _buildNumberButton('9'),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Opacity(opacity: 0.0, child: _buildNumberButton('')),
-                        SizedBox(width: 30),
+                        // Spacer for layout alignment
+                        const SizedBox(width: 60, height: 60), 
+                        const SizedBox(width: 30),
                         _buildNumberButton('0'),
-                        SizedBox(width: 30),
+                        const SizedBox(width: 30),
                         GestureDetector(
                           onTap: _removeDigit,
                           child: Container(
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 3, color: Colors.white)),
-                            child: Icon(Icons.backspace, color: Colors.white, size: 24),
+                            child: const Icon(Icons.backspace, color: Colors.white, size: 24),
                           ),
                         ),
                       ],
@@ -1334,6 +1757,8 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   ],
                 ),
               ),
+
+              // Manual Submit Button (Optional, since we auto-submit on 4th digit)
               GestureDetector(
                 onTap: () {
                   if (_enteredPasscode.length == 4) _checkPasscode();
@@ -1341,8 +1766,9 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                 child: Container(
                   width: 150,
                   height: 45,
+                  margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Submit',
                       style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
@@ -1350,7 +1776,25 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              
+              // "Forgot Passcode" Link
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: GestureDetector(
+                  onTap: () {
+                     // Go back to normal login
+                     Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => LoginScreen()),
+                      (route) => false
+                    );
+                  },
+                  child: const Text(
+                    "Forgot Passcode? Login with Email",
+                    style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -1375,3 +1819,4 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
     );
   }
 }
+
