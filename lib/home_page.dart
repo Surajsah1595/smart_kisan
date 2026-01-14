@@ -7,6 +7,8 @@ import 'weather_page.dart';
 import 'water_optimization.dart';
 import 'notification.dart';
 import 'settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   final bool isNewUser;
@@ -24,7 +26,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentNavIndex = 0;
+  String displayName = '';
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with the name passed from navigation
+    displayName = widget.userName;
+    // Try to fetch the latest name from database
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // 1. Try to get name from Auth Profile (Google/Email)
+      if (user.displayName != null && user.displayName!.isNotEmpty) {
+        setState(() {
+          displayName = user.displayName!;
+        });
+      }
+
+      // 2. Try to get name from Firestore (Database) for more accuracy
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          final data = doc.data();
+          if (data != null && data.containsKey('firstName') && data.containsKey('lastName')) {
+             setState(() {
+               displayName = "${data['firstName']} ${data['lastName']}";
+             });
+          }
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+      }
+    }
+  }
   // Colors used in the app
   final Color _primaryGreen = const Color(0xFF2C7C48);
   final Color _lightGreen = const Color(0xFFF0FDF4);
@@ -140,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Text(
-                'Good morning, ${widget.userName}',
+                'Good morning, $displayName',
                 style: TextStyle(
                   color: _lightText,
                   fontSize: 12,

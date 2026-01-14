@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_kisan/welcome_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_service.dart'; // Import your auth service
 
 // Colors used in the settings screens
 const Color _primaryGreen = Color(0xFF2C7C48);
@@ -467,17 +469,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showLogoutConfirmation() {
+    void _showLogoutConfirmation() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Logout', style: TextStyle(color: _textDark, fontFamily: 'Arimo')),
         content: const Text('Are you sure you want to logout?', style: TextStyle(fontFamily: 'Arimo', fontSize: 16)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel', style: TextStyle(color: _gray, fontFamily: 'Arimo'))),
           TextButton(
-            onPressed: () {
+            onPressed: () => Navigator.pop(context), 
+            child: const Text('Cancel', style: TextStyle(color: _gray, fontFamily: 'Arimo'))
+          ),
+          TextButton(
+            onPressed: () async {
+              // 1. Close the dialog
               Navigator.pop(context);
+              
+              // 2. Show a loading indicator briefly
+              showDialog(
+                context: context, 
+                barrierDismissible: false,
+                builder: (_) => const Center(child: CircularProgressIndicator())
+              );
+
+              // 3. Perform actual Firebase Sign Out
+              await AuthService.instance.signOut();
+
+              // 4. Navigate to Welcome Screen
+              if (!mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => WelcomeScreen()),
