@@ -1,6 +1,6 @@
 // scan_page.dart
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // For navigation back to home
+import 'home_page.dart';
 
 class ScanPage extends StatefulWidget {
   final bool isNewUser;
