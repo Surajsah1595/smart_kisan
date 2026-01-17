@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AiService {
-  static const String _apiKey = 'My_api_key';
+  static const String _apiKey = 'AIzaSyC4_HfU1xEOufeHeMoBacSHPPQ8Et4dot0';
 
   // We will try these models in order. The app will use the first one that works.
   static const List<String> _modelCandidates = [
@@ -14,9 +14,6 @@ class AiService {
   ];
 
   Future<String?> sendMessage(String message) async {
-     print("------------------------------------------------");
-    print("🚀 STARTING AI REQUEST with Key: ${_apiKey.substring(0, 5)}...");
-
     for (String modelName in _modelCandidates) {
       print("🔄 Trying model: $modelName...");
       final result = await _tryModel(modelName, message);
@@ -26,8 +23,6 @@ class AiService {
         return result;
       }
     }
-    print("❌ ALL MODELS FAILED.");
-    print("------------------------------------------------");
     return "Error: Could not connect to any AI model. Please check your API Key permissions.";
   }
 

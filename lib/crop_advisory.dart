@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'ai_service.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 // --- MODELS ---
 
@@ -9,12 +12,18 @@ class Field {
   final String name;
   final String size;
   final String soilType;
+  final DateTime createdAt;
+  final double? latitude;
+  final double? longitude;
 
   Field({
     required this.id,
     required this.name,
     required this.size,
     required this.soilType,
+    required this.createdAt,
+    this.latitude,
+    this.longitude,
   });
 
   factory Field.fromSnapshot(DocumentSnapshot doc) {
@@ -24,6 +33,9 @@ class Field {
       name: data['name'] ?? '',
       size: data['size'] ?? '',
       soilType: data['soilType'] ?? 'Loamy Soil (Ideal)',
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
     );
   }
 }
@@ -34,7 +46,9 @@ class Crop {
   final String season;
   final String duration;
   final String waterNeed;
-  final double progress;
+  final String cropStage;
+  final DateTime createdAt;
+  final String notes;
 
   Crop({
     required this.id,
@@ -42,7 +56,9 @@ class Crop {
     required this.season,
     required this.duration,
     required this.waterNeed,
-    this.progress = 0.0,
+    this.cropStage = 'Seedling',
+    required this.createdAt,
+    this.notes = '',
   });
 
   factory Crop.fromSnapshot(DocumentSnapshot doc) {
@@ -53,7 +69,9 @@ class Crop {
       season: data['season'] ?? '',
       duration: data['duration'] ?? '',
       waterNeed: data['waterNeed'] ?? '',
-      progress: (data['progress'] ?? 0.0).toDouble(),
+      cropStage: data['cropStage'] ?? 'Seedling',
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      notes: data['notes'] ?? '',
     );
   }
 }
@@ -73,7 +91,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   String? selectedFieldId; 
   String? selectedFieldName;
-  Field? selectedFieldObject; 
+  Field? selectedFieldObject;
+  
+  // Security: Rate limiting
+  DateTime? _lastFieldCreated;
+  DateTime? _lastCropCreated;
+  static const _fieldCreationCooldown = Duration(seconds: 2);
+  static const _cropCreationCooldown = Duration(seconds: 1);
+  static const _maxFieldsPerUser = 10;
+  static const _maxCropsPerField = 20; 
 
   // Standardized Soil Types for Dropdown
   final List<String> _soilTypes = [
@@ -392,7 +418,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   Widget _buildAdvisoryButton() {
     return GestureDetector(
-      onTap: () => _showRecommendations(context),
+      onTap: () => _getAiRecommendations(context),
       child: Container(
         height: 60,
         decoration: BoxDecoration(
@@ -406,7 +432,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             children: [
               Icon(Icons.auto_awesome, color: Colors.white),
               SizedBox(width: 8),
-              Text('Get Smart Recommendations', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+              Text('Get Smart AI Recommendations', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -525,18 +551,36 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         const SizedBox(width: 12),
                         Expanded(child: ElevatedButton(
                           onPressed: () async {
-                            if (nameCtrl.text.isNotEmpty) {
-                              try {
-                                await _usersCollection.doc(uid).collection('fields').add({
-                                  'name': nameCtrl.text,
-                                  'size': sizeCtrl.text,
-                                  'soilType': selectedSoil, // Save dropdown value
-                                  'createdAt': FieldValue.serverTimestamp(),
-                                });
-                                Navigator.pop(context);
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-                              }
+                            if (nameCtrl.text.isEmpty) return;
+                            
+                            // Rate limiting check
+                            if (_lastFieldCreated != null && DateTime.now().difference(_lastFieldCreated!) < _fieldCreationCooldown) {
+                              await _logAuditAction('suspicious_field_spam', reason: 'Attempted to create field too quickly');
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wait 2 seconds before adding another field')));
+                              return;
+                            }
+                            
+                            // Check max fields
+                            final existingFields = await _usersCollection.doc(uid).collection('fields').count().get();
+                            if ((existingFields.count ?? 0) >= _maxFieldsPerUser) {
+                              await _logAuditAction('suspicious_max_fields_exceeded', reason: 'User attempted to exceed max 10 fields');
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Max 10 fields allowed per account')));
+                              return;
+                            }
+
+                            try {
+                              await _usersCollection.doc(uid).collection('fields').add({
+                                'name': nameCtrl.text,
+                                'size': sizeCtrl.text,
+                                'soilType': selectedSoil,
+                                'createdAt': FieldValue.serverTimestamp(),
+                              });
+                              await _logAuditAction('field_created', fieldName: nameCtrl.text);
+                              _lastFieldCreated = DateTime.now();
+                              Navigator.pop(context);
+                            } catch (e) {
+                              await _logAuditAction('field_creation_failed', fieldName: nameCtrl.text, reason: e.toString());
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A63E)),
@@ -640,10 +684,27 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          if (nameCtrl.text.isNotEmpty) {
-                            await _saveCropToFirebase(nameCtrl.text, 'Custom', 'Unknown', 'Medium');
-                            Navigator.pop(context);
+                          if (nameCtrl.text.isEmpty) return;
+                          
+                          // Rate limiting check
+                          if (_lastCropCreated != null && DateTime.now().difference(_lastCropCreated!) < _cropCreationCooldown) {
+                            await _logAuditAction('suspicious_crop_spam', fieldName: selectedFieldName, reason: 'Attempted to create crop too quickly');
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wait before adding another crop')));
+                            return;
                           }
+                          
+                          // Check max crops in field
+                          final existingCrops = await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').count().get();
+                          if ((existingCrops.count ?? 0) >= _maxCropsPerField) {
+                            await _logAuditAction('suspicious_max_crops_exceeded', fieldName: selectedFieldName, reason: 'User attempted to exceed max 20 crops per field');
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Max 20 crops per field allowed')));
+                            return;
+                          }
+                          
+                          await _saveCropToFirebase(nameCtrl.text, 'Custom', 'Unknown', 'Medium');
+                          await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: nameCtrl.text);
+                          _lastCropCreated = DateTime.now();
+                          Navigator.pop(context);
                         },
                         child: const Text("Add Custom Crop"),
                       ),
@@ -656,6 +717,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         subtitle: Text('${c['season']} • ${c['duration']}'),
                         onTap: () async {
                           await _saveCropToFirebase(c['name']!, c['season']!, c['duration']!, c['waterNeed']!);
+                          await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: c['name']!, reason: 'User selected from database');
                           Navigator.pop(context);
                         },
                       )).toList(),
@@ -670,150 +732,149 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     );
   }
 
-  Future<void> _saveCropToFirebase(String name, String season, String duration, String water) async {
+  Future<void> _saveCropToFirebase(String name, String season, String duration, String water, {String cropStage = 'Seedling', String notes = ''}) async {
     await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').add({
       'name': name,
       'season': season,
       'duration': duration,
       'waterNeed': water,
-      'progress': 0.0,
+      'cropStage': cropStage,
       'createdAt': FieldValue.serverTimestamp(),
+      'notes': notes,
     });
+  }
+
+  // --- AUDIT LOGGING ---
+  Future<void> _logAuditAction(String action, {String? fieldName, String? cropName, String? reason}) async {
+    try {
+      await _usersCollection.doc(uid).collection('auditLog').add({
+        'action': action,
+        'fieldName': fieldName,
+        'cropName': cropName,
+        'reason': reason,
+        'timestamp': FieldValue.serverTimestamp(),
+        'userAgent': 'smart_kisan_app_v1.0',
+      });
+      print('✅ Logged action: $action');
+    } catch (e) {
+      print('❌ Failed to log action: $e');
+    }
   }
 
   // --- SMART RECOMMENDATION LOGIC ---
 
-  void _showRecommendations(BuildContext context) {
+  Future<void> _getAiRecommendations(BuildContext context) async {
     if (selectedFieldObject == null) return;
 
-    final month = DateTime.now().month;
-    String currentSeason;
-    if (month >= 11 || month <= 2) currentSeason = 'Winter';
-    else if (month >= 3 && month <= 5) currentSeason = 'Spring';
-    else if (month >= 6 && month <= 9) currentSeason = 'Monsoon';
-    else currentSeason = 'Autumn';
+    showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
 
-    String soil = selectedFieldObject!.soilType.toLowerCase();
-    List<Map<String, String>> suggestions = [];
+    try {
+      final cropSnapshot = await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').get();
+      final cropNames = cropSnapshot.docs.map((d) => d['name'] ?? '').where((s) => s.isNotEmpty).toList();
 
-    // --- LOGIC FOR DROPDOWN SOIL TYPES ---
-    
-    if (currentSeason == 'Winter') {
-      if (soil.contains('clay')) {
-        suggestions.add({'name': 'Wheat', 'reason': 'Clay holds moisture well for wheat.'});
-        suggestions.add({'name': 'Lentils', 'reason': 'Pulses thrive in heavy clay soil.'});
-      } else if (soil.contains('sandy')) {
-        suggestions.add({'name': 'Carrot', 'reason': 'Root vegetables grow straight in sandy soil.'});
-        suggestions.add({'name': 'Radish', 'reason': 'Easy root penetration in sandy soil.'});
-        suggestions.add({'name': 'Peanut', 'reason': 'Needs loose soil for pod formation.'});
-      } else if (soil.contains('black')) { // Black cotton soil
-        suggestions.add({'name': 'Chickpea', 'reason': 'Excellent for moisture retentive black soil.'});
-        suggestions.add({'name': 'Mustard', 'reason': 'Grows vigorously in rich soil.'});
-      } else { // Loam / Silt
-        suggestions.add({'name': 'Mustard', 'reason': 'Versatile winter cash crop.'});
-        suggestions.add({'name': 'Peas', 'reason': 'Loam provides perfect drainage.'});
-        suggestions.add({'name': 'Potato', 'reason': 'Tuber formation is best in loamy soil.'});
+      final month = DateTime.now().month;
+      String currentSeason;
+      if (month >= 11 || month <= 2) currentSeason = 'Winter';
+      else if (month >= 3 && month <= 5) currentSeason = 'Spring';
+      else if (month >= 6 && month <= 9) currentSeason = 'Monsoon';
+      else currentSeason = 'Autumn';
+
+      final prompt = StringBuffer();
+      prompt.writeln('Field Name: ${selectedFieldObject!.name}');
+      prompt.writeln('Size: ${selectedFieldObject!.size}');
+      prompt.writeln('Soil Type: ${selectedFieldObject!.soilType}');
+      prompt.writeln('Current Season: $currentSeason');
+      prompt.writeln('Existing Crops: ${cropNames.isEmpty ? 'None' : cropNames.join(", ")}');
+      prompt.writeln();
+      prompt.writeln('Provide concise actionable recommendations for this field (planting choices, irrigation, fertilizer, pest watch, and quick care).');
+      prompt.writeln('Suggest 5-7 suitable crops for planting.');
+      prompt.writeln('At the end output ONLY a JSON array under the exact marker SUGGESTED_CROPS_JSON: []; example: SUGGESTED_CROPS_JSON: [{"name":"Wheat","reason":"Clay holds moisture well","season":"Winter"},{"name":"Lentils","reason":"Pulses thrive in clay soil","season":"Winter"}]');
+
+      final ai = AiService();
+      final response = await ai.sendMessage(prompt.toString());
+
+      Navigator.pop(context);
+
+      if (response == null || response.startsWith('Error:')) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('AI returned no response.')));
+        return;
       }
-    } 
-    
-    else if (currentSeason == 'Monsoon') {
-      if (soil.contains('clay')) {
-        suggestions.add({'name': 'Rice (Paddy)', 'reason': 'Clay retains water needed for paddy.'});
-      } else if (soil.contains('sandy')) {
-        suggestions.add({'name': 'Corn (Maize)', 'reason': 'Prevents root rot with good drainage.'});
-        suggestions.add({'name': 'Groundnut', 'reason': 'Requires non-compact soil.'});
-      } else if (soil.contains('black')) {
-        suggestions.add({'name': 'Cotton', 'reason': 'Black soil is famous for cotton.'});
-        suggestions.add({'name': 'Soybean', 'reason': 'High yield in nutrient rich soil.'});
+
+      final regex = RegExp(r'SUGGESTED_CROPS_JSON:\s*(\[.*?\])', dotAll: true);
+      final match = regex.firstMatch(response);
+      List<dynamic>? suggested;
+      if (match != null) {
+        try {
+          final jsonPart = match.group(1)!;
+          print('🌾 Found JSON: $jsonPart');
+          suggested = jsonDecode(jsonPart) as List<dynamic>;
+          print('🌾 Parsed ${suggested.length} crops from AI');
+        } catch (e) {
+          print('❌ JSON parse error: $e');
+          suggested = null;
+        }
       } else {
-        suggestions.add({'name': 'Millet', 'reason': 'Hardy crop for various soils.'});
-        suggestions.add({'name': 'Soybean', 'reason': 'Good drainage required.'});
+        print('⚠️ No SUGGESTED_CROPS_JSON marker found in response');
       }
-    } 
-    
-    else if (currentSeason == 'Spring') {
-      suggestions.add({'name': 'Cucumber', 'reason': 'Fast growing spring vegetable.'});
-      suggestions.add({'name': 'Pumpkin', 'reason': 'Warmth helps vine growth.'});
-      if (soil.contains('loam') || soil.contains('clay')) {
-        suggestions.add({'name': 'Sugarcane', 'reason': 'Planting season for long duration crop.'});
-      }
-    } 
-    
-    else { // Autumn
-      suggestions.add({'name': 'Buckwheat', 'reason': 'Short season crop.'});
-      suggestions.add({'name': 'Barley', 'reason': 'Drought resistant.'});
-    }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.75),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.auto_awesome, color: Colors.green, size: 28),
-                const SizedBox(width: 12),
-                const Text('Smart Recommendations', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Row(children: const [Icon(Icons.auto_awesome, color: Colors.green), SizedBox(width: 8), Text('AI Recommendations', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
+                const SizedBox(height: 12),
+                Expanded(child: SingleChildScrollView(child: MarkdownBody(data: response, styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 14, color: Colors.black87), strong: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black), em: const TextStyle(fontStyle: FontStyle.italic))))),
+                const SizedBox(height: 12),
+                if (suggested != null) ...[
+                  const Divider(),
+                  const Text('Suggested Crops (tap + to add):', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Expanded(child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: suggested.length,
+                    itemBuilder: (context, i) {
+                      final item = suggested![i] as Map<String, dynamic>;
+                      final name = item['name'] ?? '';
+                      final reason = item['reason'] ?? '';
+                      final season = item['season'] ?? currentSeason;
+                      final duration = item['duration'] ?? 'Seasonal';
+                      final water = item['waterNeed'] ?? 'Variable';
+                      return ListTile(
+                        leading: CircleAvatar(backgroundColor: Colors.green[100], child: Text(name.isNotEmpty ? name[0] : '?', style: const TextStyle(color: Colors.green))),
+                        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(reason),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.add_circle, color: Colors.green),
+                          onPressed: () async {
+                            await _saveCropToFirebase(name, season, duration, water);
+                            await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: name, reason: 'Added from AI recommendations');
+                            _lastCropCreated = DateTime.now();
+                            Navigator.pop(ctx);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added $name to field')));
+                          },
+                        ),
+                      );
+                    },
+                  ))
+                ],
+                const SizedBox(height: 12),
+                Row(children: [Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(ctx), style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 45)), child: const Text('Close')))]),
               ],
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(8)),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline, color: Colors.blue),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text("Based on ${selectedFieldObject!.soilType} in $currentSeason.", style: const TextStyle(fontSize: 14))),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text("Recommended to Plant:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: suggestions.length,
-                itemBuilder: (context, index) {
-                  final s = suggestions[index];
-                  return Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.green[100],
-                        child: Text(s['name']![0], style: const TextStyle(color: Colors.green)),
-                      ),
-                      title: Text(s['name']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(s['reason']!),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.add_circle, color: Colors.green),
-                        onPressed: () {
-                          _saveCropToFirebase(s['name']!, currentSeason, 'Seasonal', 'Variable');
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Added ${s['name']} to field!")));
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 45)),
-              child: const Text("Close"),
-            )
-          ],
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
   }
 
   void _deleteField(String fieldId) {

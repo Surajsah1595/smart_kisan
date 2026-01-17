@@ -309,7 +309,7 @@ class _HomePageState extends State<HomePage> {
       } else if (t > 30) {
         advice = 'High heat. Water crops extra today.';
       } else if (t < 10) {
-        advice = 'Cold warning. Protect seedlings.';
+        advice = 'Cold warning.Protect seedlings.';
       } else {
         advice = 'Good conditions for field work.';
       }
@@ -333,55 +333,67 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: _white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
+                // Left side: icon + texts - allow this area to expand
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: _white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(Icons.cloud, color: Colors.white, size: 16),
                       ),
-                      child: const Icon(Icons.cloud, color: Colors.white, size: 16),
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Current Weather',
-                          style: TextStyle(
-                            color: _white,
-                            fontSize: 12,
-                            fontFamily: 'Arimo',
-                          ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Current Weather',
+                              style: TextStyle(
+                                color: _white,
+                                fontSize: 12,
+                                fontFamily: 'Arimo',
+                              ),
+                            ),
+                            Text(
+                              '$temp°C • $condition',
+                              style: TextStyle(
+                                color: _white,
+                                fontSize: 14,
+                                fontFamily: 'Arimo',
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                        Text(
-                          '$temp°C • $condition',
-                          style: TextStyle(
-                            color: _white,
-                            fontSize: 14,
-                            fontFamily: 'Arimo',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                
-                // Advice Box
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _warningYellow,
-                    borderRadius: BorderRadius.circular(8),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    advice,
-                    style: TextStyle(
-                      color: const Color(0xFF733E0A),
-                      fontSize: 12,
-                      fontFamily: 'Arimo',
+                ),
+
+                const SizedBox(width: 8),
+
+                // Advice Box - allow to shrink and show ellipsis if needed
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _warningYellow,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      advice,
+                      style: TextStyle(
+                        color: const Color(0xFF733E0A),
+                        fontSize: 12,
+                        fontFamily: 'Arimo',
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
