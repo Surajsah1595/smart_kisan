@@ -44,6 +44,10 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan crops for pests and diseases</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library</string>
 	<true/>
 </dict>
 </plist>

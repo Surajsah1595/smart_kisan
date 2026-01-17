@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smart_kisan/main.dart'; // Ensure this matches your project name
 
 void main() {
   testWidgets('Smart Kisan Landing Page Smoke Test', (WidgetTester tester) async {

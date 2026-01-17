@@ -635,7 +635,7 @@ class NotificationItemWidget extends StatelessWidget {
     required this.onDelete,
   });
   
-  Map<NotificationType, Map<String, dynamic>> _typeStyles = {
+  static final Map<NotificationType, Map<String, dynamic>> _typeStyles = {
     NotificationType.weather: {
       'border': Color(0xFFBDDAFF),
       'bg': Color(0xFFEFF6FF),

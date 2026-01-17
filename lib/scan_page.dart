@@ -14,14 +14,9 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   final Color _primaryGreen = const Color(0xFF2C7C48);
   final Color _lightGreen = const Color(0xFFDBFBE6);
-  final Color _accentGreen = const Color(0xFF00C950);
-  final Color _darkGreen = const Color(0xFF008236);
   final Color _white = Colors.white;
   final Color _darkGray = const Color(0xFF101727);
   final Color _mediumGray = const Color(0xFF697282);
-  final Color _warningYellow = const Color(0xFFF0B100);
-  final Color _warningOrange = const Color(0xFFA65F00);
-  final Color _errorRed = const Color(0xFFC10007);
   final Color _infoBlue = const Color(0xFF2B7FFF);
   final Color _darkBlue = const Color(0xFF1B388E);
 

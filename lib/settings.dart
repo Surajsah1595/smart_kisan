@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smart_kisan/welcome_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_service.dart'; // Import your auth service
 
 // Colors used in the settings screens
-const Color _primaryGreen = Color(0xFF2C7C48);
 const Color _lightGreen = Color(0xFFDCFCE7);
 const Color _darkGreen = Color(0xFF008236);
 const Color _white = Colors.white;
 const Color _black = Colors.black;
 const Color _gray = Color(0xFF4A5565);
-const Color _darkGray = Color(0xFF1F2937);
 const Color _lightGray = Color(0xFFF9FAFB);
 const Color _borderGray = Color(0xFFE5E7EB);
 const Color _textDark = Color(0xFF101727);

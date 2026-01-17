@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'pest_disease_service.dart';
+import 'ai_service.dart';
+
+// For better logging visibility
+void _log(String message) {
+  debugPrint('🎯 PEST_DISEASE: $message');
+}
 
 // Active Alert Item Widget (Separate class)
 class ActiveAlertItem extends StatelessWidget {
@@ -301,8 +310,15 @@ class RecentScanItem extends StatelessWidget {
 }
 
 // Main Pest Disease Help Screen
-class PestDiseaseHelpScreen extends StatelessWidget {
+class PestDiseaseHelpScreen extends StatefulWidget {
   const PestDiseaseHelpScreen({super.key});
+
+  @override
+  State<PestDiseaseHelpScreen> createState() => _PestDiseaseHelpScreenState();
+}
+
+class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
+  late final PestDiseaseService _pestDiseaseService = PestDiseaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -475,35 +491,6 @@ class PestDiseaseHelpScreen extends StatelessWidget {
   }
 
   Widget _buildActiveAlertsSection(BuildContext context) {
-    final activeAlerts = [
-      {
-        'title': 'Aphids',
-        'subtitle': 'Pest • Wheat',
-        'description': 'Small green insects on leaf undersides',
-        'treatment': 'Apply neem oil spray or introduce ladybugs',
-        'severity': 'Medium',
-        'severityColor': const Color(0xFFA65F00),
-        'severityBgColor': const Color(0xFFFEF9C2),
-        'icon': Icons.bug_report,
-        'iconBgColor': const Color(0xFFFEF9C2),
-        'detectedDate': '2024-12-14',
-        'borderColor': const Color(0xFFFB2C36),
-      },
-      {
-        'title': 'Leaf Blight',
-        'subtitle': 'Disease • Rice',
-        'description': 'Brown spots spreading on leaves',
-        'treatment': 'Remove affected leaves and apply fungicide',
-        'severity': 'High',
-        'severityColor': const Color(0xFFC10007),
-        'severityBgColor': const Color(0xFFFFE2E2),
-        'icon': Icons.sick,
-        'iconBgColor': const Color(0xFFFFE2E2),
-        'detectedDate': '2024-12-13',
-        'borderColor': const Color(0xFFFB2C36),
-      },
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -517,62 +504,69 @@ class PestDiseaseHelpScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Column(
-          children: activeAlerts.map((alert) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: ActiveAlertItem(
-                title: alert['title'] as String,
-                subtitle: alert['subtitle'] as String,
-                description: alert['description'] as String,
-                treatment: alert['treatment'] as String,
-                severity: alert['severity'] as String,
-                severityColor: alert['severityColor'] as Color,
-                severityBgColor: alert['severityBgColor'] as Color,
-                icon: alert['icon'] as IconData,
-                iconBgColor: alert['iconBgColor'] as Color,
-                detectedDate: alert['detectedDate'] as String,
-                borderColor: alert['borderColor'] as Color,
-                onTap: () => _showAlertDetails(context, alert),
-              ),
+        StreamBuilder<List<PestAlertData>>(
+          stream: _pestDiseaseService.getActiveAlerts(),
+          initialData: const [],
+          builder: (context, snapshot) {
+            final alerts = snapshot.data ?? [];
+            
+            if (alerts.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'No active alerts. Your crops are looking healthy!',
+                  style: TextStyle(color: Color(0xFF495565)),
+                ),
+              );
+            }
+
+            return Column(
+              children: alerts.map((alert) {
+                final severity = alert.severity;
+                final Color severityColor;
+                final Color severityBgColor;
+                
+                if (severity == 'High') {
+                  severityColor = const Color(0xFFC10007);
+                  severityBgColor = const Color(0xFFFFE2E2);
+                } else if (severity == 'Medium') {
+                  severityColor = const Color(0xFFA65F00);
+                  severityBgColor = const Color(0xFFFEF9C2);
+                } else {
+                  severityColor = const Color(0xFF008236);
+                  severityBgColor = const Color(0xFFE2FFFB);
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: ActiveAlertItem(
+                    title: alert.pestName,
+                    subtitle: 'Pest • ${alert.cropName}',
+                    description: alert.description,
+                    treatment: alert.treatment,
+                    severity: severity,
+                    severityColor: severityColor,
+                    severityBgColor: severityBgColor,
+                    icon: Icons.bug_report,
+                    iconBgColor: severityBgColor,
+                    detectedDate: _formatDate(alert.detectedDate),
+                    borderColor: const Color(0xFFFB2C36),
+                    onTap: () => _showAlertDetails(context, alert),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         ),
       ],
     );
   }
 
   Widget _buildRecentScansSection(BuildContext context) {
-    final recentScans = [
-      {
-        'cropName': 'Corn',
-        'date': '2024-12-15',
-        'status': 'Healthy',
-        'confidence': '95% confidence',
-        'statusColor': const Color(0xFF008236),
-        'icon': Icons.agriculture,
-        'iconBgColor': const Color(0xFFDCFCE7),
-      },
-      {
-        'cropName': 'Rice',
-        'date': '2024-12-14',
-        'status': 'Disease Detected',
-        'confidence': '88% confidence',
-        'statusColor': const Color(0xFFC10007),
-        'icon': Icons.sick,
-        'iconBgColor': const Color(0xFFFFE2E2),
-      },
-      {
-        'cropName': 'Wheat',
-        'date': '2024-12-14',
-        'status': 'Pest Alert',
-        'confidence': '82% confidence',
-        'statusColor': const Color(0xFFC10007),
-        'icon': Icons.bug_report,
-        'iconBgColor': const Color(0xFFFFE2E2),
-      },
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -586,22 +580,66 @@ class PestDiseaseHelpScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Column(
-          children: recentScans.map((scan) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: RecentScanItem(
-                cropName: scan['cropName'] as String,
-                date: scan['date'] as String,
-                status: scan['status'] as String,
-                confidence: scan['confidence'] as String,
-                statusColor: scan['statusColor'] as Color,
-                icon: scan['icon'] as IconData,
-                iconBgColor: scan['iconBgColor'] as Color,
-                onTap: () => _showScanDetails(context, scan),
-              ),
+        StreamBuilder<List<PestScanData>>(
+          stream: _pestDiseaseService.getRecentScans(limit: 5),
+          initialData: const [],
+          builder: (context, snapshot) {
+            final scans = snapshot.data ?? [];
+
+            if (scans.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'No scans yet. Start by scanning a crop!',
+                  style: TextStyle(color: Color(0xFF495565)),
+                ),
+              );
+            }
+
+            return Column(
+              children: scans.map((scan) {
+                final Color statusColor;
+                final IconData icon;
+                final Color iconBgColor;
+                final String displayStatus;
+
+                if (scan.status == 'Healthy') {
+                  statusColor = const Color(0xFF008236);
+                  icon = Icons.agriculture;
+                  iconBgColor = const Color(0xFFDCFCE7);
+                  displayStatus = 'Healthy';
+                } else if (scan.status == 'Disease Detected') {
+                  statusColor = const Color(0xFFC10007);
+                  icon = Icons.sick;
+                  iconBgColor = const Color(0xFFFFE2E2);
+                  displayStatus = 'Disease Detected';
+                } else {
+                  statusColor = const Color(0xFFA65F00);
+                  icon = Icons.bug_report;
+                  iconBgColor = const Color(0xFFFEF9C2);
+                  displayStatus = 'Pest Alert';
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: RecentScanItem(
+                    cropName: scan.cropName,
+                    date: _formatDate(scan.scanDate),
+                    status: displayStatus,
+                    confidence: '${(scan.confidence * 100).toStringAsFixed(0)}% confidence',
+                    statusColor: statusColor,
+                    icon: icon,
+                    iconBgColor: iconBgColor,
+                    onTap: () => _showScanDetails(context, scan),
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         ),
       ],
     );
@@ -767,7 +805,7 @@ class PestDiseaseHelpScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _showScanningDialog(context);
+              _openCamera();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFB2C36),
@@ -779,53 +817,157 @@ class PestDiseaseHelpScreen extends StatelessWidget {
     );
   }
 
-  void _showScanningDialog(BuildContext context) {
+  void _openCamera() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      _log('Opening camera...');
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+
+      _log('Camera returned: ${photo != null ? "Image captured at ${photo.path}" : "No image (user cancelled)"}');
+      
+      if (photo != null) {
+        _log('Processing image...');
+        print('📸 DEBUG: photo.path = ${photo.path}');
+        print('✅ DEBUG: About to call _showScanningDialog');
+        if (!mounted) return;
+        await _showScanningDialog(context, photo.path);
+        print('✅ DEBUG: _showScanningDialog completed');
+      } else {
+        _log('No image selected');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No image selected')),
+        );
+      }
+    } catch (e) {
+      _log('Camera error: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error accessing camera: $e')),
+      );
+    }
+  }
+
+  Future<void> _showScanningDialog(BuildContext context, String imagePath) async {
+    _log('🔍 Showing scanning dialog for: $imagePath');
+    print('🔍 DEBUG: _showScanningDialog START');
+    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(color: const Color(0xFFFB2C36)),
-              const SizedBox(height: 16),
-              const Text(
-                'Analyzing crop image...',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Arimo',
+      builder: (context) {
+        print('🔍 DEBUG: Dialog builder called');
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                const SizedBox(height: 16),
+                const Text(
+                  'Analyzing crop image...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Arimo',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
 
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pop(context);
-      _showScanResults(context);
-    });
+    print('🔍 DEBUG: Dialog shown, about to call _analyzeCropWithAI');
+    _log('🔍 Dialog shown, calling analysis...');
+    
+    try {
+      await _analyzeCropWithAI(context, imagePath);
+      print('🔍 DEBUG: _analyzeCropWithAI completed successfully');
+    } catch (e) {
+      print('❌ DEBUG: _analyzeCropWithAI threw error: $e');
+      rethrow;
+    }
   }
 
-  void _showScanResults(BuildContext context) {
+  Future<void> _analyzeCropWithAI(BuildContext context, String imagePath) async {
+    try {
+      print('🔍 DEBUG: _analyzeCropWithAI START');
+      _log('🔍 [START] _analyzeCropWithAI called');
+      _log('🔍 Image path: $imagePath');
+      
+      print('🔍 DEBUG: About to call analyzeImageWithAI');
+      _log('🔍 About to call analyzeImageWithAI...');
+      
+      final result = await _pestDiseaseService.analyzeImageWithAI(imagePath);
+      
+      print('🔍 DEBUG: analyzeImageWithAI returned');
+      _log('🔍 [DONE] analyzeImageWithAI returned');
+      
+      _log('🔍 Analysis result keys: ${result.keys.toList()}');
+      _log('🔍 Status: ${result['status']}');
+      
+      if (!context.mounted) {
+        print('❌ DEBUG: Context NOT mounted after analysis');
+        _log('❌ Context NOT mounted after analysis');
+        return;
+      }
+      
+      print('✅ DEBUG: Context still mounted');
+      _log('✅ Context still mounted');
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      print('✅ DEBUG: About to pop dialog');
+      Navigator.pop(context);
+      _log('✅ Dialog closed, showing results');
+      
+      if (!context.mounted) {
+        print('❌ DEBUG: Context lost after pop');
+        _log('❌ Context lost');
+        return;
+      }
+      
+      print('✅ DEBUG: About to show results');
+      _showScanResults(context, result);
+      _log('✅ Results shown');
+      
+    } catch (e) {
+      print('❌ DEBUG: _analyzeCropWithAI caught error: $e');
+      _log('❌ ERROR: $e');
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
+  void _showScanResults(BuildContext context, Map<String, dynamic> result) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Scan Results'),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Crop: Tomato', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Status: Healthy'),
-            SizedBox(height: 8),
-            Text('Confidence: 92%'),
-            SizedBox(height: 16),
-            Text('No pests or diseases detected. Continue regular monitoring.', style: TextStyle(color: Color(0xFF008236))),
+            Text('Crop: ${result['cropName'] ?? 'Unknown'}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Status: ${result['status'] ?? 'Unknown'}'),
+            const SizedBox(height: 8),
+            Text('Confidence: ${(((result['confidence'] as num?)?.toDouble() ?? 0.0) * 100).toStringAsFixed(0)}%'),
+            const SizedBox(height: 16),
+            Text(
+              result['description'] ?? 'Scan completed',
+              style: TextStyle(
+                color: result['status'] == 'Healthy' ? const Color(0xFF008236) : const Color(0xFFC10007),
+              ),
+            ),
           ],
         ),
         actions: [
@@ -848,23 +990,23 @@ class PestDiseaseHelpScreen extends StatelessWidget {
     );
   }
 
-  void _showAlertDetails(BuildContext context, Map<String, dynamic> alert) {
+  void _showAlertDetails(BuildContext context, PestAlertData alert) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(alert['title'] as String),
+        title: Text(alert.pestName),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Crop: ${alert['subtitle']}'),
+            Text('Crop: ${alert.cropName}'),
             const SizedBox(height: 8),
-            Text('Description: ${alert['description']}'),
+            Text('Description: ${alert.description}'),
             const SizedBox(height: 8),
-            Text('Severity: ${alert['severity']}'),
+            Text('Severity: ${alert.severity}'),
             const SizedBox(height: 16),
             Text(
-              'Treatment: ${alert['treatment']}',
+              'Treatment: ${alert.treatment}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -875,35 +1017,37 @@ class PestDiseaseHelpScreen extends StatelessWidget {
             child: const Text('Close'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
+              await _pestDiseaseService.resolveAlert(alert.id);
+              if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Treatment guide opened')),
+                const SnackBar(content: Text('Alert marked as resolved')),
               );
             },
-            child: const Text('View Treatment'),
+            child: const Text('Mark Resolved'),
           ),
         ],
       ),
     );
   }
 
-  void _showScanDetails(BuildContext context, Map<String, dynamic> scan) {
+  void _showScanDetails(BuildContext context, PestScanData scan) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${scan['cropName']} Scan Details'),
+        title: Text('${scan.cropName} Scan Details'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Date: ${scan['date']}'),
+            Text('Date: ${_formatDate(scan.scanDate)}'),
             const SizedBox(height: 8),
-            Text('Status: ${scan['status']}'),
+            Text('Status: ${scan.status}'),
             const SizedBox(height: 8),
-            Text('Confidence: ${scan['confidence']}'),
+            Text('Confidence: ${(scan.confidence * 100).toStringAsFixed(0)}%'),
             const SizedBox(height: 16),
-            const Text('Tap to view detailed analysis and recommendations.'),
+            Text('AI Response: ${scan.aiResponse}'),
           ],
         ),
         actions: [
@@ -923,6 +1067,10 @@ class PestDiseaseHelpScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   void _showSearchDialog(BuildContext context) {
@@ -978,56 +1126,128 @@ class PestDiseaseHelpScreen extends StatelessWidget {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('Search Results for "$query"'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.bug_report, color: Color(0xFFFB2C36)),
-                title: const Text('Aphid Management'),
-                subtitle: const Text('Comprehensive guide for aphid control'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening aphid guide')),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.local_florist, color: Color(0xFF008236)),
-                title: const Text('Disease Prevention'),
-                subtitle: const Text('Best practices for crop health'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening prevention guide')),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.agriculture, color: Color(0xFFA65F00)),
-                title: const Text('Integrated Pest Management'),
-                subtitle: const Text('Sustainable pest control methods'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Opening IPM guide')),
-                  );
-                },
-              ),
-            ],
+        title: Text('Searching for "$query"...'),
+        content: const SizedBox(
+          height: 100,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                SizedBox(height: 16),
+                Text('Fetching information...'),
+              ],
+            ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
+
+    _searchKnowledgeBase(context, query);
+  }
+
+  Future<void> _searchKnowledgeBase(BuildContext dialogContext, String query) async {
+    try {
+      print('🔍 Searching for: $query');
+      
+      final prompt = '''You are an agriculture expert. Provide SHORT and PRACTICAL information about: "$query"
+
+If it's a pest or disease, include:
+1. **What it is** (1 line)
+2. **Symptoms** (2-3 bullet points)
+3. **Treatment** (2-3 practical steps)
+4. **Prevention** (1-2 tips)
+
+Keep it SHORT and practical for farmers. Use bullet points and bold for important terms.''';
+
+      final response = await AiService().sendMessage(prompt);
+      
+      print('✅ Search response received');
+      
+      // Use the page's context, not the dialog context
+      if (!mounted) {
+        print('❌ Widget no longer mounted');
+        return;
+      }
+
+      // Close the loading dialog
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Information about "$query"'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (response != null && response.isNotEmpty)
+                  MarkdownBody(
+                    data: response,
+                    selectable: true,
+                    styleSheet: MarkdownStyleSheet(
+                      p: const TextStyle(
+                        fontSize: 14,
+                        height: 1.6,
+                      ),
+                      strong: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF354152),
+                      ),
+                      em: const TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      h1: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      h2: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      h3: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else
+                  const Text('No information found. Please try another search.'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print('❌ Search error: $e');
+      
+      if (!mounted) return;
+      
+      // Close loading dialog if still open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 }
