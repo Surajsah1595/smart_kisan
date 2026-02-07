@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 import 'ai_service.dart';
+import 'notification_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'localization_service.dart';
 
 // --- MODELS ---
 
@@ -88,6 +90,7 @@ class CropAdvisoryScreen extends StatefulWidget {
 class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
+  final NotificationService _notificationService = NotificationService();
 
   String? selectedFieldId; 
   String? selectedFieldName;
@@ -113,8 +116,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   ];
 
   static final List<BoxShadow> _cardShadow = [
-    BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 2, offset: const Offset(0, 1), spreadRadius: -1),
-    BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 3, offset: const Offset(0, 1), spreadRadius: 0),
+    BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 2, offset: const Offset(0, 1), spreadRadius: -1),
+    BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 3, offset: const Offset(0, 1), spreadRadius: 0),
   ];
 
   @override
@@ -129,8 +132,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               child: StreamBuilder<QuerySnapshot>(
                 stream: _usersCollection.doc(uid).collection('fields').orderBy('createdAt').snapshots(),
                 builder: (context, fieldSnapshot) {
-                  if (fieldSnapshot.hasError) return Center(child: Text('Error: ${fieldSnapshot.error}'));
-                  if (fieldSnapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+                  if (fieldSnapshot.hasError) {
+                    return Center(child: Text('${LocalizationService.translate('Error:')} ${fieldSnapshot.error}'));
+                  }
+
+                  if (!fieldSnapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
                   final fieldDocs = fieldSnapshot.data!.docs;
                   final fields = fieldDocs.map((doc) => Field.fromSnapshot(doc)).toList();
@@ -138,20 +146,12 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   // Auto-select logic
                   if (selectedFieldId == null && fields.isNotEmpty) {
                     selectedFieldId = fields.first.id;
-                    selectedFieldName = fields.first.name;
                     selectedFieldObject = fields.first;
-                  } else if (fields.isNotEmpty && selectedFieldId != null) {
-                    try {
-                      selectedFieldObject = fields.firstWhere((f) => f.id == selectedFieldId);
-                      selectedFieldName = selectedFieldObject!.name;
-                    } catch (e) {
-                      selectedFieldId = fields.first.id;
-                      selectedFieldObject = fields.first;
-                      selectedFieldName = fields.first.name;
-                    }
+                    selectedFieldName = fields.first.name;
                   } else if (fields.isEmpty) {
                     selectedFieldId = null;
                     selectedFieldObject = null;
+                    selectedFieldName = null;
                   }
 
                   return SingleChildScrollView(
@@ -161,8 +161,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                       children: [
                         // 1. FIELDS LIST
                         _buildSection(
-                          title: 'Your Fields',
-                          buttonText: 'Add Field',
+                          title: LocalizationService.translate('Your Fields'),
+                          buttonText: LocalizationService.translate('Add Field'),
                           onButtonPressed: () => _showAddFieldDialog(context),
                           child: Column(
                             children: fields.isEmpty 
@@ -192,9 +192,9 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                               final cropDocs = cropSnapshot.data!.docs;
                               final crops = cropDocs.map((doc) => Crop.fromSnapshot(doc)).toList();
 
-                              return _buildSection(
-                                title: 'Crops in $selectedFieldName',
-                                buttonText: 'Add Crop',
+                                return _buildSection(
+                                title: LocalizationService.translate('Crops in') + ' $selectedFieldName',
+                                buttonText: LocalizationService.translate('Add Crop'),
                                 onButtonPressed: () => _showAddCropDialog(context),
                                 child: Column(
                                   children: [
@@ -202,7 +202,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                                     ...crops.map((crop) => Padding(
                                       padding: const EdgeInsets.only(bottom: 12),
                                       child: _buildCropCard(crop),
-                                    )).toList(),
+                                    )),
                                   ],
                                 ),
                               );
@@ -248,15 +248,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
               ),
               const SizedBox(width: 16),
-              const Text('Crop Advisory', style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Arimo')),
+              Text(LocalizationService.translate('Crop Advisory'), style: const TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Arimo')),
             ],
           ),
           const SizedBox(height: 16),
-          const Row(
+          Row(
             children: [
-              Icon(Icons.eco, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Text('Manage fields & get recommendations', style: TextStyle(color: Color(0xE5FFFEFE), fontSize: 16, fontFamily: 'Arimo')),
+              const Icon(Icons.eco, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(LocalizationService.translate('Manage fields & get recommendations'), style: const TextStyle(color: Color(0xE5FFFEFE), fontSize: 16, fontFamily: 'Arimo')),
             ],
           ),
         ],
@@ -394,7 +394,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             children: [
               const Icon(Icons.water_drop, size: 16, color: Color(0xFF495565)),
               const SizedBox(width: 4),
-              Text('Water: ${crop.waterNeed}', style: const TextStyle(color: Color(0xFF495565), fontSize: 14)),
+              Text('${LocalizationService.translate("Water Needed")}: ${crop.waterNeed}', style: const TextStyle(color: Color(0xFF495565), fontSize: 14)),
             ],
           ),
         ],
@@ -406,11 +406,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: _cardShadow),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.grass, size: 48, color: Colors.grey),
-          SizedBox(height: 16),
-          Text('No crops added yet', style: TextStyle(color: Color(0xFF495565), fontSize: 16)),
+          const Icon(Icons.grass, size: 48, color: Colors.grey),
+          const SizedBox(height: 16),
+          Text(LocalizationService.translate("No crops added yet"), style: const TextStyle(color: Color(0xFF495565), fontSize: 16)),
         ],
       ),
     );
@@ -426,13 +426,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: _cardShadow,
         ),
-        child: const Center(
+        child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.auto_awesome, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Get Smart AI Recommendations', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+              const Icon(Icons.auto_awesome, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(LocalizationService.translate("Get Smart AI Recommendations"), style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -442,21 +442,37 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   Widget _buildSeasonalTips() {
     final month = DateTime.now().month;
-    String seasonTitle = 'Seasonal Tips';
+    String seasonTitle = LocalizationService.translate("Seasonal Tips");
     List<String> tips = [];
 
     if (month >= 11 || month <= 2) {
-      seasonTitle = 'Winter Season (Nov-Feb)';
-      tips = ['Reduce watering frequency.', 'Protect sensitive crops from frost.', 'Plant cover crops for soil health.'];
+      seasonTitle = LocalizationService.translate("Winter Season (Nov-Feb)");
+      tips = [
+        LocalizationService.translate("Reduce watering frequency."),
+        LocalizationService.translate("Protect sensitive crops from frost."),
+        LocalizationService.translate("Plant cover crops for soil health."),
+      ];
     } else if (month >= 3 && month <= 5) {
-      seasonTitle = 'Spring Season (Mar-May)';
-      tips = ['Prepare land for planting.', 'Watch for aphids.', 'Clean irrigation channels.'];
+      seasonTitle = LocalizationService.translate("Spring Season (Mar-May)");
+      tips = [
+        LocalizationService.translate("Prepare land for planting."),
+        LocalizationService.translate("Watch for aphids."),
+        LocalizationService.translate("Clean irrigation channels."),
+      ];
     } else if (month >= 6 && month <= 9) {
-      seasonTitle = 'Monsoon Season (Jun-Sep)';
-      tips = ['Ensure drainage to prevent waterlogging.', 'Monitor for stem borer.', 'Harvest rainwater.'];
+      seasonTitle = LocalizationService.translate("Monsoon Season (Jun-Sep)");
+      tips = [
+        LocalizationService.translate("Ensure drainage to prevent waterlogging."),
+        LocalizationService.translate("Monitor for stem borer."),
+        LocalizationService.translate("Harvest rainwater."),
+      ];
     } else {
-      seasonTitle = 'Autumn Season (Oct)';
-      tips = ['Harvest monsoon crops.', 'Prepare soil for wheat.', 'Store grains in dry places.'];
+      seasonTitle = LocalizationService.translate("Autumn Season (Oct)");
+      tips = [
+        LocalizationService.translate("Harvest monsoon crops."),
+        LocalizationService.translate("Prepare soil for wheat."),
+        LocalizationService.translate("Store grains in dry places."),
+      ];
     }
 
     return Container(
@@ -478,7 +494,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           ...tips.map((tip) => Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Text('• $tip', style: const TextStyle(color: Color(0xFF016630))),
-          )).toList(),
+          )),
         ],
       ),
     );
@@ -504,18 +520,18 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('Add New Field', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(LocalizationService.translate('Add New Field'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 20),
-                    _buildTextField('Field Name', 'e.g., South Field', nameCtrl),
+                    _buildTextField(LocalizationService.translate('Field Name'), LocalizationService.translate('e.g., South Field'), nameCtrl),
                     const SizedBox(height: 12),
-                    _buildTextField('Size', 'e.g., 2 Acres / 5 Katha', sizeCtrl),
+                    _buildTextField(LocalizationService.translate('Size'), LocalizationService.translate('e.g., 2 Acres / 5 Katha'), sizeCtrl),
                     const SizedBox(height: 12),
                     
                     // --- SOIL DROPDOWN ---
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Soil Type', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                        Text(LocalizationService.translate('Soil Type'), style: const TextStyle(fontSize: 14, color: Colors.grey)),
                         const SizedBox(height: 4),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -547,7 +563,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                     const SizedBox(height: 24),
                     Row(
                       children: [
-                        Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: Colors.grey), child: const Text('Cancel'))),
+                        Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: Colors.grey), child: Text(LocalizationService.translate('Cancel')))),
                         const SizedBox(width: 12),
                         Expanded(child: ElevatedButton(
                           onPressed: () async {
@@ -556,7 +572,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             // Rate limiting check
                             if (_lastFieldCreated != null && DateTime.now().difference(_lastFieldCreated!) < _fieldCreationCooldown) {
                               await _logAuditAction('suspicious_field_spam', reason: 'Attempted to create field too quickly');
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wait 2 seconds before adding another field')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Wait 2 seconds before adding another field'))));
                               return;
                             }
                             
@@ -564,7 +580,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             final existingFields = await _usersCollection.doc(uid).collection('fields').count().get();
                             if ((existingFields.count ?? 0) >= _maxFieldsPerUser) {
                               await _logAuditAction('suspicious_max_fields_exceeded', reason: 'User attempted to exceed max 10 fields');
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Max 10 fields allowed per account')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Max 10 fields allowed per account'))));
                               return;
                             }
 
@@ -575,16 +591,25 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                                 'soilType': selectedSoil,
                                 'createdAt': FieldValue.serverTimestamp(),
                               });
+                              
+                              // Send notification
+                              await _notificationService.notifyFieldCreated(
+                                fieldName: nameCtrl.text,
+                                area: double.tryParse(sizeCtrl.text) ?? 0.0,
+                                areaUnit: 'acres',
+                                cropType: 'Multiple',
+                              );
+                              
                               await _logAuditAction('field_created', fieldName: nameCtrl.text);
                               _lastFieldCreated = DateTime.now();
                               Navigator.pop(context);
                             } catch (e) {
                               await _logAuditAction('field_creation_failed', fieldName: nameCtrl.text, reason: e.toString());
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${LocalizationService.translate("Error:")} $e')));
                             }
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A63E)),
-                          child: const Text('Save', style: TextStyle(color: Colors.white)),
+                          child: Text(LocalizationService.translate('Save'), style: const TextStyle(color: Colors.white)),
                         )),
                       ],
                     ),
@@ -674,13 +699,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Add Crop', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(LocalizationService.translate('Add Crop'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               Flexible(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      _buildTextField('Custom Crop Name', 'Enter Name', nameCtrl),
+                      _buildTextField(LocalizationService.translate('Custom Crop Name'), LocalizationService.translate('Enter Name'), nameCtrl),
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
@@ -689,7 +714,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                           // Rate limiting check
                           if (_lastCropCreated != null && DateTime.now().difference(_lastCropCreated!) < _cropCreationCooldown) {
                             await _logAuditAction('suspicious_crop_spam', fieldName: selectedFieldName, reason: 'Attempted to create crop too quickly');
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wait before adding another crop')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Wait before adding another crop'))));
                             return;
                           }
                           
@@ -697,7 +722,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                           final existingCrops = await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').count().get();
                           if ((existingCrops.count ?? 0) >= _maxCropsPerField) {
                             await _logAuditAction('suspicious_max_crops_exceeded', fieldName: selectedFieldName, reason: 'User attempted to exceed max 20 crops per field');
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Max 20 crops per field allowed')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Max 20 crops per field allowed'))));
                             return;
                           }
                           
@@ -706,10 +731,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                           _lastCropCreated = DateTime.now();
                           Navigator.pop(context);
                         },
-                        child: const Text("Add Custom Crop"),
+                        child: Text(LocalizationService.translate('Add Custom Crop')),
                       ),
                       const Divider(height: 30),
-                      const Text('Or Select Common Crop:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(LocalizationService.translate('Or Select Common Crop:'), style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 10),
                       ...cropDatabase.map((c) => ListTile(
                         leading: const Icon(Icons.eco, color: Colors.green),
@@ -720,7 +745,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                           await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: c['name']!, reason: 'User selected from database');
                           Navigator.pop(context);
                         },
-                      )).toList(),
+                      )),
                     ],
                   ),
                 ),
@@ -742,6 +767,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       'createdAt': FieldValue.serverTimestamp(),
       'notes': notes,
     });
+    
+    // Send notification
+    await _notificationService.notifyCropHealth(
+      cropName: name,
+      healthStatus: 'Good',
+      observation: 'New $name crop planted in $season season. Duration: $duration. Water need: $water.',
+    );
   }
 
   // --- AUDIT LOGGING ---
@@ -774,8 +806,9 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
       final month = DateTime.now().month;
       String currentSeason;
-      if (month >= 11 || month <= 2) currentSeason = 'Winter';
-      else if (month >= 3 && month <= 5) currentSeason = 'Spring';
+      if (month >= 11 || month <= 2) {
+        currentSeason = 'Winter';
+      } else if (month >= 3 && month <= 5) currentSeason = 'Spring';
       else if (month >= 6 && month <= 9) currentSeason = 'Monsoon';
       else currentSeason = 'Autumn';
 
@@ -796,7 +829,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       Navigator.pop(context);
 
       if (response == null || response.startsWith('Error:')) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('AI returned no response.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('AI returned no response.'))));
         return;
       }
 
@@ -828,13 +861,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: const [Icon(Icons.auto_awesome, color: Colors.green), SizedBox(width: 8), Text('AI Recommendations', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
+                Row(children: [const Icon(Icons.auto_awesome, color: Colors.green), const SizedBox(width: 8), Text(LocalizationService.translate('AI Recommendation'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 Expanded(child: SingleChildScrollView(child: MarkdownBody(data: response, styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 14, color: Colors.black87), strong: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black), em: const TextStyle(fontStyle: FontStyle.italic))))),
                 const SizedBox(height: 12),
                 if (suggested != null) ...[
                   const Divider(),
-                  const Text('Suggested Crops (tap + to add):', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(LocalizationService.translate('Suggested Crops (tap + to add):'), style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Expanded(child: ListView.builder(
                     shrinkWrap: true,
@@ -857,7 +890,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: name, reason: 'Added from AI recommendations');
                             _lastCropCreated = DateTime.now();
                             Navigator.pop(ctx);
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added $name to field')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Added') + ' $name ' + LocalizationService.translate('to field'))));
                           },
                         ),
                       );
@@ -865,7 +898,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   ))
                 ],
                 const SizedBox(height: 12),
-                Row(children: [Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(ctx), style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 45)), child: const Text('Close')))]),
+                Row(children: [Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(ctx), style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 45)), child: Text(LocalizationService.translate('Close'))))]),
               ],
             ),
           ),
@@ -873,7 +906,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       );
     } catch (e) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${LocalizationService.translate('Error:')} $e')));
     }
   }
 
@@ -885,6 +918,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Cancel")),
         TextButton(onPressed: () async {
           await _usersCollection.doc(uid).collection('fields').doc(fieldId).delete();
+          
+          // Send notification
+          await _notificationService.notifyFieldCreated(
+            fieldName: selectedFieldName ?? 'Unknown Field',
+            area: 0,
+            areaUnit: 'acres',
+            cropType: 'Deleted',
+          );
+          
           setState(() { selectedFieldId = null; selectedFieldName = null; });
           Navigator.pop(ctx);
         }, child: const Text("Delete", style: TextStyle(color: Colors.red))),
@@ -895,6 +937,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   void _deleteCrop(String cropId) {
     if (selectedFieldId == null) return;
     _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').doc(cropId).delete();
+    
+    // Send notification
+    _notificationService.notifyCropHealth(
+      cropName: 'Unknown Crop',
+      healthStatus: 'Deleted',
+      observation: 'Crop has been removed from your field.',
+    );
   }
 
   Widget _buildTextField(String label, String hint, TextEditingController controller) {

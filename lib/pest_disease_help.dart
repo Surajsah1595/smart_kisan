@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'pest_disease_service.dart';
 import 'ai_service.dart';
+import 'notification_service.dart';
+import 'localization_service.dart';
 
 // For better logging visibility
 void _log(String message) {
@@ -53,13 +55,13 @@ class ActiveAlertItem extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
               spreadRadius: -1,
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 3,
               offset: const Offset(0, 1),
               spreadRadius: 0,
@@ -98,8 +100,8 @@ class ActiveAlertItem extends StatelessWidget {
                         ),
                         Text(
                           subtitle,
-                          style: TextStyle(
-                            color: const Color(0xFF495565),
+                          style: const TextStyle(
+                            color: Color(0xFF495565),
                             fontSize: 16,
                             fontFamily: 'Arimo',
                             fontWeight: FontWeight.w400,
@@ -131,8 +133,8 @@ class ActiveAlertItem extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 48),
                 child: Text(
                   description,
-                  style: TextStyle(
-                    color: const Color(0xFF354152),
+                  style: const TextStyle(
+                    color: Color(0xFF354152),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -149,10 +151,10 @@ class ActiveAlertItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Treatment: ',
                       style: TextStyle(
-                        color: const Color(0xFF101727),
+                        color: Color(0xFF101727),
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.bold,
@@ -161,8 +163,8 @@ class ActiveAlertItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         treatment,
-                        style: TextStyle(
-                          color: const Color(0xFF354152),
+                        style: const TextStyle(
+                          color: Color(0xFF354152),
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
@@ -177,8 +179,8 @@ class ActiveAlertItem extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 48),
                 child: Text(
                   'Detected: $detectedDate',
-                  style: TextStyle(
-                    color: const Color(0xFF495565),
+                  style: const TextStyle(
+                    color: Color(0xFF495565),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -226,13 +228,13 @@ class RecentScanItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
               spreadRadius: -1,
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 3,
               offset: const Offset(0, 1),
               spreadRadius: 0,
@@ -268,8 +270,8 @@ class RecentScanItem extends StatelessWidget {
                     ),
                     Text(
                       date,
-                      style: TextStyle(
-                        color: const Color(0xFF495565),
+                      style: const TextStyle(
+                        color: Color(0xFF495565),
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.w400,
@@ -292,8 +294,8 @@ class RecentScanItem extends StatelessWidget {
                   ),
                   Text(
                     confidence,
-                    style: TextStyle(
-                      color: const Color(0xFF495565),
+                    style: const TextStyle(
+                      color: Color(0xFF495565),
                       fontSize: 16,
                       fontFamily: 'Arimo',
                       fontWeight: FontWeight.w400,
@@ -425,7 +427,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -450,7 +452,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 Text(
                   'Use your camera to identify pests and diseases',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -469,14 +471,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
-            child: Row(
+            child: const Row(
               children: [
-                const Icon(Icons.camera_alt, color: Color(0xFFFB2C36)),
-                const SizedBox(width: 8),
+                Icon(Icons.camera_alt, color: Color(0xFFFB2C36)),
+                SizedBox(width: 8),
                 Text(
                   'Scan Now',
                   style: TextStyle(
-                    color: const Color(0xFFFB2C36),
+                    color: Color(0xFFFB2C36),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -674,13 +676,13 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 2,
                 offset: const Offset(0, 1),
                 spreadRadius: -1,
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 3,
                 offset: const Offset(0, 1),
                 spreadRadius: 0,
@@ -699,8 +701,8 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                     Expanded(
                       child: Text(
                         tip,
-                        style: TextStyle(
-                          color: const Color(0xFF354152),
+                        style: const TextStyle(
+                          color: Color(0xFF354152),
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
@@ -730,11 +732,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         children: [
           const Icon(Icons.search, size: 24, color: Color(0xFF354152)),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Search Knowledge Base',
                   style: TextStyle(
                     color: Color(0xFF101727),
@@ -746,7 +748,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 Text(
                   'Find information about pests and diseases',
                   style: TextStyle(
-                    color: const Color(0xFF495565),
+                    color: Color(0xFF495565),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -765,9 +767,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
-            child: const Text(
-              'Search',
-              style: TextStyle(
+            child: Text(
+              LocalizationService.translate('Search'),
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontFamily: 'Arimo',
@@ -785,22 +787,29 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Scan Your Crop'),
-        content: const Column(
+        title: Text(LocalizationService.translate('Scan Your Crop')),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('This feature will open your camera to scan crops for pests and diseases.'),
+            Text(LocalizationService.translate('This feature will open your camera to scan crops for pests and diseases.')),
             SizedBox(height: 16),
-            Text('Make sure to:'),
-            Text('1. Focus on the affected area'),
-            Text('2. Use good lighting'),
-            Text('3. Keep camera steady'),
+            Text(LocalizationService.translate('Make sure to:')),
+            Text(LocalizationService.translate('1. Focus on the affected area')),
+            Text(LocalizationService.translate('2. Use good lighting')),
+            Text(LocalizationService.translate('3. Keep camera steady')),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(LocalizationService.translate('Cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _openGallery();
+            },
+            child: Text(LocalizationService.translate('Upload Image')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -810,7 +819,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFB2C36),
             ),
-            child: const Text('Open Camera'),
+            child: Text(LocalizationService.translate('Open Camera')),
           ),
         ],
       ),
@@ -831,27 +840,73 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       if (photo != null) {
         _log('Processing image...');
         print('📸 DEBUG: photo.path = ${photo.path}');
-        print('✅ DEBUG: About to call _showScanningDialog');
         if (!mounted) return;
-        await _showScanningDialog(context, photo.path);
+
+        // Attempt to upload image to Firebase Storage and pass URL to analysis
+        String? uploadedUrl;
+        try {
+          uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
+        } catch (e) {
+          print('⚠️ Upload failed, continuing without imageUrl: $e');
+        }
+
+        print('✅ DEBUG: About to call _showScanningDialog');
+        await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
         print('✅ DEBUG: _showScanningDialog completed');
       } else {
         _log('No image selected');
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No image selected')),
+          SnackBar(content: Text(LocalizationService.translate('No image selected'))),
         );
       }
     } catch (e) {
       _log('Camera error: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error accessing camera: $e')),
+        SnackBar(content: Text('${LocalizationService.translate('Error accessing camera:')} $e')),
       );
     }
   }
 
-  Future<void> _showScanningDialog(BuildContext context, String imagePath) async {
+  void _openGallery() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      _log('Opening gallery...');
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      _log('Gallery returned: ${photo != null ? "Image selected at ${photo.path}" : "No image (user cancelled)"}');
+
+      if (photo != null) {
+        if (!mounted) return;
+
+        String? uploadedUrl;
+        try {
+          uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
+        } catch (e) {
+          print('⚠️ Upload failed, continuing without imageUrl: $e');
+        }
+
+        await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(LocalizationService.translate('No image selected'))),
+        );
+      }
+    } catch (e) {
+      print('❌ Gallery error: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${LocalizationService.translate('Error accessing gallery:')} $e')),
+      );
+    }
+  }
+
+  Future<void> _showScanningDialog(BuildContext context, String imagePath, {String? imageUrl}) async {
     _log('🔍 Showing scanning dialog for: $imagePath');
     print('🔍 DEBUG: _showScanningDialog START');
     
@@ -863,12 +918,12 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         return Dialog(
           child: Container(
             padding: const EdgeInsets.all(24),
-            child: Column(
+            child: const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(color: Color(0xFFFB2C36)),
-                const SizedBox(height: 16),
-                const Text(
+                CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                SizedBox(height: 16),
+                Text(
                   'Analyzing crop image...',
                   style: TextStyle(
                     fontSize: 16,
@@ -886,7 +941,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     _log('🔍 Dialog shown, calling analysis...');
     
     try {
-      await _analyzeCropWithAI(context, imagePath);
+      await _analyzeCropWithAI(context, imagePath, imageUrl: imageUrl);
       print('🔍 DEBUG: _analyzeCropWithAI completed successfully');
     } catch (e) {
       print('❌ DEBUG: _analyzeCropWithAI threw error: $e');
@@ -894,7 +949,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }
   }
 
-  Future<void> _analyzeCropWithAI(BuildContext context, String imagePath) async {
+  Future<void> _analyzeCropWithAI(BuildContext context, String imagePath, {String? imageUrl}) async {
     try {
       print('🔍 DEBUG: _analyzeCropWithAI START');
       _log('🔍 [START] _analyzeCropWithAI called');
@@ -903,7 +958,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       print('🔍 DEBUG: About to call analyzeImageWithAI');
       _log('🔍 About to call analyzeImageWithAI...');
       
-      final result = await _pestDiseaseService.analyzeImageWithAI(imagePath);
+      final result = await _pestDiseaseService.analyzeImageWithAI(imagePath, imageUrl: imageUrl);
       
       print('🔍 DEBUG: analyzeImageWithAI returned');
       _log('🔍 [DONE] analyzeImageWithAI returned');
@@ -941,31 +996,45 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       if (context.mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('${LocalizationService.translate('Error:')} $e')),
         );
       }
     }
   }
 
   void _showScanResults(BuildContext context, Map<String, dynamic> result) {
+    // Determine color based on status
+    Color descriptionColor = const Color(0xFF008236); // Default green for healthy
+    
+    final status = result['status'] ?? 'Unknown';
+    if (status == 'Healthy') {
+      descriptionColor = const Color(0xFF008236); // Green
+    } else if (status == 'Not a Plant') {
+      descriptionColor = const Color(0xFFC10007); // Red
+    } else if (status == 'Pest Alert' || status == 'Disease Detected') {
+      descriptionColor = const Color(0xFFA65F00); // Orange
+    } else {
+      descriptionColor = const Color(0xFFC10007); // Red for errors
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Scan Results'),
+        title: Text(LocalizationService.translate('Scan Results')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Crop: ${result['cropName'] ?? 'Unknown'}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(LocalizationService.translate('Crop:') + ' ${result['cropName'] ?? LocalizationService.translate('Unknown')}', style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text('Status: ${result['status'] ?? 'Unknown'}'),
+            Text(LocalizationService.translate('Status:') + ' ${result['status'] ?? LocalizationService.translate('Unknown')}'),
             const SizedBox(height: 8),
-            Text('Confidence: ${(((result['confidence'] as num?)?.toDouble() ?? 0.0) * 100).toStringAsFixed(0)}%'),
+            Text(LocalizationService.translate('Confidence:') + ' ${(((result['confidence'] as num?)?.toDouble() ?? 0.0) * 100).toStringAsFixed(0)}%'),
             const SizedBox(height: 16),
             Text(
               result['description'] ?? 'Scan completed',
               style: TextStyle(
-                color: result['status'] == 'Healthy' ? const Color(0xFF008236) : const Color(0xFFC10007),
+                color: descriptionColor,
               ),
             ),
           ],
@@ -973,18 +1042,19 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(LocalizationService.translate('Close')),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Scan saved to history')),
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB2C36)),
-            child: const Text('Save Result'),
-          ),
+          if (status != 'Not a Plant')
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(LocalizationService.translate('Scan saved to history'))),
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB2C36)),
+              child: Text(LocalizationService.translate('Save Result')),
+            ),
         ],
       ),
     );
@@ -995,74 +1065,170 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(alert.pestName),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Crop: ${alert.cropName}'),
-            const SizedBox(height: 8),
-            Text('Description: ${alert.description}'),
-            const SizedBox(height: 8),
-            Text('Severity: ${alert.severity}'),
-            const SizedBox(height: 16),
-            Text(
-              'Treatment: ${alert.treatment}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Crop Info
+              Row(
+                children: [
+                      Text(LocalizationService.translate('Crop:'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Expanded(child: Text(alert.cropName)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              
+              // Severity Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: alert.severity.toLowerCase() == 'high' 
+                    ? Colors.red.withValues(alpha: 0.2)
+                    : alert.severity.toLowerCase() == 'medium'
+                      ? Colors.orange.withValues(alpha: 0.2)
+                      : Colors.yellow.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'Severity: ${alert.severity}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: alert.severity.toLowerCase() == 'high' 
+                      ? Colors.red[700]
+                      : alert.severity.toLowerCase() == 'medium'
+                        ? Colors.orange[700]
+                        : Colors.yellow[700],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Description as bullet points
+              Text(LocalizationService.translate('📋 Description:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  alert.description,
+                  style: const TextStyle(fontSize: 13, height: 1.5),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Treatment as bullet points
+              Text(LocalizationService.translate('💊 Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildBulletPoints(alert.treatment),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(LocalizationService.translate('Close')),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
               await _pestDiseaseService.resolveAlert(alert.id);
+              
+              // Send resolution notification
+              final notificationService = NotificationService();
+              if (alert.pestName.toLowerCase().contains('disease') || alert.description.toLowerCase().contains('disease')) {
+                await notificationService.notifyDiseaseAlertResolved(
+                  diseaseName: alert.pestName,
+                  treatment: alert.treatment,
+                );
+              } else {
+                await notificationService.notifyPestAlertResolved(
+                  pestName: alert.pestName,
+                  treatment: alert.treatment,
+                );
+              }
+              
               if (!context.mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Alert marked as resolved')),
+                SnackBar(content: Text(LocalizationService.translate('Alert marked as resolved'))),
               );
             },
-            child: const Text('Mark Resolved'),
+            child: Text(LocalizationService.translate('Mark Resolved')),
           ),
         ],
       ),
     );
+  }
+  
+  /// Convert treatment text to bullet points
+  List<Widget> _buildBulletPoints(String text) {
+    // Split by numbers (1., 2., 3.) or by common separators
+    List<String> points = text
+        .split(RegExp(r'\n|(?=\d+\.)|(?=•)|(?=\-)|(?=\*)|\.(?=\s*[A-Z])'))
+        .where((p) => p.trim().isNotEmpty)
+        .map((p) => p.trim().replaceAll(RegExp(r'^[\d\.\-•\*\s]+'), '').trim())
+        .where((p) => p.isNotEmpty)
+        .toList();
+    
+    if (points.isEmpty) {
+      points = [text];
+    }
+    
+    return points.map((point) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            Text(LocalizationService.translate('Bullet'), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Expanded(
+              child: Text(
+                point,
+                style: const TextStyle(fontSize: 13, height: 1.4),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
   }
 
   void _showScanDetails(BuildContext context, PestScanData scan) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${scan.cropName} Scan Details'),
+        title: Text('${scan.cropName} ${LocalizationService.translate('Scan Details')}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Date: ${_formatDate(scan.scanDate)}'),
+            Text('${LocalizationService.translate('Date:')} ${_formatDate(scan.scanDate)}'),
             const SizedBox(height: 8),
-            Text('Status: ${scan.status}'),
+            Text('${LocalizationService.translate('Status:')} ${scan.status}'),
             const SizedBox(height: 8),
-            Text('Confidence: ${(scan.confidence * 100).toStringAsFixed(0)}%'),
+            Text('${LocalizationService.translate('Confidence:')} ${(scan.confidence * 100).toStringAsFixed(0)}%'),
             const SizedBox(height: 16),
-            Text('AI Response: ${scan.aiResponse}'),
+            Text('${LocalizationService.translate('AI Response:')} ${scan.aiResponse}'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(LocalizationService.translate('Close')),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Detailed analysis opened')),
+                SnackBar(content: Text(LocalizationService.translate('Detailed analysis opened'))),
               );
             },
-            child: const Text('View Details'),
+            child: Text(LocalizationService.translate('View Details')),
           ),
         ],
       ),
@@ -1079,29 +1245,26 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Search Knowledge Base'),
+        title: Text(LocalizationService.translate('Search Knowledge Base')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
               controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search for pests and diseases',
+              decoration: InputDecoration(
+                labelText: LocalizationService.translate('Search for pests and diseases'),
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Enter keywords like "aphids", "leaf blight", "corn diseases", etc.',
-              style: TextStyle(fontSize: 14),
-            ),
+            Text(LocalizationService.translate('Enter keywords like "aphids", "leaf blight", "corn diseases", etc.'), style: const TextStyle(fontSize: 14)),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(LocalizationService.translate('Cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1109,7 +1272,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               _performSearch(context, searchController.text);
             },
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB2C36)),
-            child: const Text('Search'),
+            child: Text(LocalizationService.translate('Search')),
           ),
         ],
       ),
@@ -1119,7 +1282,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
   void _performSearch(BuildContext context, String query) {
     if (query.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a search term')),
+        SnackBar(content: Text(LocalizationService.translate('Please enter a search term'))),
       );
       return;
     }
@@ -1128,16 +1291,16 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('Searching for "$query"...'),
-        content: const SizedBox(
+        title: Text(LocalizationService.translate('Searching for "{q}"...').replaceAll('{q}', query)),
+        content: SizedBox(
           height: 100,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: Color(0xFFFB2C36)),
-                SizedBox(height: 16),
-                Text('Fetching information...'),
+                const CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                const SizedBox(height: 16),
+                Text(LocalizationService.translate('Fetching information...')),
               ],
             ),
           ),
@@ -1228,7 +1391,7 @@ Keep it SHORT and practical for farmers. Use bullet points and bold for importan
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: Text(LocalizationService.translate('Close')),
             ),
           ],
         ),

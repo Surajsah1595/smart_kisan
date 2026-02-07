@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'weather_service.dart'; // Imports the API logic we wrote earlier
+import 'localization_service.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -255,7 +256,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Scaffold(
       // Custom AppBar with Gradient
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight * 2), 
+        preferredSize: const Size.fromHeight(kToolbarHeight * 2), 
         child: Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -500,7 +501,7 @@ class _WeatherPageState extends State<WeatherPage> {
         children: [
           Icon(icon, color: Colors.orange, size: 24),
           const SizedBox(height: 8),
-          Text(title, style: const TextStyle(fontSize: 12, color: Color(0xFF495565))),
+          Text(LocalizationService.translate(title), style: const TextStyle(fontSize: 12, color: Color(0xFF495565))),
           const SizedBox(height: 4),
           Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
         ],
@@ -512,7 +513,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Hourly Forecast', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+          Text(LocalizationService.translate('Hourly Forecast'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
         const SizedBox(height: 12),
         SizedBox(
           height: 140, 
@@ -566,7 +567,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('7-Day Forecast', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+        Text(LocalizationService.translate('7-Day Forecast'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
         const SizedBox(height: 12),
         Column(
           children: _weeklyData.map((day) {
@@ -628,15 +629,15 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Farming Advice',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
+        Text(
+          LocalizationService.translate('Farming Advice'),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
         ),
         const SizedBox(height: 12),
         if (_adviceData.isEmpty)
-           const Padding(
-             padding: EdgeInsets.all(8.0),
-             child: Text("Conditions are stable. No specific warnings.", style: TextStyle(color: Colors.grey)),
+           Padding(
+             padding: const EdgeInsets.all(8.0),
+             child: Text(LocalizationService.translate('Conditions are stable. No specific warnings.'), style: const TextStyle(color: Colors.grey)),
            ),
         Column(
           children: _adviceData.map((advice) {
@@ -707,7 +708,7 @@ class _WeatherPageState extends State<WeatherPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Location'),
+        title: Text(LocalizationService.translate('Select Location')),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -727,7 +728,7 @@ class _WeatherPageState extends State<WeatherPage> {
         actions: [
           TextButton.icon(
             icon: const Icon(Icons.my_location),
-            label: const Text("Use Current GPS"),
+            label: Text(LocalizationService.translate('Use Current GPS')),
             onPressed: () {
               _fetchWeatherByGPS();
               Navigator.pop(context);

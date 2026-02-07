@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_kisan/welcome_screen.dart';
 import 'auth_service.dart'; // Import your auth service
+import 'localization_service.dart'; // Import localization
 
 // Colors used in the settings screens
 const Color _lightGreen = Color(0xFFDCFCE7);
@@ -17,14 +18,14 @@ const Color _red = Color(0xFFE7000B);
 
 // Main Settings Screen
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String selectedLanguage = 'English';
+  late String selectedLanguage;
   String selectedTheme = 'Dark Mode';
   String temperatureUnit = 'Celsius (°C)';
   String areaUnit = 'Acres';
@@ -34,6 +35,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool analytics = true;
   bool locationTracking = true;
   bool twoFactorAuth = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial language based on current language code
+    final currentLang = LocalizationService.currentLanguage;
+    selectedLanguage = currentLang == LocalizationService.EN
+        ? 'English'
+        : currentLang == LocalizationService.HI
+            ? 'Hindi'
+            : 'Nepali';
+  }
+
+  void _setLanguage(String languageName, String languageCode) {
+    setState(() {
+      selectedLanguage = languageName;
+    });
+    LocalizationService.setLanguage(languageCode);
+    // Trigger app rebuild
+    if (Navigator.of(context).canPop()) {
+      Navigator.pop(context, true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           colors: [_darkGreen, Color(0xFF00A63D)],
         ),
         boxShadow: [
-          BoxShadow(color: _black.withOpacity(0.1), blurRadius: 6, offset: const Offset(0, 4)),
+          BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -84,19 +108,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: _white.withOpacity(0.2),
+                    color: _white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.arrow_back, color: _white, size: 20),
                 ),
               ),
               const SizedBox(width: 16),
-              const Text('Settings', style: TextStyle(color: _white, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('Settings'),
+                  style: const TextStyle(color: _white, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Manage your account and preferences',
-              style: TextStyle(color: _white.withOpacity(0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(LocalizationService.translate('Manage your account and preferences'),
+              style: TextStyle(color: _white.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -105,8 +130,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildProfileCard() {
     return _buildSettingsCard(
       icon: Icons.person,
-      title: 'Profile Settings',
-      subtitle: 'Manage your personal information',
+      title: LocalizationService.translate('Profile Settings'),
+      subtitle: LocalizationService.translate('Manage your personal information'),
       child: Column(
         children: [
           Row(
@@ -125,12 +150,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: const Center(child: Text('R', style: TextStyle(color: _white, fontSize: 30, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
               ),
               const SizedBox(width: 16),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Ramesh Kumar', style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text('Kumar Organic Farm', style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                   ],
                 ),
@@ -155,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-              child: const Center(child: Text('Edit Profile', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+              child: Center(child: Text(LocalizationService.translate('Edit Profile'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
             ),
           ),
         ],
@@ -168,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Icon(icon, color: _textGray, size: 16),
         const SizedBox(width: 8),
-        Expanded(child: Text(text, style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+        Expanded(child: Text(text, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
       ],
     );
   }
@@ -176,25 +201,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildNotificationCard() {
     return _buildSettingsCard(
       icon: Icons.notifications,
-      title: 'Notification Settings',
-      subtitle: 'Manage your alerts and notifications',
+      title: LocalizationService.translate('Notification Settings'),
+      subtitle: LocalizationService.translate('Manage your alerts and notifications'),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
+                  Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Active Notifications', style: TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(LocalizationService.translate('Active Notifications'), style: TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                   const SizedBox(height: 4),
-                  Text('You have 7 notifications enabled', style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(LocalizationService.translate('You have 7 notifications enabled'), style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
-                child: Text('7/9', style: TextStyle(color: const Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                child: Text(LocalizationService.translate('7/9'), style: const TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
               ),
             ],
           ),
@@ -205,7 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-              child: const Center(child: Text('Manage Notifications', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+              child: Center(child: Text(LocalizationService.translate('Manage Notifications'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
             ),
           ),
         ],
@@ -219,7 +244,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         color: _white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -239,8 +264,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                      Text(subtitle, style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(title, style: const TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -256,15 +281,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildLanguageCard() {
     return _buildSettingsCard(
       icon: Icons.language,
-      title: 'Language',
-      subtitle: 'Select your preferred language',
+      title: LocalizationService.translate('Language'),
+      subtitle: LocalizationService.translate('Select your preferred language'),
       child: Column(
         children: [
-          _buildOption('English', selectedLanguage == 'English', () => setState(() => selectedLanguage = 'English')),
+            _buildOption(LocalizationService.translate('English'), selectedLanguage == 'English',
+              () => _setLanguage('English', LocalizationService.EN)),
           const SizedBox(height: 8),
-          _buildOption('Nepali', selectedLanguage == 'Nepali', () => setState(() => selectedLanguage = 'Nepali')),
+            _buildOption(LocalizationService.translate('नेपाली'), selectedLanguage == 'Nepali',
+              () => _setLanguage('Nepali', LocalizationService.NE)),
           const SizedBox(height: 8),
-          _buildOption('Hindi', selectedLanguage == 'Hindi', () => setState(() => selectedLanguage = 'Hindi')),
+            _buildOption(LocalizationService.translate('Hindi'), selectedLanguage == 'Hindi',
+              () => _setLanguage('Hindi', LocalizationService.HI)),
         ],
       ),
     );
@@ -273,15 +301,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildThemeCard() {
     return _buildSettingsCard(
       icon: Icons.brightness_medium,
-      title: 'Theme',
-      subtitle: 'Choose your display theme',
+      title: LocalizationService.translate('Theme'),
+      subtitle: LocalizationService.translate('Choose your display theme'),
       child: Column(
         children: [
-          _buildOption('Light Mode', selectedTheme == 'Light Mode', () => setState(() => selectedTheme = 'Light Mode')),
+          _buildOption(LocalizationService.translate('Light Mode'), selectedTheme == 'Light Mode', () => setState(() => selectedTheme = 'Light Mode')),
           const SizedBox(height: 8),
-          _buildOption('Dark Mode', selectedTheme == 'Dark Mode', () => setState(() => selectedTheme = 'Dark Mode')),
+          _buildOption(LocalizationService.translate('Dark Mode'), selectedTheme == 'Dark Mode', () => setState(() => selectedTheme = 'Dark Mode')),
           const SizedBox(height: 8),
-          _buildOption('Auto Mode', selectedTheme == 'Auto Mode', () => setState(() => selectedTheme = 'Auto Mode')),
+          _buildOption(LocalizationService.translate('Auto Mode'), selectedTheme == 'Auto Mode', () => setState(() => selectedTheme = 'Auto Mode')),
         ],
       ),
     );
@@ -311,15 +339,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildUnitsCard() {
     return _buildSettingsCard(
       icon: Icons.straighten,
-      title: 'Units of Measurement',
-      subtitle: 'Set your preferred units',
+      title: LocalizationService.translate('Units of Measurement'),
+      subtitle: LocalizationService.translate('Set your preferred units'),
       child: Column(
         children: [
-          _buildUnitSection('Temperature', temperatureUnit, ['Celsius (°C)', 'Fahrenheit (°F)'], (value) => setState(() => temperatureUnit = value)),
+          _buildUnitSection(LocalizationService.translate('Temperature'), temperatureUnit, [LocalizationService.translate('Celsius (°C)'), LocalizationService.translate('Fahrenheit (°F)')], (value) => setState(() => temperatureUnit = value)),
           const SizedBox(height: 16),
-          _buildUnitSection('Area', areaUnit, ['Acres', 'Hectares'], (value) => setState(() => areaUnit = value)),
+          _buildUnitSection(LocalizationService.translate('Area'), areaUnit, [LocalizationService.translate('Acres'), LocalizationService.translate('Hectares')], (value) => setState(() => areaUnit = value)),
           const SizedBox(height: 16),
-          _buildUnitSection('Volume', volumeUnit, ['Liters', 'Gallons'], (value) => setState(() => volumeUnit = value)),
+          _buildUnitSection(LocalizationService.translate('Volume'), volumeUnit, [LocalizationService.translate('Liters'), LocalizationService.translate('Gallons')], (value) => setState(() => volumeUnit = value)),
         ],
       ),
     );
@@ -329,7 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(title, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
         Row(
           children: options.map((option) {
@@ -361,17 +389,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildPrivacyCard() {
     return _buildSettingsCard(
       icon: Icons.security,
-      title: 'Privacy & Security',
-      subtitle: 'Manage your privacy settings',
+      title: LocalizationService.translate('Privacy & Security'),
+      subtitle: LocalizationService.translate('Manage your privacy settings'),
       child: Column(
         children: [
-          _buildPrivacySwitch('Share Usage Data', 'Help improve the app', shareUsageData, (value) => setState(() => shareUsageData = value)),
+          _buildPrivacySwitch(LocalizationService.translate('Share Usage Data'), LocalizationService.translate('Help improve the app'), shareUsageData, (value) => setState(() => shareUsageData = value)),
           const SizedBox(height: 12),
-          _buildPrivacySwitch('Analytics', 'Allow analytics tracking', analytics, (value) => setState(() => analytics = value)),
+          _buildPrivacySwitch(LocalizationService.translate('Analytics'), LocalizationService.translate('Allow analytics tracking'), analytics, (value) => setState(() => analytics = value)),
           const SizedBox(height: 12),
-          _buildPrivacySwitch('Location Tracking', 'For weather and field data', locationTracking, (value) => setState(() => locationTracking = value)),
+          _buildPrivacySwitch(LocalizationService.translate('Location Tracking'), LocalizationService.translate('For weather and field data'), locationTracking, (value) => setState(() => locationTracking = value)),
           const SizedBox(height: 12),
-          _buildPrivacyItem('Change Password', Icons.lock, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()))),
+          _buildPrivacyItem(LocalizationService.translate('Change Password'), Icons.lock, () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordScreen()))),
           const SizedBox(height: 12),
           _buildPrivacySwitch('Two-Factor Authentication', '', twoFactorAuth, (value) => setState(() => twoFactorAuth = value)),
         ],
@@ -390,15 +418,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 if (subtitle.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ],
             ),
           ),
-          Switch(value: value, onChanged: onChanged, activeColor: _darkGreen),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: _darkGreen),
         ],
       ),
     );
@@ -414,7 +442,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Icon(icon, color: _textDark, size: 20),
             const SizedBox(width: 8),
-            Expanded(child: Text(title, style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+            Expanded(child: Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
             const Icon(Icons.chevron_right, color: _gray),
           ],
         ),
@@ -425,17 +453,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildAboutCard() {
   return _buildSettingsCard(
     icon: Icons.info,
-    title: 'About',
-    subtitle: 'App information and version',
+    title: LocalizationService.translate('About'),
+    subtitle: LocalizationService.translate('App information and version'),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Smart Kisan App', style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(LocalizationService.translate('Smart Kisan App'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
-        Text('Version 1.0.0', style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(LocalizationService.translate('Version 1.0.0'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
-        Text('© 2024 Smart Kisan. All rights reserved.',
-            style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(LocalizationService.translate('© 2024 Smart Kisan. All rights reserved.'),
+            style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -451,14 +479,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           decoration: BoxDecoration(
             color: _red,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [BoxShadow(color: _black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+            boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout, color: _white, size: 20),
-              SizedBox(width: 8),
-              Text('Logout', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              const Icon(Icons.logout, color: _white, size: 20),
+              const SizedBox(width: 8),
+              Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
         ),
@@ -470,12 +498,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout', style: TextStyle(color: _textDark, fontFamily: 'Arimo')),
-        content: const Text('Are you sure you want to logout?', style: TextStyle(fontFamily: 'Arimo', fontSize: 16)),
+        title: Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _textDark, fontFamily: 'Arimo')),
+        content: Text(LocalizationService.translate('Are you sure you want to logout?'), style: const TextStyle(fontFamily: 'Arimo', fontSize: 16)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context), 
-            child: const Text('Cancel', style: TextStyle(color: _gray, fontFamily: 'Arimo'))
+            child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _gray, fontFamily: 'Arimo'))
           ),
           TextButton(
             onPressed: () async {
@@ -496,11 +524,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (!mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
                 (route) => false,
               );
             },
-            child: const Text('Logout', style: TextStyle(color: _red, fontFamily: 'Arimo')),
+            child: Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _red, fontFamily: 'Arimo')),
           ),
         ],
       ),
@@ -510,7 +538,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 // Profile Edit Screen
 class ProfileEditScreen extends StatefulWidget {
-  const ProfileEditScreen({Key? key}) : super(key: key);
+  const ProfileEditScreen({super.key});
 
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
@@ -548,7 +576,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 decoration: BoxDecoration(
                   color: _white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
                 ),
                 child: Form(
                   key: _formKey,
@@ -578,27 +606,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.camera_alt, color: _darkGreen, size: 16),
-                                    const SizedBox(width: 8),
-                                    Text('Change Photo', style: TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                                  ],
-                                ),
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.camera_alt, color: _darkGreen, size: 16),
+                                      const SizedBox(width: 8),
+                                      Text(LocalizationService.translate('Change Photo'), style: const TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 24),
-                        _buildTextField('Full Name', _nameController),
+                        _buildTextField(LocalizationService.translate('Full Name'), _nameController),
                         const SizedBox(height: 16),
-                        _buildTextField('Farm Name', _farmController),
+                        _buildTextField(LocalizationService.translate('Farm Name'), _farmController),
                         const SizedBox(height: 16),
-                        _buildTextField('Email', _emailController),
+                        _buildTextField(LocalizationService.translate('Email'), _emailController),
                         const SizedBox(height: 16),
-                        _buildTextField('Phone Number', _phoneController),
+                        _buildTextField(LocalizationService.translate('Phone Number'), _phoneController),
                         const SizedBox(height: 16),
-                        _buildTextField('Location', _locationController),
+                        _buildTextField(LocalizationService.translate('Location'), _locationController),
                         const SizedBox(height: 24),
                         Row(
                           children: [
@@ -607,7 +635,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 onTap: () {
                                   if (_formKey.currentState!.validate()) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: _darkGreen),
+                                      SnackBar(content: Text(LocalizationService.translate('Profile updated successfully!')), backgroundColor: _darkGreen),
                                     );
                                     Navigator.pop(context);
                                   }
@@ -615,8 +643,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(
-                                      child: Text('Save Changes', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                    child: Center(
+                                      child: Text(LocalizationService.translate('Save Changes'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -627,7 +655,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(child: Text('Cancel', style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -662,7 +690,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               child: const Icon(Icons.arrow_back, color: _textDark),
             ),
           ),
-          Text(title, style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           Container(width: 36, height: 36, decoration: BoxDecoration(borderRadius: BorderRadius.circular(8))),
         ],
       ),
@@ -673,11 +701,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(label, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         TextFormField(
           controller: controller,
-          style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+          style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
@@ -693,7 +721,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
 // Change Password Screen
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({Key? key}) : super(key: key);
+  const ChangePasswordScreen({super.key});
 
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
@@ -744,7 +772,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         child: const Icon(Icons.arrow_back, color: _textDark),
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Change Password',
                       style: TextStyle(
                         color: _textDark,
@@ -767,7 +795,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 decoration: BoxDecoration(
                   color: _white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
                 ),
                 child: Form(
                   key: _formKey,
@@ -792,7 +820,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 onTap: () {
                                   if (_formKey.currentState!.validate()) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Password changed successfully!'), backgroundColor: _darkGreen, duration: Duration(seconds: 2)),
+                                      SnackBar(content: Text(LocalizationService.translate('Password changed successfully!')), backgroundColor: _darkGreen, duration: const Duration(seconds: 2)),
                                     );
                                     Future.delayed(const Duration(seconds: 2), () => Navigator.pop(context));
                                   }
@@ -800,7 +828,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(child: Text('Change Password', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                  child: Center(child: Text(LocalizationService.translate('Change Password'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -811,7 +839,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                                  child: const Center(child: Text('Cancel', style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -834,12 +862,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(label, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         TextFormField(
           controller: controller,
           obscureText: !isVisible,
-          style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+          style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
@@ -865,7 +893,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Password Requirements:', style: TextStyle(color: const Color(0xFF0D532B), fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w600)),
+          Text(LocalizationService.translate('Password Requirements:'), style: const TextStyle(color: Color(0xFF0D532B), fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           _buildRequirement('At least 6 characters'),
           _buildRequirement('Contains uppercase and lowercase letters'),
@@ -880,9 +908,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(children: [
-        Icon(Icons.check_circle, color: _darkGreen, size: 16),
+        const Icon(Icons.check_circle, color: _darkGreen, size: 16),
         const SizedBox(width: 8),
-        Text(text, style: TextStyle(color: _darkGreen, fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(text, style: const TextStyle(color: _darkGreen, fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
       ]),
     );
   }
@@ -890,7 +918,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
 // Notification Settings Screen
 class NotificationSettingsScreen extends StatefulWidget {
-  const NotificationSettingsScreen({Key? key}) : super(key: key);
+  const NotificationSettingsScreen({super.key});
 
   @override
   _NotificationSettingsScreenState createState() => _NotificationSettingsScreenState();
@@ -973,7 +1001,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [_darkGreen, Color(0xFF00A63D)]),
-        boxShadow: [BoxShadow(color: _black.withOpacity(0.1), blurRadius: 6, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -985,7 +1013,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 child: Container(
                   width: 24,
                   height: 24,
-                  decoration: BoxDecoration(color: _white.withOpacity(0.2), borderRadius: BorderRadius.circular(6)),
+                  decoration: BoxDecoration(color: _white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
                   child: const Icon(Icons.arrow_back, color: _white, size: 16),
                 ),
               ),
@@ -994,7 +1022,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             ],
           ),
           const SizedBox(height: 16),
-          Text(subtitle, style: TextStyle(color: _white.withOpacity(0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(subtitle, style: TextStyle(color: _white.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -1007,7 +1035,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       decoration: BoxDecoration(
         color: _white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1015,15 +1043,15 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Active Notifications', style: TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('Active Notifications'), style: const TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
               const SizedBox(height: 4),
-              Text('You have $enabledCount notifications enabled', style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('You have {count} notifications enabled').replaceAll('{count}', '$enabledCount'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
-            child: Text('$enabledCount/9', style: TextStyle(color: const Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+            child: Text('$enabledCount/9', style: const TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           ),
         ],
       ),
@@ -1036,7 +1064,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       decoration: BoxDecoration(
         color: _white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -1056,8 +1084,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                      Text(subtitle, style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(title, style: const TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -1091,24 +1119,24 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               children: [
                 Row(
                   children: [
-                    Text(title, style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                    Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     const SizedBox(width: 8),
                     if (value)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(4)),
-                        child: Text('Active', style: TextStyle(color: _darkGreen, fontSize: 12, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                        child: Text(LocalizationService.translate('Active'), style: const TextStyle(color: _darkGreen, fontSize: 12, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                       ),
                   ],
                 ),
                 if (description.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(description, style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(description, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ],
             ),
           ),
-          Switch(value: value, onChanged: onChanged, activeColor: _darkGreen),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: _darkGreen),
         ],
       ),
     );
@@ -1121,12 +1149,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       decoration: BoxDecoration(
         color: _white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Quick Actions', style: TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(LocalizationService.translate('Quick Actions'), style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -1139,7 +1167,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-                    child: const Center(child: Text('Enable All', style: TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                    child: Center(child: Text(LocalizationService.translate('Enable All'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                   ),
                 ),
               ),
@@ -1153,7 +1181,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                    child: const Center(child: Text('Disable All', style: TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                    child: Center(child: Text(LocalizationService.translate('Disable All'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                   ),
                 ),
               ),
@@ -1183,12 +1211,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             decoration: BoxDecoration(color: const Color(0xFF0D532B), borderRadius: BorderRadius.circular(3)),
           ),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('About Notifications', style: TextStyle(color: const Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                const SizedBox(height: 4),
+                Text('About Notifications', style: TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                SizedBox(height: 4),
                 Text(
                   'We recommend keeping critical alerts like weather and pest notifications enabled to stay informed about important farming conditions.',
                   style: TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),

@@ -1,7 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:convert';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'ai_service.dart';
+import 'notification_service.dart';
 
 /// Pest & Disease Data Model
 class PestAlertData {
@@ -91,6 +94,7 @@ class PestScanData {
 /// Pest & Disease Backend Service
 class PestDiseaseService {
   static final PestDiseaseService _instance = PestDiseaseService._internal();
+  final NotificationService _notificationService = NotificationService();
 
   factory PestDiseaseService() {
     return _instance;
@@ -100,12 +104,12 @@ class PestDiseaseService {
 
   final String? uid = FirebaseAuth.instance.currentUser?.uid;
   final db = FirebaseFirestore.instance;
+  final firebase_storage.FirebaseStorage _storage = firebase_storage.FirebaseStorage.instance;
 
   // Rate limiting & storage protection
   static const int maxScansPerDay = 50; // Max 50 scans per user per day
   static const int maxStorageGB = 5; // Max 5GB per user
   static const Duration scanCooldown = Duration(seconds: 2); // 2 second cooldown between scans
-  DateTime? _lastScanTime;
 
   /// Get stream of active pest alerts
   Stream<List<PestAlertData>> getActiveAlerts() {
@@ -142,7 +146,7 @@ class PestDiseaseService {
   }
 
   /// Analyze image with AI and create alert if pest detected
-  Future<Map<String, dynamic>> analyzeImageWithAI(String imagePath) async {
+  Future<Map<String, dynamic>> analyzeImageWithAI(String imagePath, {String? imageUrl}) async {
     if (uid == null) throw Exception('User not authenticated');
 
     try {
@@ -191,12 +195,20 @@ class PestDiseaseService {
         }
       }
 
+      // Check if it's a wrong object (not a plant)
+      if (analysisData['status'] == 'Not a Plant') {
+        print('⚠️ [SERVICE] Wrong object detected - not a plant');
+        analysisData['description'] = 'This image does not contain a plant or crop. Please scan a plant or crop image.';
+        analysisData['confidence'] = 0.0;
+      }
+
       print('💾 [SERVICE] Saving scan to Firestore...');
       await _savePestScan(
         cropName: analysisData['cropName'] ?? 'Unknown',
         status: analysisData['status'] ?? 'Pending',
         confidence: (analysisData['confidence'] as num?)?.toDouble() ?? 0.0,
         aiResponse: response,
+        imageUrl: imageUrl,
       );
       print('✅ [SERVICE] Scan saved');
 
@@ -226,6 +238,7 @@ class PestDiseaseService {
     required String status,
     required double confidence,
     required String aiResponse,
+    String? imageUrl,
   }) async {
     if (uid == null) return;
 
@@ -236,10 +249,29 @@ class PestDiseaseService {
         'status': status,
         'confidence': confidence,
         'aiResponse': aiResponse,
+        if (imageUrl != null) 'imageUrl': imageUrl,
       });
       print('✅ Pest scan saved with ID: ${docRef.id}');
     } catch (e) {
       print('❌ Error saving scan: $e');
+      rethrow;
+    }
+  }
+
+  /// Upload an image file to Firebase Storage and return its download URL.
+  Future<String> uploadImageToStorage(String localPath) async {
+    if (uid == null) throw Exception('User not authenticated');
+
+    final fileName = 'pest_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final ref = _storage.ref().child('users').child(uid!).child('pest_images').child(fileName);
+
+    try {
+      final uploadTask = await ref.putFile(File(localPath));
+      final downloadUrl = await ref.getDownloadURL();
+      print('✅ Image uploaded to Storage: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('❌ Error uploading image to storage: $e');
       rethrow;
     }
   }
@@ -265,6 +297,14 @@ class PestDiseaseService {
         'resolved': false,
       });
       print('⚠️ Pest alert created with ID: ${docRef.id}');
+      
+      // Send notification
+      await _notificationService.notifyPestDetected(
+        pestName: pestName,
+        cropName: cropName,
+        severity: severity,
+        treatment: treatment,
+      );
     } catch (e) {
       print('❌ Error creating alert: $e');
       rethrow;

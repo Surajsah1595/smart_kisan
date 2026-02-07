@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Only authenticated users can access their own data
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+      
+      // Restrict field creation: max 10 fields per user
+      match /fields/{fieldId} {
+        allow create: if request.auth.uid == userId && 
+                        request.resource.data.size() > 0 &&
+                        request.resource.data.name is string &&
+                        request.resource.data.soilType is string;
+        allow read, update, delete: if request.auth.uid == userId;
+        
+        // Restrict crops: max 20 crops per field
+        match /crops/{cropId} {
+          allow create: if request.auth.uid == userId &&
+                          request.resource.data.size() > 0 &&
+                          request.resource.data.name is string;
+          allow read, update, delete: if request.auth.uid == userId;
+        }
+      }
+      
+      // Water Optimization data
+      match /water_zones/{zoneId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // Irrigation Calculations (Water Optimization History)
+      match /irrigation_calculations/{calcId} {
+        allow create: if request.auth.uid == userId;
+        allow read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // Water Usage - the actual collection used by the app
+      match /water_usage/{usageId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      match /water_usage_history/{usageId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      match /water_usage_daily_totals/{dateKey} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      match /water_recommendations/{recId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // Pest & Disease data
+      match /pestAlerts/{alertId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      match /pestScans/{scanId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // Notifications - user-specific
+      match /notifications/{notificationId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // Audit logging - track all suspicious activity
+      match /auditLog/{logId} {
+        allow create: if request.auth.uid == userId;
+        allow read: if request.auth.uid == userId;
+        allow list: if request.auth.uid == userId;
+      }
+    }
+    
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

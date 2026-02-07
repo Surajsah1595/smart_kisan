@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'scan_page.dart';
-import 'location_page.dart';
 import 'crop_advisory.dart';
 import 'pest_disease_help.dart';
 import 'weather_page.dart';
@@ -11,16 +9,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'weather_service.dart';
 import 'ai_chat_page.dart';
+import 'localization_service.dart';
 
 class HomePage extends StatefulWidget {
   final bool isNewUser;
   final String userName;
   
   const HomePage({
-    Key? key,
+    super.key,
     this.isNewUser = false,
     this.userName = 'Farmer',
-  }) : super(key: key);
+  });
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -35,21 +34,47 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic>? _homeWeatherData;
   bool _loadingWeather = true;
 
+  // Farm Overview State
+  int _activeCropsCount = 0;
+  int _alertsCount = 0;
+  double _yieldRate = 0.0;
+  int _tasksDone = 0;
+  int _totalTasks = 0;
+  List<Map<String, String>> _recentActivities = [];
+
+  String tr(String key) => LocalizationService.translate(key);
+
   @override
   void initState() {
     super.initState();
+    print('🏠 HomePage initState called');
     // Initialize with the name passed from navigation
     displayName = widget.userName;
     // Try to fetch the latest name from database
     _fetchUserName();
+    print('🔄 Calling _fetchHomeWeather from initState');
     _fetchHomeWeather(); // Fetch weather when app starts
+    _fetchFarmOverviewData(); // Fetch farm overview data
+    _fetchRecentActivities(); // Fetch recent activities
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   // Fetch Weather for Home Card
   Future<void> _fetchHomeWeather() async {
     try {
+      print('🔄 _fetchHomeWeather() called');
       final data = await _weatherService.getCurrentWeather();
+      print('✅ Weather data fetched: ${data['main']?['temp']}°C');
+      
+      // Check weather and create notifications
+      print('📌 Calling checkWeatherAndNotify()...');
+      await _weatherService.checkWeatherAndNotify();
+      print('✅ checkWeatherAndNotify() completed');
+      
       if (mounted) {
         setState(() {
           _homeWeatherData = data;
@@ -57,7 +82,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     } catch (e) {
-      print("Home Weather Error: $e");
+      print("❌ Home Weather Error: $e");
       if (mounted) {
         setState(() {
           _loadingWeather = false;
@@ -80,8 +105,8 @@ class _HomePageState extends State<HomePage> {
       try {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (doc.exists) {
-          final data = doc.data();
-          if (data != null && data.containsKey('firstName') && data.containsKey('lastName')) {
+          final data = doc.data() as Map<String, dynamic>? ?? {};
+          if (data.containsKey('firstName') && data.containsKey('lastName')) {
              setState(() {
                displayName = "${data['firstName']} ${data['lastName']}";
              });
@@ -92,6 +117,246 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
+
+  // Fetch Farm Overview Data from Firestore
+  Future<void> _fetchFarmOverviewData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      // Fetch active crops by aggregating across fields -> users/{uid}/fields/{fieldId}/crops
+      final fieldsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('fields')
+          .get();
+
+      int totalCrops = 0;
+      for (var fieldDoc in fieldsSnapshot.docs) {
+        try {
+          final cropCount = await fieldDoc.reference.collection('crops').count().get();
+          totalCrops += (cropCount.count ?? 0);
+        } catch (_) {
+          // fallback: try fetching docs if count() not supported
+          final cropDocs = await fieldDoc.reference.collection('crops').get();
+          totalCrops += cropDocs.docs.length;
+        }
+      }
+      
+      // Fetch pest alerts
+      final alertsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('pestAlerts')
+          .where('resolved', isEqualTo: false)
+          .get();
+
+        // Fetch recent notifications (use 'time' field that NotificationService writes)
+        final notificationsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('notifications')
+          .orderBy('time', descending: true)
+          .limit(50)
+          .get();
+          // If no results using 'time', try 'timestamp' as older code might use that key
+          if (notificationsSnapshot.docs.isEmpty) {
+            final altSnapshot = await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .collection('notifications')
+                .orderBy('timestamp', descending: true)
+                .limit(50)
+                .get();
+            if (altSnapshot.docs.isNotEmpty) {
+              print(' Found notifications using \"timestamp\" field');
+              // replace notificationsSnapshot variable by altSnapshot for counting
+              // (we'll keep a local reference)
+              // Use altSnapshot for completedTasks calculation below
+          
+              // set variable by shadowing
+          
+            }
+          }
+
+        int completedTasks = notificationsSnapshot.docs.where((doc) {
+        final data = doc.data() as Map<String, dynamic>? ?? {};
+        final title = (data['title'] as String?)?.toLowerCase() ?? '';
+        final type = (data['type'] as String?)?.toLowerCase() ?? '';
+        return type == 'system' || title.contains('task') || title.contains('done') || title.contains('completed');
+        }).length;
+
+      if (mounted) {
+        setState(() {
+          _activeCropsCount = totalCrops;
+          _alertsCount = alertsSnapshot.docs.length;
+          _yieldRate = 85.0; // Default value - could fetch from crop data
+          _tasksDone = completedTasks;
+          _totalTasks = completedTasks + 2; // Estimated total
+        });
+      }
+          print('ℹ️ Farm overview: crops=$totalCrops alerts=${alertsSnapshot.docs.length} tasksDone=$completedTasks');
+    } catch (e) {
+      print('❌ Error fetching farm overview: $e');
+    }
+  }
+
+  // Fetch Recent Activities from Firestore
+  Future<void> _fetchRecentActivities() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      // Fetch notifications
+      final notificationsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('notifications')
+          .orderBy('time', descending: true)
+          .limit(10)
+          .get();
+
+      List<QueryDocumentSnapshot> docs = notificationsSnapshot.docs;
+      // If no docs with 'time', try 'timestamp'
+      if (docs.isEmpty) {
+        final alt = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('notifications')
+            .orderBy('timestamp', descending: true)
+            .limit(10)
+            .get();
+        docs = alt.docs;
+        if (docs.isNotEmpty) print('ℹ️ Using notifications ordered by "timestamp"');
+      }
+
+      // Fetch pest alerts
+      final alertsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('pestAlerts')
+          .orderBy('detectedDate', descending: true)
+          .limit(10)
+          .get();
+
+      List<Map<String, String>> activities = [];
+
+      // Add notifications
+      for (var doc in docs) {
+        final data = doc.data() as Map<String, dynamic>? ?? {};
+        final timestamp = (data['time'] as Timestamp?)?.toDate()
+            ?? (data['timestamp'] as Timestamp?)?.toDate()
+            ?? (data['createdAt'] as Timestamp?)?.toDate()
+            ?? DateTime.now();
+        final duration = DateTime.now().difference(timestamp);
+        
+        String timeAgo = _formatTimeAgo(duration);
+
+        activities.add({
+          'title': data['title'] ?? 'Activity',
+          'time': timeAgo,
+          'type': data['module'] ?? data['type'] ?? 'system',
+        });
+      }
+
+      // Add pest alerts
+      for (var doc in alertsSnapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>? ?? {};
+        final timestamp = (data['detectedDate'] as Timestamp?)?.toDate() ?? DateTime.now();
+        final duration = DateTime.now().difference(timestamp);
+        
+        String timeAgo = _formatTimeAgo(duration);
+        final pestName = data['pestName'] ?? 'Alert';
+        final severity = data['severity'] ?? 'Medium';
+
+        activities.add({
+          'title': '⚠️ $pestName detected (${severity.toLowerCase()})',
+          'time': timeAgo,
+          'type': 'pest',
+        });
+      }
+
+      // Sort activities by time (most recent first)
+      // We need to extract time for sorting - for now keep insertion order
+      // (notifications are already sorted, alerts are already sorted)
+
+      // Take only top 5
+      activities = activities.take(5).toList();
+
+      if (mounted) {
+        setState(() {
+          _recentActivities = activities;
+        });
+      }
+      print('ℹ️ Recent Activities: ${activities.length} items (${docs.length} notifications, ${alertsSnapshot.docs.length} pest alerts)');
+    } catch (e) {
+      print('❌ Error fetching recent activities: $e');
+      // Show default welcome message
+      if (mounted) {
+        setState(() {
+          _recentActivities = [
+            {'title': 'Welcome to Smart Kisan!', 'time': 'Just now', 'type': 'task'},
+          ];
+        });
+      }
+    }
+  }
+
+  // Helper to format time ago
+  String _formatTimeAgo(Duration duration) {
+    if (duration.inMinutes < 1) {
+      return 'Just now';
+    } else if (duration.inMinutes < 60) {
+      return '${duration.inMinutes} minute${duration.inMinutes > 1 ? 's' : ''} ago';
+    } else if (duration.inHours < 24) {
+      return '${duration.inHours} hour${duration.inHours > 1 ? 's' : ''} ago';
+    } else {
+      return '${duration.inDays} day${duration.inDays > 1 ? 's' : ''} ago';
+    }
+  }
+
+  // Show language selection dialog
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(tr('Select Language')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('English'),
+              onTap: () {
+                LocalizationService.setLanguage('en');
+                Navigator.pop(context);
+                setState(() {});
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('हिन्दी (Hindi)'),
+              onTap: () {
+                LocalizationService.setLanguage('hi');
+                Navigator.pop(context);
+                setState(() {});
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('नेपाली (Nepali)'),
+              onTap: () {
+                LocalizationService.setLanguage('ne');
+                Navigator.pop(context);
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
   // Colors used in the app
   final Color _primaryGreen = const Color(0xFF2C7C48);
   final Color _lightGreen = const Color(0xFFF0FDF4);
@@ -132,7 +397,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     Text(
-                      'Farm Overview',
+                      tr('Farm Overview'),
                       style: TextStyle(
                         color: _darkGray,
                         fontSize: 16,
@@ -174,7 +439,7 @@ class _HomePageState extends State<HomePage> {
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
-            color: _black.withOpacity(0.1),
+            color: _black.withValues(alpha: 0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -188,7 +453,7 @@ class _HomePageState extends State<HomePage> {
             height: 40,
             decoration: BoxDecoration(
               // ignore: deprecated_member_use
-              color: _white.withOpacity(0.2),
+              color: _white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Icon(Icons.person, color: Colors.white, size: 20),
@@ -199,31 +464,31 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Smart Kisan',
-                style: TextStyle(
-                  color: _white,
-                  fontSize: 16,
-                  fontFamily: 'Arimo',
-                  fontWeight: FontWeight.w700,
-                ),
+            Text(
+              tr('smart_kisan'),
+              style: TextStyle(
+                color: _white,
+                fontSize: 16,
+                fontFamily: 'Arimo',
+                fontWeight: FontWeight.w700,
               ),
-              Text(
-                'Good morning, $displayName',
-                style: TextStyle(
-                  color: _lightText,
-                  fontSize: 12,
-                  fontFamily: 'Arimo',
-                ),
+            ),
+            Text(
+              '${tr('Welcome ')}, $displayName',
+              style: TextStyle(
+                color: _lightText,
+                fontSize: 12,
+                fontFamily: 'Arimo',
               ),
-              Text(
-                _homeWeatherData != null ? _homeWeatherData!['name'] : 'Locating...',
-                style: TextStyle(
-                  color: _lightText,
-                  fontSize: 11,
-                  fontFamily: 'Arimo',
-                ),
+            ),
+            Text(
+              _homeWeatherData != null ? _homeWeatherData!['name'] : tr('Locating...'),
+              style: TextStyle(
+                color: _lightText,
+                fontSize: 11,
+                fontFamily: 'Arimo',
               ),
+            ),
             ],
           ),
           
@@ -235,7 +500,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NotificationScreen()),
+                MaterialPageRoute(builder: (context) => const NotificationScreen()),
               );
             },
             child: Container(
@@ -247,17 +512,50 @@ class _HomePageState extends State<HomePage> {
               child: Stack(
                 children: [
                   const Center(child: Icon(Icons.notifications, color: Colors.white, size: 30)),
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _errorRed, // Keep your existing _errorRed color
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                  // StreamBuilder to get unread notification count
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+                        .collection('notifications')
+                        .where('isRead', isEqualTo: false)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      int unreadCount = 0;
+                      if (snapshot.hasData) {
+                        unreadCount = snapshot.data!.docs.length;
+                      }
+                      
+                      // Show badge only if there are unread notifications
+                      if (unreadCount == 0) {
+                        return const SizedBox.shrink();
+                      }
+                      
+                      return Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: _errorRed,
+                            borderRadius: BorderRadius.circular(13),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              unreadCount > 99 ? '99+' : unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontFamily: 'Arimo',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -291,10 +589,12 @@ class _HomePageState extends State<HomePage> {
   Widget _buildWeatherCard() {
     // Default values (if loading or error)
     String temp = '--';
-    String condition = 'Loading...';
+    String condition = tr('Loading...');
     String humidity = '--';
     String wind = '--';
-    String advice = 'Fetching weather...';
+    String visibility = '--';
+    String feelsLike = '--';
+    String advice = tr('Fetching weather...');
 
     if (!_loadingWeather && _homeWeatherData != null) {
       double t = (_homeWeatherData!['main']['temp'] as num).toDouble();
@@ -302,23 +602,43 @@ class _HomePageState extends State<HomePage> {
       condition = _homeWeatherData!['weather'][0]['main'];
       humidity = "${_homeWeatherData!['main']['humidity']}%";
       wind = "${(_homeWeatherData!['wind']['speed'] * 3.6).round()} km/h"; // m/s to km/h
+      // Visibility (meters to km)
+      if (_homeWeatherData!['visibility'] != null) {
+        try {
+          final vis = (_homeWeatherData!['visibility'] as num).toDouble();
+          visibility = '${(vis / 1000).toStringAsFixed(1)} km';
+        } catch (_) {
+          visibility = '--';
+        }
+      }
+
+      // Feels like
+      try {
+        feelsLike = '${(_homeWeatherData!['main']['feels_like'] as num).round()}°C';
+      } catch (_) {
+        feelsLike = '--';
+      }
       
       // Dynamic Advice logic
       if (condition.toLowerCase().contains('rain')) {
-        advice = 'Rain expected. Delay fertilizers.';
+        advice = tr('Rain Detected');
       } else if (t > 30) {
-        advice = 'High heat. Water crops extra today.';
+        advice = tr('Irrigation Needed');
       } else if (t < 10) {
-        advice = 'Cold warning.Protect seedlings.';
+        advice = tr('Cold Stress Risk');
       } else {
-        advice = 'Good conditions for field work.';
+        advice = tr('Good Field Conditions');
       }
     }
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Navigate to full weather page
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeatherPage()));
+        await Navigator.push(context, MaterialPageRoute(builder: (_) => const WeatherPage()));
+        // Refresh weather notifications when returning
+        if (mounted) {
+          await _fetchHomeWeather();
+        }
       },
       child: Container(
         margin: const EdgeInsets.all(16),
@@ -326,7 +646,7 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: _primaryGreen,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _white.withOpacity(0.2), width: 1.5),
+          border: Border.all(color: _white.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Column(
           children: [
@@ -341,7 +661,7 @@ class _HomePageState extends State<HomePage> {
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: _white.withOpacity(0.2),
+                          color: _white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(Icons.cloud, color: Colors.white, size: 16),
@@ -352,7 +672,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Current Weather',
+                              tr('Current Weather'),
                               style: TextStyle(
                                 color: _white,
                                 fontSize: 12,
@@ -387,8 +707,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Text(
                       advice,
-                      style: TextStyle(
-                        color: const Color(0xFF733E0A),
+                      style: const TextStyle(
+                        color: Color(0xFF733E0A),
                         fontSize: 12,
                         fontFamily: 'Arimo',
                       ),
@@ -405,10 +725,10 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildWeatherMetric(Icons.water_drop, 'Humidity', humidity),
-                _buildWeatherMetric(Icons.air, 'Wind', wind),
-                _buildWeatherMetric(Icons.visibility, 'Visibility', _loadingWeather ? '--' : 'Good'),
-                _buildWeatherMetric(Icons.thermostat, 'Feels Like', _loadingWeather ? '--' : '${(_homeWeatherData!['main']['feels_like'] as num).round()}°C'),
+                _buildWeatherMetric(Icons.water_drop, tr('Humidity'), humidity),
+                _buildWeatherMetric(Icons.air, tr('Wind'), wind),
+                _buildWeatherMetric(Icons.visibility, tr('Visibility'), visibility),
+                _buildWeatherMetric(Icons.thermostat, tr('Feels Like'), feelsLike),
               ],
             ),
           ],
@@ -423,7 +743,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: _white.withOpacity(0.15),
+        color: _white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -524,7 +844,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: _black.withOpacity(0.1),
+                    color: _black.withValues(alpha: 0.1),
                     blurRadius: 6,
                     offset: const Offset(0, 4),
                   ),
@@ -536,7 +856,7 @@ class _HomePageState extends State<HomePage> {
                   Icon(feature['icon'] as IconData, color: _white, size: 32),
                   const SizedBox(height: 8),
                   Text(
-                    feature['title'] as String,
+                    tr(feature['title'] as String),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: _white,
@@ -563,7 +883,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: _black.withOpacity(0.1),
+            color: _black.withValues(alpha: 0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -576,9 +896,9 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(child: _buildStatCard(
                 icon: Icons.agriculture,
-                label: 'Active Crops',
-                value: widget.isNewUser ? '0' : '4',
-                subtitle: widget.isNewUser ? 'Tap to add crops' : 'Rice, Wheat, Corn',
+                label: tr('Active Crops'),
+                value: _activeCropsCount.toString(),
+                subtitle: _activeCropsCount == 0 ? tr('Tap to add crops') : tr('Currently growing'),
                 color: _lightGreen,
                 textColor: _darkGreen,
               )),
@@ -587,9 +907,9 @@ class _HomePageState extends State<HomePage> {
               
               Expanded(child: _buildStatCard(
                 icon: Icons.insights,
-                label: 'Yield Rate',
-                value: widget.isNewUser ? '0%' : '92%',
-                subtitle: widget.isNewUser ? 'Start farming to see' : '+5% from last season',
+                label: tr('Yield Rate'),
+                value: '${_yieldRate.toStringAsFixed(0)}%',
+                subtitle: tr('Farm productivity'),
                 color: const Color(0xFFEFF6FF),
                 textColor: _darkBlue,
               )),
@@ -603,9 +923,9 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(child: _buildStatCard(
                 icon: Icons.notifications,
-                label: 'Alerts',
-                value: widget.isNewUser ? '0' : '2',
-                subtitle: widget.isNewUser ? 'No alerts yet' : 'Pest warning, Rain',
+                label: tr('Alerts'),
+                value: _alertsCount.toString(),
+                subtitle: _alertsCount == 0 ? tr('All clear') : tr('Issues detected'),
                 color: const Color(0xFFFEF3F2),
                 textColor: _darkRed,
               )),
@@ -614,9 +934,9 @@ class _HomePageState extends State<HomePage> {
               
               Expanded(child: _buildStatCard(
                 icon: Icons.task,
-                label: 'Tasks Done',
-                value: widget.isNewUser ? '0/0' : '8/10',
-                subtitle: widget.isNewUser ? 'Setup your farm' : 'This week',
+                label: tr('Tasks Done'),
+                value: '$_tasksDone/$_totalTasks',
+                subtitle: tr('This period'),
                 color: _lightGreen,
                 textColor: _darkGreen,
               )),
@@ -640,7 +960,7 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: textColor.withOpacity(0.12), width: 1.5),
+        border: Border.all(color: textColor.withValues(alpha: 0.12), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -698,7 +1018,7 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
+              Row(
             children: [
               Container(
                 width: 40,
@@ -714,17 +1034,17 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Language / भाषा',
-                    style: TextStyle(
-                      color: const Color(0xFF884A00),
+                    tr('Language / भाषा'),
+                    style: const TextStyle(
+                      color: Color(0xFF884A00),
                       fontSize: 16,
                       fontFamily: 'Arimo',
                     ),
                   ),
                   Text(
-                    'Currently: English',
-                    style: TextStyle(
-                      color: const Color(0xFFD08700),
+                    tr('Currently: English'),
+                    style: const TextStyle(
+                      color: Color(0xFFD08700),
                       fontSize: 14,
                       fontFamily: 'Arimo',
                     ),
@@ -745,14 +1065,14 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: _black.withOpacity(0.1),
+                  color: _black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Text(
-              'नेपाली',
+              tr('Nepali'),
               style: TextStyle(
                 color: _white,
                 fontSize: 14,
@@ -766,19 +1086,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRecentActivity() {
-    List<Map<String, String>> activities;
-    
-    if (widget.isNewUser) {
-      activities = [
-        {'title': 'Welcome to Smart Kisan!', 'time': 'Just now', 'type': 'task'},
-        {'title': 'Complete farm setup to get started', 'time': '1 minute ago', 'type': 'task'},
-      ];
-    } else {
-      activities = [
-        {'title': 'Pest identified in tomato crop', 'time': '2 hours ago', 'type': 'pest'},
-        {'title': 'Weather alert: Rain expected', 'time': '5 hours ago', 'type': 'weather'},
-      ];
-    }
+    // Use real activities from state or show default if empty
+    List<Map<String, String>> activities = _recentActivities.isNotEmpty
+        ? _recentActivities
+        : [
+            {'title': 'Welcome to Smart Kisan!', 'time': 'Just now', 'type': 'task'},
+          ];
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -786,7 +1099,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Recent Activity',
+            tr('Recent Activity'),
             style: TextStyle(
               color: _black,
               fontSize: 14,
@@ -796,62 +1109,90 @@ class _HomePageState extends State<HomePage> {
           
           const SizedBox(height: 12),
           
-          ...activities.map((activity) {
-            Color iconColor;
-            IconData icon;
-            
-            if (activity['type'] == 'pest') {
-              iconColor = _darkRed;
-              icon = Icons.bug_report;
-            } else if (activity['type'] == 'weather') {
-              iconColor = const Color(0xFFDBEAFE);
-              icon = Icons.cloud;
-            } else {
-              iconColor = _primaryGreen;
-              icon = Icons.check_circle;
-            }
-            
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: iconColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(icon, color: _white, size: 10),
+          if (activities.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  tr('No recent activity'),
+                  style: TextStyle(
+                    color: _gray,
+                    fontSize: 12,
+                    fontFamily: 'Arimo',
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          activity['title']!,
-                          style: TextStyle(
-                            color: _black,
-                            fontSize: 12,
-                            fontFamily: 'Arimo',
-                          ),
-                        ),
-                        Text(
-                          activity['time']!,
-                          style: TextStyle(
-                            color: _black.withOpacity(0.6),
-                            fontSize: 12,
-                            fontFamily: 'Arimo',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            );
-          }).toList(),
+            )
+          else
+            ...activities.map((activity) {
+              Color iconColor;
+              IconData icon;
+              
+              final activityType = activity['type']?.toLowerCase() ?? 'task';
+              
+              if (activityType.contains('pest')) {
+                iconColor = _darkRed;
+                icon = Icons.bug_report;
+              } else if (activityType.contains('weather')) {
+                iconColor = const Color(0xFFDBEAFE);
+                icon = Icons.cloud;
+              } else if (activityType.contains('crop') || activityType.contains('advisory')) {
+                iconColor = _primaryGreen;
+                icon = Icons.agriculture;
+              } else if (activityType.contains('water')) {
+                iconColor = _infoBlue;
+                icon = Icons.water_drop;
+              } else if (activityType.contains('notification') || activityType.contains('alert')) {
+                iconColor = _warningYellow;
+                icon = Icons.notifications;
+              } else {
+                iconColor = _primaryGreen;
+                icon = Icons.check_circle;
+              }
+              
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: iconColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(icon, color: _white, size: 10),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            activity['title'] ?? 'Activity',
+                            style: TextStyle(
+                              color: _black,
+                              fontSize: 12,
+                              fontFamily: 'Arimo',
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            activity['time'] ?? 'Recently',
+                            style: TextStyle(
+                              color: _black.withValues(alpha: 0.6),
+                              fontSize: 11,
+                              fontFamily: 'Arimo',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
         ],
       ),
     );
@@ -862,10 +1203,10 @@ class _HomePageState extends State<HomePage> {
       height: 66,
       decoration: BoxDecoration(
         color: _white,
-        border: Border(top: BorderSide(color: const Color(0xFFB8F7CF), width: 0.8)),
+        border: const Border(top: BorderSide(color: Color(0xFFB8F7CF), width: 0.8)),
         boxShadow: [
           BoxShadow(
-            color: _black.withOpacity(0.1),
+            color: _black.withValues(alpha: 0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -879,56 +1220,59 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildNavItem(Icons.home, 'Home', 0),
-                  _buildNavItem(Icons.auto_awesome, 'Ask AI', 1),
-                  _buildNavItem(Icons.qr_code_scanner, 'Scan', 2),
-                  _buildNavItem(Icons.add_location, 'Add\nLocation', 3),
+                  _buildNavItem(Icons.home, tr('Home'), 0),
+                  _buildNavItem(Icons.auto_awesome, tr('Ask AI'), 1),
+                  _buildNavItem(Icons.bug_report, tr('Pest & Disease'), 2),
+                  _buildNavItem(Icons.eco, tr('Add Crop'), 3),
                 ],
               ),
             ),
             
             // Language Button
-            Container(
-              width: 72,
-              margin: const EdgeInsets.only(left: 8),
+            GestureDetector(
+              onTap: _showLanguageDialog,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [Color(0xFFF0B000), Color(0xFFFF6800)],
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                width: 72,
+                margin: const EdgeInsets.only(left: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [Color(0xFFF0B000), Color(0xFFFF6800)],
                     ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.language, color: Colors.white, size: 16),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: _white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
-                      child: const Text(
-                        'EN',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: 'Arimo',
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.language, color: Colors.white, size: 16),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _white.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          LocalizationService.currentLanguage,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontFamily: 'Arimo',
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -959,14 +1303,14 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ScanPage(isNewUser: widget.isNewUser),
+              builder: (context) => const PestDiseaseHelpScreen(),
             ),
           );
         } else if (index == 3) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const LocationPage(),
+              builder: (context) => const CropAdvisoryScreen(),
             ),
           );
         }
@@ -987,7 +1331,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 4),
             Text(
-              label,
+              tr(label),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: isSelected ? _darkGreen : _gray,

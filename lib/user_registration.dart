@@ -6,6 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';// To check session
 import 'auth_service.dart';
 import 'package:local_auth/local_auth.dart';// For Fingerprint
 import 'package:flutter/services.dart';  // For PlatformException
+import 'localization_service.dart';
+
+// helper for translations in this file
+String tr(String key) => LocalizationService.translate(key);
 
 // Base Screen
 class ForgotPasswordBaseScreen extends StatelessWidget {
@@ -14,11 +18,11 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
   final bool showBackButton;
 
   const ForgotPasswordBaseScreen({
-    Key? key,
+    super.key,
     required this.child,
     required this.title,
     this.showBackButton = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +31,21 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (showBackButton) _buildBackButton(context),
                 Center(
-                  child: Container(
+                  child: SizedBox(
                     width: 250,
                     height: 200,
                     child: Image.asset('assets/Fp.png', fit: BoxFit.contain),
                   ),
                 ),
-                SizedBox(height: 20),
-                Text(title, style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+                Text(title, style: const TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                const SizedBox(height: 20),
                 child,
               ],
             ),
@@ -61,7 +65,7 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-          child: Icon(Icons.arrow_back, color: Colors.black),
+          child: const Icon(Icons.arrow_back, color: Colors.black),
         ),
       ),
     );
@@ -70,6 +74,8 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
 
 // Screen 1: Forgot Password
 class ForgotPasswordScreen1 extends StatefulWidget {
+  const ForgotPasswordScreen1({super.key});
+
   @override
   _ForgotPasswordScreen1State createState() => _ForgotPasswordScreen1State();
 }
@@ -85,11 +91,11 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
         
         // Skip OTP screens and go straight to Success
         Navigator.push(context, MaterialPageRoute(
-          builder: (_) => ForgotPasswordScreen4()
+          builder: (_) => const ForgotPasswordScreen4()
         ));
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Error sending link'), backgroundColor: Colors.red),
+          SnackBar(content: Text(e.message ?? tr('Error sending link')), backgroundColor: Colors.red),
         );
       }
     }
@@ -98,50 +104,50 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   @override
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
-      title: 'Forgot Password',
+      title: tr('Forgot Password'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Enter the email address you used when you joined and we\'ll send you instructions to reset your password.',
+            tr('Enter the email address you used when you joined and we\'ll send you instructions to reset your password.'),
             textAlign: TextAlign.justify,
-            style: TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
+            style: const TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Email ID', style: TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
-                SizedBox(height: 8),
+                Text(tr('Email ID'), style: const TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
+                const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                   child: TextFormField(
                     controller: _emailController,
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return 'Please enter email id ';
+                        return tr('Please enter email id');
                       }
                       // Basic validation for email format
                       if (!v.contains('@') && !RegExp(r'^[0-9]+$').hasMatch(v)) {
-                        return 'Please enter a valid email id';
+                        return tr('Please enter a valid email id');
                       }
                       return null;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Enter email id ',
-                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintText: tr('Enter email id'),
+                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                     ),
-                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                    style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Center(
             child: GestureDetector(
               onTap: _sendResetLink,
@@ -149,33 +155,33 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
                 width: 200,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Color(0xFF2C7C48),
+                  color: const Color(0xFF2C7C48),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: Text(
-                    'Send Link/Code',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                    tr('Send Link/Code'),
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Having a Problem?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
-                SizedBox(width: 5),
+                Text(tr('Having a Problem?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                const SizedBox(width: 5),
                 GestureDetector(
                   onTap: _sendResetLink,
-                  child: Text('Send Again', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  child: Text(tr('Send Again'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -185,7 +191,7 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
 // Screen 2: Verify Code
 class ForgotPasswordScreen2 extends StatefulWidget {
   final String email;
-  ForgotPasswordScreen2({required this.email});
+  const ForgotPasswordScreen2({super.key, required this.email});
 
   @override
   _ForgotPasswordScreen2State createState() => _ForgotPasswordScreen2State();
@@ -213,26 +219,33 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   @override
   void dispose() {
     _timer.cancel();
-    _codeControllers.forEach((c) => c.dispose());
-    _focusNodes.forEach((f) => f.dispose());
+    for (var c in _codeControllers) {
+      c.dispose();
+    }
+    for (var f in _focusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_timerSeconds > 0) setState(() => _timerSeconds--);
-      else timer.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerSeconds > 0) {
+        setState(() => _timerSeconds--);
+      } else {
+        timer.cancel();
+      }
     });
   }
 
   void _verifyCode() {
     String code = _codeControllers.map((c) => c.text).join();
     if (code.length == 4) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen3()));
-    } else {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen3()));
+      } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter the complete 4-digit code'),
+          content: Text(tr('Please enter the complete 4-digit code')),
           backgroundColor: Colors.red,
         ),
       );
@@ -241,8 +254,11 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
 
   void _onCodeChanged(String value, int index) {
     if (value.isNotEmpty) {
-      if (index < 3) _focusNodes[index + 1].requestFocus();
-      else _focusNodes[index].unfocus();
+      if (index < 3) {
+        _focusNodes[index + 1].requestFocus();
+      } else {
+        _focusNodes[index].unfocus();
+      }
     }
   }
 
@@ -255,25 +271,25 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
   @override
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
-      title: 'Verify code sent',
+      title: tr('Verify code sent'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Enter 4-digits code sent to you at ${widget.email}',
             textAlign: TextAlign.justify,
-            style: TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
+            style: const TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(4, (index) => Container(
-                margin: EdgeInsets.symmetric(horizontal: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 8),
                 width: 60,
                 height: 70,
                 decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Color(0xFF34843C)),
+                  border: Border.all(width: 2, color: const Color(0xFF34843C)),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TextField(
@@ -282,18 +298,18 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   maxLength: 1,
-                  style: TextStyle(color: Colors.black, fontSize: 26, fontFamily: 'PT Sans'),
-                  decoration: InputDecoration(counterText: '', border: InputBorder.none),
+                  style: const TextStyle(color: Colors.black, fontSize: 26, fontFamily: 'PT Sans'),
+                  decoration: const InputDecoration(counterText: '', border: InputBorder.none),
                   onChanged: (v) => _onCodeChanged(v, index),
                 ),
               )),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Center(
-            child: Text(_formatTime(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'PT Sans')),
+            child: Text(_formatTime(), style: const TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'PT Sans')),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Center(
             child: GestureDetector(
               onTap: _verifyCode,
@@ -301,40 +317,42 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                 width: 200,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Color(0xFF2C7C48),
+                  color: const Color(0xFF2C7C48),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: Text(
-                    'Verify Code',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                    tr('Verify Code'),
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Having a Problem?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
-                SizedBox(width: 5),
+                Text(tr('Having a Problem?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                const SizedBox(width: 5),
                 GestureDetector(
                   onTap: () {
                     setState(() {
                       _timerSeconds = 60;
                       _startTimer();
-                      _codeControllers.forEach((c) => c.clear());
+                      for (var c in _codeControllers) {
+                        c.clear();
+                      }
                       _focusNodes[0].requestFocus();
                     });
                   },
-                  child: Text('Send Again', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  child: Text(tr('Send Again'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -343,6 +361,8 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
 
 // Screen 3: New Password
 class ForgotPasswordScreen3 extends StatefulWidget {
+  const ForgotPasswordScreen3({super.key});
+
   @override
   _ForgotPasswordScreen3State createState() => _ForgotPasswordScreen3State();
 }
@@ -355,14 +375,14 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
 
   void _createNewPassword() {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen4()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen4()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return ForgotPasswordBaseScreen(
-      title: 'New Password',
+      title: tr('New Password'),
       child: Form(
         key: _formKey,
         child: Column(
@@ -371,65 +391,65 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Enter New Password', style: TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
-                SizedBox(height: 8),
+                Text(tr('Enter New Password'), style: const TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                   child: TextFormField(
                     controller: _newPasswordController,
                     obscureText: !_showNewPassword,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Please enter new password';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
+                      if (value == null || value.isEmpty) return tr('Please enter new password');
+                      if (value.length < 6) return tr('Password must be at least 6 characters');
                       return null;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Enter new password',
-                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintText: tr('Enter new password'),
+                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                       suffixIcon: IconButton(
-                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
                         onPressed: () => setState(() => _showNewPassword = !_showNewPassword),
                       ),
                     ),
-                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                    style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Confirm New Password', style: TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
-                SizedBox(height: 8),
+                Text(tr('Confirm New Password'), style: const TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                   child: TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: !_showConfirmPassword,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Please confirm new password';
-                      if (value != _newPasswordController.text) return 'Passwords do not match';
+                      if (value == null || value.isEmpty) return tr('Please confirm new password');
+                      if (value != _newPasswordController.text) return tr('Passwords do not match');
                       return null;
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Confirm new password',
-                      hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintText: tr('Confirm new password'),
+                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                       suffixIcon: IconButton(
-                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
                         onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
                       ),
                     ),
-                    style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                    style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 60),
+            const SizedBox(height: 60),
             Center(
               child: GestureDetector(
                 onTap: _createNewPassword,
@@ -437,19 +457,19 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
                   width: 250,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Color(0xFF2C7C48),
+                    color: const Color(0xFF2C7C48),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
-                      'Create New Password',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                      tr('Create New Password'),
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -459,6 +479,8 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
 
 // Screen 4: Success
 class ForgotPasswordScreen4 extends StatefulWidget {
+  const ForgotPasswordScreen4({super.key});
+
   @override
   _ForgotPasswordScreen4State createState() => _ForgotPasswordScreen4State();
 }
@@ -467,7 +489,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
     });
   }
@@ -478,7 +500,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          Container(color: Colors.black.withOpacity(0.37)),
+          Container(color: Colors.black.withValues(alpha: 0.37)),
           Center(
             child: Container(
               width: 336,
@@ -486,7 +508,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, spreadRadius: 2)],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, spreadRadius: 2)],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -494,28 +516,28 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
                   Container(
                     width: 176,
                     height: 176,
-                    decoration: BoxDecoration(color: Color(0xFF2C7C48), shape: BoxShape.circle),
+                    decoration: const BoxDecoration(color: Color(0xFF2C7C48), shape: BoxShape.circle),
                     child: Center(
-                      child: Container(
+                      child: SizedBox(
                         width: 150,
                         height: 150,
                         child: Image.asset('assets/Fp.png', fit: BoxFit.contain),
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
-                  Text('Congratulations!', style: TextStyle(fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 30),
+                  Text(tr('Congratulations!'), style: const TextStyle(fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 20),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'A password reset link has been sent to your email. Please check your inbox (and spam), click the link to reset your password, and then login here.',
+                      tr('A password reset link has been sent to your email. Please check your inbox (and spam), click the link to reset your password, and then login here.'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                      style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                     ),
                   ),
-                  SizedBox(height: 40),
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Color(0xFF2C7C48))),
+                  const SizedBox(height: 40),
+                  const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Color(0xFF2C7C48))),
                 ],
               ),
             ),
@@ -528,6 +550,8 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
 
 // Login Screen
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -537,6 +561,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _showPassword = false;
+
+  String tr(String key) => LocalizationService.translate(key);
 
   @override
   void dispose() {
@@ -551,8 +577,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // Local validation
     if (!_emailController.text.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid email address'),
+        SnackBar(
+          content: Text(tr('Please enter a valid email address')),
           backgroundColor: Colors.red,
         ),
       );
@@ -561,8 +587,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (_passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password must be at least 6 characters'),
+        SnackBar(
+          content: Text(tr('Password must be at least 6 characters')),
           backgroundColor: Colors.red,
         ),
       );
@@ -600,14 +626,14 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on FirebaseAuthException catch (e) {
       Navigator.of(context).pop();
-
-      String message = 'Login failed';
+      String message = tr('An error occurred. Please try again.');
+      
       if (e.code == 'user-not-found') {
-        message = 'No user found with this email.';
+        message = tr('No account found with this email.');
       } else if (e.code == 'wrong-password') {
-        message = 'Incorrect password.';
+        message = tr('Incorrect password.');
       } else if (e.code == 'invalid-email') {
-        message = 'The email address is invalid.';
+        message = tr('The email address is invalid.');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -616,8 +642,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An unexpected error occurred. Please try again.'),
+        SnackBar(
+          content: Text(tr('An unexpected error occurred. Please try again.')),
           backgroundColor: Colors.red,
         ),
       );
@@ -663,9 +689,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  const Text(
-                    'Log In',
-                    style: TextStyle(
+                  Text(
+                    tr('log_in'),
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 32,
                       fontFamily: 'PT Sans',
@@ -673,9 +699,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'please Log in to continue',
-                    style: TextStyle(
+                  Text(
+                    tr('please Log in to continue'),
+                    style: const TextStyle(
                       color: Color(0xFFB0ABAB),
                       fontSize: 16,
                       fontFamily: 'PT Sans',
@@ -687,9 +713,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Email',
-                        style: TextStyle(
+                      Text(
+                        tr('Email'),
+                        style: const TextStyle(
                           color: Color(0xFF9A9595),
                           fontSize: 16,
                           fontFamily: 'PT Sans',
@@ -710,14 +736,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _emailController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
+                              return tr('Please enter your email');
                             }
                             return null;
                           },
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your email',
-                            hintStyle: TextStyle(
+                            hintText: tr('enter_email'),
+                            hintStyle: const TextStyle(
                               color: Color(0xFF9A9595),
                               fontSize: 16,
                             ),
@@ -736,9 +762,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Password',
-                        style: TextStyle(
+                      Text(
+                        tr('Password'),
+                        style: const TextStyle(
                           color: Color(0xFF9A9595),
                           fontSize: 16,
                           fontFamily: 'PT Sans',
@@ -760,13 +786,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: !_showPassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
+                              return tr('Please enter your password');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your password',
+                            hintText: tr('enter_password'),
                             hintStyle: const TextStyle(
                               color: Color(0xFF9A9595),
                               fontSize: 16,
@@ -798,12 +824,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ForgotPasswordScreen1(),
+                        builder: (_) => const ForgotPasswordScreen1(),
                       ),
                     ),
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
+                    child: Text(
+                      tr('Forgot Password?'),
+                      style: const TextStyle(
                         color: Color(0xFF4BA26A),
                         fontSize: 14,
                         fontFamily: 'PT Sans',
@@ -825,10 +851,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: _login,
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Log in',
-                            style: TextStyle(
+                            tr('Log in'),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontFamily: 'PT Sans',
@@ -855,18 +881,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => FingerprintScreen(),
+                            builder: (_) => const FingerprintScreen(),
                           ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(Icons.fingerprint,
                                 color: Colors.white, size: 20),
                             SizedBox(width: 10),
                             Text(
-                              'Tap to login with Fingerprint',
-                              style: TextStyle(
+                              tr('Tap to login with Fingerprint'),
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontFamily: 'PT Sans',
@@ -882,16 +908,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Divider
                   Row(
-                    children: const [
+                    children: [
                       Expanded(
                         child: Divider(color: Color(0xFFB0ABAB)),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
-                          'or sign in with',
+                          tr('or sign in with'),
                           style: TextStyle(
-                            color: Color(0xFF262626),
+                            color: const Color(0xFF262626),
                             fontSize: 16,
                             fontFamily: 'PT Sans',
                           ),
@@ -931,7 +957,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Google Sign-In failed or cancelled')),
+                              SnackBar(content: Text(tr('Google Sign-In failed or cancelled'))),
                             );
                           }
                         },
@@ -949,9 +975,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Don\'t have an account?',
-                        style: TextStyle(
+                      Text(
+                        tr('Don\'t have an account?'),
+                        style: const TextStyle(
                           color: Color(0xFF696666),
                           fontSize: 16,
                           fontFamily: 'PT Sans',
@@ -962,12 +988,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () => Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => SignupScreen(),
+                            builder: (_) => const SignupScreen(),
                           ),
                         ),
-                        child: const Text(
-                          'sign up',
-                          style: TextStyle(
+                        child: Text(
+                          tr('sign up'),
+                          style: const TextStyle(
                             color: Color(0xFF4BA26A),
                             fontSize: 16,
                             fontFamily: 'PT Sans',
@@ -990,6 +1016,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // Signup Screen
 class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
   _SignupScreenState createState() => _SignupScreenState();
@@ -1012,8 +1040,8 @@ class _SignupScreenState extends State<SignupScreen> {
     // Local validation (keep your existing checks)
     if (!_emailController.text.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid email address'),
+        SnackBar(
+          content: Text(tr('Please enter a valid email address')),
           backgroundColor: Colors.red,
         ),
       );
@@ -1022,8 +1050,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (!RegExp(r'^[0-9]{10,15}$').hasMatch(_mobileController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid mobile number (10-15 digits)'),
+        SnackBar(
+          content: Text(tr('Please enter a valid mobile number (10-15 digits)')),
           backgroundColor: Colors.red,
         ),
       );
@@ -1032,8 +1060,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (_passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password must be at least 6 characters'),
+        SnackBar(
+          content: Text(tr('Password must be at least 6 characters')),
           backgroundColor: Colors.red,
         ),
       );
@@ -1042,8 +1070,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
+        SnackBar(
+          content: Text(tr('Passwords do not match')),
           backgroundColor: Colors.red,
         ),
       );
@@ -1095,13 +1123,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
       print('SIGNUP ERROR: code=${e.code}, message=${e.message}');
 
-      String message = 'Failed to sign up';
+      String message = tr('Failed to sign up');
       if (e.code == 'email-already-in-use') {
-        message = 'This email is already in use. Please log in instead.';
+        message = tr('This email is already in use. Please log in instead.');
       } else if (e.code == 'invalid-email') {
-        message = 'The email address is invalid.';
+        message = tr('The email address is invalid.');
       } else if (e.code == 'weak-password') {
-        message = 'The password is too weak.';
+        message = tr('The password is too weak.');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1111,8 +1139,8 @@ class _SignupScreenState extends State<SignupScreen> {
       Navigator.of(context).pop();
       print('Signup: unexpected error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An unexpected error occurred. Please try again.'),
+        SnackBar(
+          content: Text(tr('An unexpected error occurred. Please try again.')),
           backgroundColor: Colors.red,
         ),
       );
@@ -1126,7 +1154,7 @@ class _SignupScreenState extends State<SignupScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Form(
               key: _formKey,
               child: Column(
@@ -1137,213 +1165,213 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 60,
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
-                      onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                      onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
                       child: Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-                        child: Icon(Icons.arrow_back, color: Colors.black),
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
                   // Logo
                   Center(
-                    child: Container(
+                    child: SizedBox(
                       width: 150,
                       height: 150,
                       child: Image.asset('assets/Ls.png', fit: BoxFit.contain),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Text('Sign Up', style: TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
-                  SizedBox(height: 10),
-                  Text('create an account to continue', style: TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 20),
+                  Text(tr('Sign Up'), style: const TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 10),
+                  Text(tr('create an account to continue'), style: const TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
+                  const SizedBox(height: 30),
                   // First Name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('First Name', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      Text(tr('First Name'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _firstNameController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your first name';
+                              return tr('Please enter your first name');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your first name',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Enter your first name'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Last Name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Last Name', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      Text(tr('Last Name'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _lastNameController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your last name';
+                              return tr('Please enter your last name');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your last name',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Enter your last name'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Mobile Number
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Mobile Number', style: TextStyle(color: Color(0xFF9A9595), fontSize: 15, fontFamily: 'Poppins')),
-                      SizedBox(height: 8),
+                      Text(tr('Mobile Number'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 15, fontFamily: 'Poppins')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _mobileController,
                           keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your mobile number';
+                              return tr('Please enter your mobile number');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your mobile number',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Enter your mobile number'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Email
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Email', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      Text(tr('Email'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
+                              return tr('Please enter your email');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your email',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Enter your email'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Password
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      Text(tr('Password'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _passwordController,
                           obscureText: !_showPassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
+                              return tr('Please enter your password');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Enter your password',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Enter your password'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
                               onPressed: () => setState(() => _showPassword = !_showPassword),
                             ),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Confirm Password
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Confirm Password', style: TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(height: 8),
+                      Text(tr('Confirm Password'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
                         child: TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: !_showConfirmPassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
+                              return tr('Please confirm your password');
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Confirm your password',
-                            hintStyle: TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintText: tr('Confirm your password'),
+                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Color(0xFF9A9595)),
+                              icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
                               onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
                             ),
                           ),
-                          style: TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
+                          style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   // Sign Up Button
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFF2C7C48),
+                      color: const Color(0xFF2C7C48),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
@@ -1353,26 +1381,26 @@ class _SignupScreenState extends State<SignupScreen> {
                         onTap: _signup,
                         child: Center(
                           child: Text(
-                            'Sign Up',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                            tr('Sign Up'),
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   // Divider
                   Row(
                     children: [
                       Expanded(child: Divider(color: Color(0xFFB0ABAB))),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Text('or sign up with', style: TextStyle(color: Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(tr('or sign up with'), style: TextStyle(color: const Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
                       ),
                       Expanded(child: Divider(color: Color(0xFFB0ABAB))),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Social Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1400,7 +1428,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Google Sign-In failed or cancelled')),
+                              SnackBar(content: Text(tr('Google Sign-In failed or cancelled'))),
                             );
                           }
                         },
@@ -1412,20 +1440,20 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Already have an account?', style: TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
-                      SizedBox(width: 5),
+                      Text(tr('Already have an account?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                      const SizedBox(width: 5),
                       GestureDetector(
-                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen())),
-                        child: Text('Log in', style: TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
+                        child: Text(tr('Log in'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -1438,6 +1466,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
 // Fingerprint Screen
 class FingerprintScreen extends StatefulWidget {
+  const FingerprintScreen({super.key});
+
   @override
   _FingerprintScreenState createState() => _FingerprintScreenState();
 }
@@ -1457,8 +1487,8 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
     // 1. WEB CHECK: Stop immediately if running on a browser
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Fingerprint login is only available on Mobile Apps.'),
+        SnackBar(
+          content: Text(tr('Fingerprint login is only available on Mobile Apps.')),
           backgroundColor: Colors.orange,
         ),
       );
@@ -1472,14 +1502,14 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
 
       if (!canAuthenticate) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fingerprint not supported on this device')),
+          SnackBar(content: Text(tr('Fingerprint not supported on this device'))),
         );
         return;
       }
 
       // 2. Scan Fingerprint
       authenticated = await auth.authenticate(
-        localizedReason: 'Scan your fingerprint to login',
+        localizedReason: tr('Scan your fingerprint to login'),
         options: const AuthenticationOptions( // This class exists in v2.2.0+
           stickyAuth: true,
           biometricOnly: true,
@@ -1488,7 +1518,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
     } on PlatformException catch (e) {
       print("Fingerprint Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.message}')),
+        SnackBar(content: Text('${tr('Error')}: ${e.message}')),
       );
       return;
     }
@@ -1509,10 +1539,10 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
       } else {
         // Fingerprint OK, but App Session Expired
         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(
-             content: Text('Session expired. Please login with Password first.'),
-             backgroundColor: Colors.orange,
-           ),
+          SnackBar(
+            content: Text(tr('Session expired. Please login with Password first.')),
+            backgroundColor: Colors.orange,
+          ),
         );
         // Optional: Go back to login
         Navigator.pop(context);
@@ -1540,14 +1570,14 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle, 
-                      color: Colors.white.withOpacity(0.2)
+                      color: Colors.white.withValues(alpha: 0.2)
                     ),
                     child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('Security Fingerprint', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Security Fingerprint'), style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 60),
               
               // Fingerprint Icon (Tap to Scan)
@@ -1564,25 +1594,25 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
                 ),
               ),
               const SizedBox(height: 60),
-              const Text('Use fingerprint to access', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Use fingerprint to access'), style: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
-              const Text('Tap the icon above to scan.', style: TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
+              Text(tr('Tap the icon above to scan.'), style: const TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
               
               const Spacer(),
               
               // Switch to Passcode Button
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PasscodeScreen()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const PasscodeScreen()));
                 },
                 child: Container(
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Use Passcode',
-                      style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+                      tr('Use Passcode'),
+                      style: const TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1598,6 +1628,8 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
 
 // Passcode Screen
 class PasscodeScreen extends StatefulWidget {
+  const PasscodeScreen({super.key});
+
   @override
   _PasscodeScreenState createState() => _PasscodeScreenState();
 }
@@ -1631,7 +1663,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
          // 2. Session Valid -> Home
         String userName = user.displayName ?? 'Farmer';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Welcome back!'), backgroundColor: Colors.green)
+          SnackBar(content: Text(tr('Welcome back!')), backgroundColor: Colors.green)
         );
         Navigator.pushAndRemoveUntil(
           context,
@@ -1641,14 +1673,14 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
       } else {
         // 3. Session Invalid -> Error
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Session expired. Login with Email first.'), backgroundColor: Colors.orange)
+          SnackBar(content: Text(tr('Session expired. Login with Email first.')), backgroundColor: Colors.orange)
         );
         setState(() => _enteredPasscode = '');
       }
     } else {
       // Wrong PIN
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Incorrect passcode. Try 1234.'), backgroundColor: Colors.red)
+        SnackBar(content: Text(tr('Incorrect passcode. Try 1234.')), backgroundColor: Colors.red)
       );
       setState(() => _enteredPasscode = '');
     }
@@ -1672,15 +1704,15 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   child: Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.2)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.2)),
                     child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('Passcode', style: TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Passcode'), style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 80),
-              const Text('Enter PassCode', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Enter PassCode'), style: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 30),
               
               // Dots
@@ -1692,7 +1724,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   height: 20,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: i < _enteredPasscode.length ? Colors.white : Colors.white.withOpacity(0.3),
+                    color: i < _enteredPasscode.length ? Colors.white : Colors.white.withValues(alpha: 0.3),
                   ),
                 )),
               ),
@@ -1768,10 +1800,10 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   height: 45,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Submit',
-                      style: TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+                      tr('Submit'),
+                      style: const TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1785,13 +1817,13 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                      // Go back to normal login
                      Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => LoginScreen()),
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
                       (route) => false
                     );
                   },
-                  child: const Text(
-                    "Forgot Passcode? Login with Email",
-                    style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
+                    child: Text(
+                    tr('Forgot Passcode? Login with Email'),
+                    style: const TextStyle(color: Colors.white, decoration: TextDecoration.underline),
                   ),
                 ),
               ),
@@ -1812,7 +1844,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
         child: Center(
           child: Text(
             digit,
-            style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+            style: const TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
           ),
         ),
       ),

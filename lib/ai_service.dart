@@ -8,7 +8,7 @@ class AiService {
   // We will try these models in order. The app will use the first one that works.
   static const List<String> _modelCandidates = [
     'gemini-1.5-flash',
-    'gemini-2.5-flash', // Found in logs
+    'gemini-2.5-flash', 
     'gemini-pro',
     'gemini-1.5-pro',
     'gemini-1.0-pro',
@@ -114,14 +114,16 @@ class AiService {
                 {
                   "text": """You are a crop disease and pest detection expert. Analyze this crop/plant image and provide assessment in JSON format ONLY.
 
+IMPORTANT: If the image is NOT a plant/crop (e.g., it's an animal, person, object, building, landscape without crops, etc.), return status as "Not a Plant" with confidence 0.0.
+
 Respond with ONLY a JSON object (no markdown, no extra text):
 {
-  "cropName": "crop name here",
-  "status": "Healthy" or "Pest Alert" or "Disease Detected",
+  "cropName": "crop name here or 'Not a Plant'",
+  "status": "Healthy" or "Pest Alert" or "Disease Detected" or "Not a Plant",
   "confidence": 0.92,
   "pestName": "pest/disease name or null",
   "description": "brief description of findings",
-  "treatment": "recommended treatment",
+  "treatment": "recommended treatment or empty string if not applicable",
   "severity": "Low" or "Medium" or "High"
 }"""
                 },
