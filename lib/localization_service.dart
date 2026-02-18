@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalizationService {
   static const String EN = 'EN';
   static const String HI = 'HI';
   static const String NE = 'NE';
+  static const String _languageKey = 'app_language';
 
   // Global language state (singleton pattern)
   static String _currentLanguage = EN;
@@ -12,6 +14,31 @@ class LocalizationService {
 
   static void setLanguage(String languageCode) {
     _currentLanguage = languageCode;
+    _saveLanguagePreference(languageCode);
+  }
+
+  // Load language from SharedPreferences
+  static Future<String> loadLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLanguage = prefs.getString(_languageKey) ?? EN;
+      _currentLanguage = savedLanguage;
+      return savedLanguage;
+    } catch (e) {
+      print('Error loading language: $e');
+      _currentLanguage = EN;
+      return EN;
+    }
+  }
+
+  // Save language to SharedPreferences
+  static Future<void> _saveLanguagePreference(String languageCode) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_languageKey, languageCode);
+    } catch (e) {
+      print('Error saving language: $e');
+    }
   }
 
   static final Map<String, Map<String, String>> _translations = {
@@ -615,6 +642,22 @@ class LocalizationService {
       'account': 'Account',
       'logout': 'Logout',
       'language': 'Language',
+      'Alert': 'Alert',
+      'Detected': 'Detected',
+      'Treatment': 'Treatment',
+      'Alert': 'Alert',
+      'hours': 'hours',
+      'Check field conditions before irrigation': 'Check field conditions before irrigation',
+      'Alert': 'Alert',
+      
+      // Profile Picture Related
+      'Select Photo Source': 'Select Photo Source',
+      'Take Photo': 'Take Photo',
+      'Choose from Gallery': 'Choose from Gallery',
+      'Remove Photo': 'Remove Photo',
+      'Profile photo updated successfully!': 'Profile photo updated successfully!',
+      'Profile photo removed': 'Profile photo removed',
+      'Change Photo': 'Change Photo',
     },
     HI: {
       // Welcome & Onboarding
@@ -1211,6 +1254,20 @@ class LocalizationService {
       'account': 'खाता',
       'logout': 'लॉग आउट',
       'language': 'भाषा',
+      'Alert': 'अलर्ट',
+      'Detected': 'पाया गया',
+      'Treatment': 'उपचार',
+      'hours': 'घंटे',
+      'Check field conditions before irrigation': 'सिंचाई से पहले खेत की स्थिति जांचें',
+      
+      // Profile Picture Related
+      'Select Photo Source': 'फ़ोटो स्रोत चुनें',
+      'Take Photo': 'फ़ोटो लें',
+      'Choose from Gallery': 'गैलरी से चुनें',
+      'Remove Photo': 'फ़ोटो हटाएं',
+      'Profile photo updated successfully!': 'प्रोफ़ाइल फ़ोटो सफलतापूर्वक अपडेट हो गया!',
+      'Profile photo removed': 'प्रोफ़ाइल फ़ोटो हटा दिया गया',
+      'Change Photo': 'फ़ोटो बदलें',
     },
     NE: {
       // Welcome & Onboarding
@@ -1238,7 +1295,7 @@ class LocalizationService {
       'Email': 'ईमेल',
       'Password': 'पासवर्ड',
       'Sign In': 'साइन इन',
-      'Don\'t have an account? Sign Up': 'खाता नछ? साइन अप गर्नुहोस्',
+      'Don\'t have an account? Sign Up': 'खाता छेेेन? साइन अप गर्नुहोस्',
       'Forgot Password?': 'पासवर्ड बिर्सनुभयो?',
       'Remember Me': 'मलाई याद राख',
       'Sign Up': 'साइन अप',
@@ -1352,8 +1409,7 @@ class LocalizationService {
       '5 hours ago': '5 घण्टा अगाडी',
       'Home': 'घर',
       'Ask AI': 'एआईलाई सोध्नुहोस्',
-      'Scan': 'स्क्यान',
-      'Add\nLocation': 'स्थान\n थप्नुहोस्',
+      
       'EN': 'EN',
       
       // Water Optimization (continuing with Nepali - abbreviated for brevity, full translations would follow same pattern)
@@ -1415,6 +1471,28 @@ class LocalizationService {
       'Notifications': 'सूचनाहरू',
       'Mark all read': 'सबै पढिएको चिन्ह लगाउनुहोस्',
       'Filter': 'फिल्टर गर्नुहोस्',
+      'home': 'घर',
+      'crops': 'फसलें',
+      'water': 'पानी',
+      'settings': 'सेटिङहरू',
+      'notifications': 'सूचनाहरू',
+      'account': 'खाता',
+      'logout': 'लगआउट',
+      'language': 'भाषा',
+      'Alert': 'सचेतावनी',
+      'Detected': 'पत्ता चलेको',
+      'Treatment': 'उपचार',
+      'hours': 'घण्टा',
+      'Check field conditions before irrigation': 'सिंचाई गर्नु अगाडी खेतको अवस्था जांच गर्नुहोस्',
+      
+      // Profile Picture Related
+      'Select Photo Source': 'फोटो स्रोत चयन गर्नुहोस्',
+      'Take Photo': 'फोटो लिनुहोस्',
+      'Choose from Gallery': 'ग्यालेरीबाट छनोट गर्नुहोस्',
+      'Remove Photo': 'फोटो हटाउनुहोस्',
+      'Profile photo updated successfully!': 'प्रोफाइल फोटो सफलतापूर्वक अपडेट भयो!',
+      'Profile photo removed': 'प्रोफाइल फोटो हटाइयो',
+      'Change Photo': 'फोटो परिवर्तन गर्नुहोस्',
     }
   };
 

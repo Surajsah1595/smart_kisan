@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '455474853473',
     projectId: 'smartkisan-b2edf',
     authDomain: 'smartkisan-b2edf.firebaseapp.com',
-    storageBucket: 'smartkisan-b2edf.firebasestorage.app',
+    storageBucket: 'smartkisan-b2edf.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -60,7 +60,7 @@ class DefaultFirebaseOptions {
     appId: '1:455474853473:android:8923532f4b219ab0b9dc20',
     messagingSenderId: '455474853473',
     projectId: 'smartkisan-b2edf',
-    storageBucket: 'smartkisan-b2edf.firebasestorage.app',
+    storageBucket: 'smartkisan-b2edf.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
     appId: '1:455474853473:ios:d4c9cd2ba1a8e9d7b9dc20',
     messagingSenderId: '455474853473',
     projectId: 'smartkisan-b2edf',
-    storageBucket: 'smartkisan-b2edf.firebasestorage.app',
+    storageBucket: 'smartkisan-b2edf.appspot.com',
     iosBundleId: 'com.example.smartKisan',
   );
 }

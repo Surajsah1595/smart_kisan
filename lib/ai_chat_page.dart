@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart'; 
 import 'ai_service.dart';
+import 'localization_service.dart';
 
 class AiChatPage extends StatefulWidget {
   const AiChatPage({super.key});
@@ -17,6 +18,8 @@ class _AiChatPageState extends State<AiChatPage> {
   // Stores chat history
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
+
+  String tr(String key) => LocalizationService.translate(key);
 
   @override
   void dispose() {
@@ -43,7 +46,7 @@ class _AiChatPageState extends State<AiChatPage> {
     setState(() {
       _messages.add({
         'role': 'ai', 
-        'text': response ?? "I am having trouble connecting. Try again."
+        'text': response ?? tr('I am having trouble connecting. Try again.')
       });
       _isLoading = false;
     });
@@ -114,11 +117,11 @@ class _AiChatPageState extends State<AiChatPage> {
             ),
           ),
           const SizedBox(width: 15),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
                Text(
-                'Smart Kisan AI',
+                tr('Smart Kisan AI'),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -127,7 +130,7 @@ class _AiChatPageState extends State<AiChatPage> {
                 ),
               ),
                Text(
-                'Your Expert Assistant',
+                tr('Your Expert Assistant'),
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
@@ -151,10 +154,10 @@ class _AiChatPageState extends State<AiChatPage> {
 
   Widget _buildQuickQuestions() {
     final quickQuestions = [
-      {'q': 'Best fertilizer for rice?', 'icon': Icons.agriculture, 'color': 0xFFDCFCE7, 'text': 0xFF008236},
-      {'q': 'Identify this pest', 'icon': Icons.bug_report, 'color': 0xFFFFE2E2, 'text': 0xFFC10007},
-      {'q': 'Irrigation for wheat?', 'icon': Icons.water_drop, 'color': 0xFFDBEAFE, 'text': 0xFF1447E6},
-      {'q': 'Tomorrow\'s weather?', 'icon': Icons.cloud, 'color': 0xFFFFEDD4, 'text': 0xFFCA3500},
+      {'q': tr('Best fertilizer for rice?'), 'icon': Icons.agriculture, 'color': 0xFFDCFCE7, 'text': 0xFF008236},
+      {'q': tr('Identify this pest'), 'icon': Icons.bug_report, 'color': 0xFFFFE2E2, 'text': 0xFFC10007},
+      {'q': tr('Irrigation for wheat?'), 'icon': Icons.water_drop, 'color': 0xFFDBEAFE, 'text': 0xFF1447E6},
+      {'q': tr('Tomorrow\'s weather?'), 'icon': Icons.cloud, 'color': 0xFFFFEDD4, 'text': 0xFFCA3500},
     ];
 
     return SingleChildScrollView(
@@ -162,7 +165,7 @@ class _AiChatPageState extends State<AiChatPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Quick Questions:", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+          Text(tr("Quick Questions:"), style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
@@ -203,7 +206,7 @@ class _AiChatPageState extends State<AiChatPage> {
               children: [
                 Icon(Icons.chat_bubble_outline, size: 60, color: Colors.grey[300]),
                 const SizedBox(height: 10),
-                Text("Start chatting with Smart Kisan", style: TextStyle(color: Colors.grey[400])),
+                Text(tr("Start chatting with Smart Kisan"), style: TextStyle(color: Colors.grey[400])),
               ],
             ),
           )
@@ -258,7 +261,7 @@ class _AiChatPageState extends State<AiChatPage> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: 'Ask about farming...',
+                hintText: tr('Ask about farming...'),
                 filled: true,
                 fillColor: const Color(0xFFF3F4F6),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),

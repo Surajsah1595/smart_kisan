@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'dart:convert';
 import 'pest_disease_service.dart';
 import 'ai_service.dart';
 import 'notification_service.dart';
@@ -1198,6 +1199,87 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }).toList();
   }
 
+  Widget _buildAIResponseWidget(String aiResponse) {
+    // Try parsing AI response as JSON and render key fields; fallback to Markdown/Text
+    try {
+      String clean = aiResponse.replaceAll('```json', '').replaceAll('```', '').trim();
+      // Try direct parse
+      Map<String, dynamic>? data;
+      try {
+        final parsed = jsonDecode(clean);
+        if (parsed is Map<String, dynamic>) data = parsed;
+      } catch (_) {
+        // Try extracting first JSON object via regex
+        final match = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(clean);
+        if (match != null) {
+          try {
+            final parsed = jsonDecode(match.group(0)!);
+            if (parsed is Map<String, dynamic>) data = parsed;
+          } catch (_) {
+            data = null;
+          }
+        }
+      }
+
+      if (data != null) {
+        final pestName = data['pestName'] ?? data['pest'] ?? data['disease'] ?? null;
+        final description = data['description'] ?? data['details'] ?? '';
+        final treatment = data['treatment'] ?? data['treatments'] ?? '';
+        final severity = data['severity'] ?? '';
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (pestName != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text('${LocalizationService.translate('Pest:')} $pestName', style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              if (severity.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text('${LocalizationService.translate('Severity:')} $severity'),
+                ),
+              if ((description as String).isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(description),
+                ),
+              if ((treatment as String).isNotEmpty) ...[
+                Text(LocalizationService.translate('💊 Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _buildBulletPoints(treatment),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      // fallthrough to show raw
+    }
+
+    // Fallback: show raw response as selectable Markdown or text
+    if (aiResponse.trim().length > 0) {
+      return SizedBox(
+        width: double.maxFinite,
+        child: MarkdownBody(
+          data: aiResponse,
+          selectable: true,
+          styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 14, height: 1.6)),
+        ),
+      );
+    }
+
+    return const Text('No additional details');
+  }
+
   void _showScanDetails(BuildContext context, PestScanData scan) {
     showDialog(
       context: context,
@@ -1213,7 +1295,8 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             const SizedBox(height: 8),
             Text('${LocalizationService.translate('Confidence:')} ${(scan.confidence * 100).toStringAsFixed(0)}%'),
             const SizedBox(height: 16),
-            Text('${LocalizationService.translate('AI Response:')} ${scan.aiResponse}'),
+            // Render AI response in a readable format instead of raw JSON
+            _buildAIResponseWidget(scan.aiResponse),
           ],
         ),
         actions: [

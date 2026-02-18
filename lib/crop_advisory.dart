@@ -863,7 +863,28 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               children: [
                 Row(children: [const Icon(Icons.auto_awesome, color: Colors.green), const SizedBox(width: 8), Text(LocalizationService.translate('AI Recommendation'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
-                Expanded(child: SingleChildScrollView(child: MarkdownBody(data: response, styleSheet: MarkdownStyleSheet(p: const TextStyle(fontSize: 14, color: Colors.black87), strong: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black), em: const TextStyle(fontStyle: FontStyle.italic))))),
+                // Show AI-written summary but remove the machine-readable JSON block if present
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Builder(builder: (ctx) {
+                      try {
+                        final jsonMarkerRegex = RegExp(r'SUGGESTED_CROPS_JSON:\s*\[.*\]', dotAll: true);
+                        final cleaned = response.replaceAll(jsonMarkerRegex, '').trim();
+                        final displayText = cleaned.isNotEmpty ? cleaned : 'AI recommendations are available.';
+                        return MarkdownBody(
+                          data: displayText,
+                          styleSheet: MarkdownStyleSheet(
+                            p: const TextStyle(fontSize: 14, color: Colors.black87),
+                            strong: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                            em: const TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        );
+                      } catch (e) {
+                        return Text('Could not render AI summary');
+                      }
+                    }),
+                  ),
+                ),
                 const SizedBox(height: 12),
                 if (suggested != null) ...[
                   const Divider(),

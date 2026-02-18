@@ -172,7 +172,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 languageCode = LocalizationService.EN;
                               }
                               
-                              // Set language globally - this triggers app rebuild via main.dart listener
+                              // Set language globally and save preference
                               LocalizationService.setLanguage(languageCode);
                               
                               setState(() => _currentScreen = 2);

@@ -43,3 +43,21 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+#large files 
+/build/
+/android/app/build/
+/android/build/
+/android/.gradle/
+**/intermediates/
+**/outputs/
+**/mergeDebugAssets/**
+**/mergeDebugResources/**
+**/flutter_assets/
+**/kernel_blob.bin
+/ios/Pods/
+/ios/.symlinks/
+*.apk
+*.ipa
+*.so
+*.bin

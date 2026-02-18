@@ -72,6 +72,21 @@ service cloud.firestore {
         allow list: if request.auth.uid == userId;
       }
     }
+
+    // User Preferences - global collection
+    match /preferences/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // User Privacy Settings
+    match /privacy/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // User Security Settings
+    match /security/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
     
     // Deny everything else
     match /{document=**} {
@@ -79,3 +94,4 @@ service cloud.firestore {
     }
   }
 }
+

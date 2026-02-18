@@ -5,18 +5,16 @@ allprojects {
     }
 }
 
-val newBuildDir: Directory =
-    rootProject.layout.buildDirectory
-        .dir("../../build")
-        .get()
-rootProject.layout.buildDirectory.value(newBuildDir)
+subprojects {
+    // Avoid forcing early evaluation of the Android app project which can
+    // cause task resolution/order issues when the Gradle graph is built by
+    // the Flutter tool. Evaluate subprojects lazily instead.
 
-subprojects {
-    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    // Disable unit tests for any subproject that provides Test tasks to
+    // mitigate cross-drive compilation problems observed on Windows.
+    tasks.withType<Test>().configureEach {
+        enabled = false
+    }
 }
 
 tasks.register<Delete>("clean") {

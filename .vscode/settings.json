@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/HERALD/FYP/smart_kisan/linux"
+    "cmake.sourceDirectory": "D:/HERALD/FYP/smart_kisan/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

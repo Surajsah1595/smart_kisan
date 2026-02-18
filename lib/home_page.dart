@@ -7,6 +7,9 @@ import 'notification.dart';
 import 'settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 import 'weather_service.dart';
 import 'ai_chat_page.dart';
 import 'localization_service.dart';
@@ -433,7 +436,7 @@ class _HomePageState extends State<HomePage> {
   
   Widget _buildAppBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         color: _primaryGreen,
         boxShadow: [
@@ -447,55 +450,108 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Row(
         children: [
-          // Profile Section
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: _white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
+          // Profile Image - Left
+          GestureDetector(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+              if (mounted) setState(() {});
+            },
+            child: FutureBuilder<String?>(
+              future: _getProfileImageUrl(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22.5),
+                      color: Colors.white24,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(Icons.person, color: Colors.white, size: 24),
+                  );
+                }
+                
+                if (snapshot.hasData && snapshot.data != null) {
+                  return Container(
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22.5),
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.file(
+                        File(snapshot.data!),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.white24,
+                            child: const Icon(Icons.person, color: Colors.white, size: 24),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                }
+                
+                return Container(
+                  width: 45,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22.5),
+                    color: Colors.white24,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: const Icon(Icons.person, color: Colors.white, size: 24),
+                );
+              },
             ),
-            child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
-          
+
           const SizedBox(width: 12),
           
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Text(
-              tr('smart_kisan'),
-              style: TextStyle(
-                color: _white,
-                fontSize: 16,
-                fontFamily: 'Arimo',
-                fontWeight: FontWeight.w700,
-              ),
+          // App Title and Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr('smart_kisan'),
+                  style: TextStyle(
+                    color: _white,
+                    fontSize: 16,
+                    fontFamily: 'Arimo',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  '${tr('Welcome ')}, $displayName',
+                  style: TextStyle(
+                    color: _lightText,
+                    fontSize: 11,
+                    fontFamily: 'Arimo',
+                  ),
+                ),
+                Text(
+                  _homeWeatherData != null ? _homeWeatherData!['name'] : tr('Locating...'),
+                  style: TextStyle(
+                    color: _lightText,
+                    fontSize: 10,
+                    fontFamily: 'Arimo',
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '${tr('Welcome ')}, $displayName',
-              style: TextStyle(
-                color: _lightText,
-                fontSize: 12,
-                fontFamily: 'Arimo',
-              ),
-            ),
-            Text(
-              _homeWeatherData != null ? _homeWeatherData!['name'] : tr('Locating...'),
-              style: TextStyle(
-                color: _lightText,
-                fontSize: 11,
-                fontFamily: 'Arimo',
-              ),
-            ),
-            ],
           ),
+
+          const SizedBox(width: 8),
           
-          const Spacer(),
-          
-          //notification part
-          
+          // Notification Icon
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -511,7 +567,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Stack(
                 children: [
-                  const Center(child: Icon(Icons.notifications, color: Colors.white, size: 30)),
+                  const Center(child: Icon(Icons.notifications, color: Colors.white, size: 24)),
                   // StreamBuilder to get unread notification count
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -535,19 +591,19 @@ class _HomePageState extends State<HomePage> {
                         right: 0,
                         top: 0,
                         child: Container(
-                          width: 26,
-                          height: 26,
+                          width: 20,
+                          height: 20,
                           decoration: BoxDecoration(
                             color: _errorRed,
-                            borderRadius: BorderRadius.circular(13),
-                            border: Border.all(color: Colors.white, width: 2),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white, width: 1.5),
                           ),
                           child: Center(
                             child: Text(
                               unreadCount > 99 ? '99+' : unreadCount.toString(),
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: 8,
                                 fontFamily: 'Arimo',
                                 fontWeight: FontWeight.bold,
                               ),
@@ -562,15 +618,16 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           
           // Settings Icon
           GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
+              if (mounted) setState(() {});
             },
             child: Container(
               width: 40,
@@ -578,12 +635,25 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.settings, color: Colors.white, size: 30),
+              child: const Icon(Icons.settings, color: Colors.white, size: 24),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<String?> _getProfileImageUrl() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final path = prefs.getString('profile_image_path');
+      if (path != null && File(path).existsSync()) {
+        return path;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   Widget _buildWeatherCard() {

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class AiService {
-  static const String _apiKey = '';
+  static const String _apiKey = 'AIzaSyAA0_ezGE5JHk3uT36M-THP5_JYhVDRes0';
 
   // We will try these models in order. The app will use the first one that works.
   static const List<String> _modelCandidates = [
