@@ -25,6 +25,7 @@ class ActiveAlertItem extends StatelessWidget {
   final Color iconBgColor;
   final String detectedDate;
   final Color borderColor;
+  final List<dynamic> productRecommendations;
   final VoidCallback? onTap;
 
   const ActiveAlertItem({
@@ -40,6 +41,7 @@ class ActiveAlertItem extends StatelessWidget {
     required this.iconBgColor,
     required this.detectedDate,
     required this.borderColor,
+    required this.productRecommendations,
     this.onTap,
   });
 
@@ -175,6 +177,47 @@ class ActiveAlertItem extends StatelessWidget {
                   ],
                 ),
               ),
+              // Product Recommendations Preview
+              if (productRecommendations.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF3E0),
+                    border: Border.all(color: Colors.orange.shade200),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.shopping_bag, size: 16, color: Color(0xFFFB2C36)),
+                          SizedBox(width: 8),
+                          Text(
+                            'Recommended Products',
+                            style: TextStyle(
+                              color: Color(0xFFFB2C36),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _getProductsPreview(),
+                        style: const TextStyle(
+                          color: Color(0xFF354152),
+                          fontSize: 13,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.only(left: 48),
@@ -193,6 +236,25 @@ class ActiveAlertItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getProductsPreview() {
+    if (productRecommendations.isEmpty) return '';
+    
+    List<String> productNames = [];
+    for (var product in productRecommendations.take(2)) {
+      if (product is Map<String, dynamic>) {
+        productNames.add(product['productName'] ?? 'Product');
+      } else if (product.runtimeType.toString().contains('ProductRecommendation')) {
+        productNames.add(product.productName ?? 'Product');
+      }
+    }
+    
+    String preview = productNames.join(', ');
+    if (productRecommendations.length > 2) {
+      preview += ' +${productRecommendations.length - 2} more';
+    }
+    return preview;
   }
 }
 
@@ -558,6 +620,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                     iconBgColor: severityBgColor,
                     detectedDate: _formatDate(alert.detectedDate),
                     borderColor: const Color(0xFFFB2C36),
+                    productRecommendations: alert.productRecommendations,
                     onTap: () => _showAlertDetails(context, alert),
                   ),
                 );
@@ -1018,27 +1081,49 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       descriptionColor = const Color(0xFFC10007); // Red for errors
     }
 
+    // Get product recommendations if pest/disease is detected
+    final pestName = result['pestName'];
+    final recommendations = (pestName != null && pestName.toString().isNotEmpty)
+        ? _pestDiseaseService.getProductRecommendations(pestName.toString())
+        : <dynamic>[];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(LocalizationService.translate('Scan Results')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(LocalizationService.translate('Crop:') + ' ${result['cropName'] ?? LocalizationService.translate('Unknown')}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text(LocalizationService.translate('Status:') + ' ${result['status'] ?? LocalizationService.translate('Unknown')}'),
-            const SizedBox(height: 8),
-            Text(LocalizationService.translate('Confidence:') + ' ${(((result['confidence'] as num?)?.toDouble() ?? 0.0) * 100).toStringAsFixed(0)}%'),
-            const SizedBox(height: 16),
-            Text(
-              result['description'] ?? 'Scan completed',
-              style: TextStyle(
-                color: descriptionColor,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(LocalizationService.translate('Crop:') + ' ${result['cropName'] ?? LocalizationService.translate('Unknown')}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(LocalizationService.translate('Status:') + ' ${result['status'] ?? LocalizationService.translate('Unknown')}'),
+              const SizedBox(height: 8),
+              Text(LocalizationService.translate('Confidence:') + ' ${(((result['confidence'] as num?)?.toDouble() ?? 0.0) * 100).toStringAsFixed(0)}%'),
+              const SizedBox(height: 16),
+              Text(
+                result['description'] ?? 'Scan completed',
+                style: TextStyle(
+                  color: descriptionColor,
+                ),
               ),
-            ),
-          ],
+              // Product Recommendations Section
+              if (recommendations.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  LocalizationService.translate('🛒 Recommended Products:'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFFFB2C36),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...recommendations.take(3).map((product) => _buildProductCard(product)),
+              ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -1110,9 +1195,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.only(left: 16),
-                child: Text(
-                  alert.description,
-                  style: const TextStyle(fontSize: 13, height: 1.5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildBulletPoints(alert.description),
                 ),
               ),
               const SizedBox(height: 16),
@@ -1127,6 +1212,21 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                   children: _buildBulletPoints(alert.treatment),
                 ),
               ),
+              
+              // Product Recommendations Section
+              if (alert.productRecommendations.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  LocalizationService.translate('🛒 Recommended Products:'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFFFB2C36),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...alert.productRecommendations.take(3).map((product) => _buildProductCard(product)),
+              ],
             ],
           ),
         ),
@@ -1166,27 +1266,28 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
   
-  /// Convert treatment text to bullet points
+  /// Convert a block of text into a list of bullet points
   List<Widget> _buildBulletPoints(String text) {
-    // Split by numbers (1., 2., 3.) or by common separators
+    // Split by common list separators or new lines, keeping the content
     List<String> points = text
         .split(RegExp(r'\n|(?=\d+\.)|(?=•)|(?=\-)|(?=\*)|\.(?=\s*[A-Z])'))
         .where((p) => p.trim().isNotEmpty)
         .map((p) => p.trim().replaceAll(RegExp(r'^[\d\.\-•\*\s]+'), '').trim())
         .where((p) => p.isNotEmpty)
         .toList();
-    
+
     if (points.isEmpty) {
       points = [text];
     }
-    
+
+    // Render each point with a bullet symbol
     return points.map((point) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Text(LocalizationService.translate('Bullet'), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          children: [
+            const Text('• ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             Expanded(
               child: Text(
                 point,
@@ -1197,6 +1298,127 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         ),
       );
     }).toList();
+  }
+
+  /// Build product recommendation card
+  Widget _buildProductCard(dynamic product) {
+    // Handle both ProductRecommendation objects and maps
+    String productName = '';
+    String category = '';
+    String description = '';
+    double rating = 0;
+    int reviews = 0;
+    String manufacturer = '';
+    String dosage = '';
+
+    if (product is Map<String, dynamic>) {
+      productName = product['productName'] ?? '';
+      category = product['category'] ?? '';
+      description = product['description'] ?? '';
+      rating = (product['rating'] as num?)?.toDouble() ?? 0;
+      reviews = product['reviews'] ?? 0;
+      manufacturer = product['manufacturer'] ?? '';
+      dosage = product['dosage'] ?? '';
+    } else {
+      // Handle ProductRecommendation object
+      productName = product.productName;
+      category = product.category;
+      description = product.description;
+      rating = product.rating;
+      reviews = product.reviews;
+      manufacturer = product.manufacturer;
+      dosage = product.dosage;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // name + category row
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        productName,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF101727),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        category,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF495565),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // short description
+            Text(
+              description,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF495565),
+                height: 1.4,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            // rating only
+            if (rating > 0 || reviews > 0)
+              Row(
+                children: [
+                  Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$rating ($reviews)',
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF495565)),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 4),
+            // manufacturer info
+            if (manufacturer.isNotEmpty)
+              Text(
+                'Manufacturer: $manufacturer',
+                style: const TextStyle(fontSize: 10, color: Color(0xFF495565)),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            const SizedBox(height: 4),
+            // more explicit dosage info
+            if (dosage.isNotEmpty)
+              Text(
+                'Dosage (quantity per area): $dosage',
+                style: const TextStyle(fontSize: 10, color: Color(0xFF495565)),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildAIResponseWidget(String aiResponse) {
@@ -1241,11 +1463,17 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text('${LocalizationService.translate('Severity:')} $severity'),
                 ),
-              if ((description as String).isNotEmpty)
+              if ((description as String).isNotEmpty) ...[
+                Text(LocalizationService.translate('📋 Description:'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(description),
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _buildBulletPoints(description),
+                  ),
                 ),
+              ],
               if ((treatment as String).isNotEmpty) ...[
                 Text(LocalizationService.translate('💊 Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
@@ -1281,23 +1509,64 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
   }
 
   void _showScanDetails(BuildContext context, PestScanData scan) {
+    // Extract pest name from AI response
+    String? pestName;
+    try {
+      final data = jsonDecode(scan.aiResponse);
+      if (data is Map<String, dynamic>) {
+        pestName = data['pestName'] ?? data['pest'] ?? data['disease'];
+      }
+    } catch (_) {
+      // Try regex extraction
+      final match = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(scan.aiResponse);
+      if (match != null) {
+        try {
+          final data = jsonDecode(match.group(0)!);
+          if (data is Map<String, dynamic>) {
+            pestName = data['pestName'] ?? data['pest'] ?? data['disease'];
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Get product recommendations if pest is detected
+    final recommendations = (pestName != null && pestName.isNotEmpty)
+        ? _pestDiseaseService.getProductRecommendations(pestName)
+        : <dynamic>[];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('${scan.cropName} ${LocalizationService.translate('Scan Details')}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${LocalizationService.translate('Date:')} ${_formatDate(scan.scanDate)}'),
-            const SizedBox(height: 8),
-            Text('${LocalizationService.translate('Status:')} ${scan.status}'),
-            const SizedBox(height: 8),
-            Text('${LocalizationService.translate('Confidence:')} ${(scan.confidence * 100).toStringAsFixed(0)}%'),
-            const SizedBox(height: 16),
-            // Render AI response in a readable format instead of raw JSON
-            _buildAIResponseWidget(scan.aiResponse),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${LocalizationService.translate('Date:')} ${_formatDate(scan.scanDate)}'),
+              const SizedBox(height: 8),
+              Text('${LocalizationService.translate('Status:')} ${scan.status}'),
+              const SizedBox(height: 8),
+              Text('${LocalizationService.translate('Confidence:')} ${(scan.confidence * 100).toStringAsFixed(0)}%'),
+              const SizedBox(height: 16),
+              // Render AI response in a readable format instead of raw JSON
+              _buildAIResponseWidget(scan.aiResponse),
+              // Product Recommendations Section
+              if (recommendations.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  LocalizationService.translate('🛒 Recommended Products:'),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFFFB2C36),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...recommendations.take(3).map((product) => _buildProductCard(product)),
+              ],
+            ],
+          ),
         ),
         actions: [
           TextButton(

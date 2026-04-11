@@ -1,0 +1,143 @@
+crop_name,soil_type,season,temp_min,temp_max,ph_min,ph_max,rainfall_min,rainfall_max,water_need,duration_days,humidity_min,humidity_max,altitude_min,altitude_max,fertilizer_n,fertilizer_p,fertilizer_k,yield_ton_per_ha,profit_usd_per_ha,difficulty_level
+Rice (Aus),Loamy,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
+Rice (Aus),Clay,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
+Rice (Aus),Silty,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
+Rice (Aman),Loamy,Monsoon,20,38,5.0,7.5,150,300,High,140,70,90,0,500,110,55,55,4.0,950,Easy
+Rice (Aman),Clay,Monsoon,20,38,5.0,7.5,150,300,High,140,70,90,0,500,110,55,55,4.0,950,Easy
+Rice (Boro),Loamy,Winter,15,30,5.0,7.5,50,100,High,160,50,75,0,500,130,65,65,4.5,1050,Medium
+Rice (Boro),Clay,Winter,15,30,5.0,7.5,50,100,High,160,50,75,0,500,130,65,65,4.5,1050,Medium
+Rice (Basmati),Loamy,Summer,20,40,6.0,7.5,80,150,Medium,120,55,80,300,800,100,50,50,3.0,1200,Medium
+Rice (Basmati),Sandy,Summer,20,40,6.0,7.5,80,150,Medium,120,55,80,300,800,100,50,50,3.0,1200,Medium
+Rice (Jhum),Sandy,Monsoon,20,35,5.5,7.0,120,200,Medium,120,65,85,500,1500,80,40,40,2.5,600,Hard
+Wheat (Spring),Loamy,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
+Wheat (Spring),Clay,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
+Wheat (Spring),Silty,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
+Wheat (Winter),Loamy,Winter,5,20,6.0,7.5,40,80,Medium,130,45,70,300,800,110,55,55,3.0,650,Medium
+Wheat (Winter),Clay,Winter,5,20,6.0,7.5,40,80,Medium,130,45,70,300,800,110,55,55,3.0,650,Medium
+Maize (Rainfed),Loamy,Summer,18,35,5.5,7.0,75,150,Medium,90,55,80,200,1000,100,50,50,2.5,550,Medium
+Maize (Rainfed),Sandy,Summer,18,35,5.5,7.0,75,150,Medium,90,55,80,200,1000,100,50,50,2.5,550,Medium
+Maize (Irrigated),Loamy,Summer,20,35,5.5,7.0,50,100,High,110,60,85,200,1000,120,60,60,4.0,800,Medium
+Maize (Irrigated),Clay,Summer,20,35,5.5,7.0,50,100,High,110,60,85,200,1000,120,60,60,4.0,800,Medium
+Barley,Loamy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,500,1500,80,40,40,2.5,500,Medium
+Barley,Sandy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,500,1500,80,40,40,2.5,500,Medium
+Millet (Pearl),Sandy,Summer,25,40,6.0,8.0,40,80,Low,80,30,60,200,800,60,30,30,1.5,350,Easy
+Millet (Pearl),Loamy,Summer,25,40,6.0,8.0,40,80,Low,80,30,60,200,800,60,30,30,1.5,350,Easy
+Millet (Finger),Loamy,Summer,20,35,5.5,7.5,50,100,Low,90,40,70,500,1500,70,35,35,1.8,400,Medium
+Millet (Finger),Sandy,Summer,20,35,5.5,7.5,50,100,Low,90,40,70,500,1500,70,35,35,1.8,400,Medium
+Sorghum (Jowar),Black,Summer,25,40,6.0,8.0,40,80,Low,120,35,65,300,1000,80,40,40,2.0,450,Medium
+Sorghum (Jowar),Loamy,Summer,25,40,6.0,8.0,40,80,Low,120,35,65,300,1000,80,40,40,2.0,450,Medium
+Oats,Loamy,Winter,10,25,6.0,7.0,60,120,Medium,100,55,80,500,1500,90,45,45,2.2,480,Medium
+Buckwheat,Sandy,Summer,15,25,5.5,7.0,70,140,Low,90,50,75,800,2500,60,30,30,1.2,300,Hard
+Quinoa,Sandy,Summer,15,30,6.0,8.0,50,100,Low,120,45,70,1000,3000,70,35,35,1.5,450,Hard
+Finger Millet,Loamy,Summer,18,30,5.5,7.5,60,120,Low,100,45,75,500,2000,70,35,35,1.6,380,Medium
+Foxtail Millet,Sandy,Summer,20,35,6.0,7.5,40,80,Low,80,40,65,300,1200,60,30,30,1.4,320,Easy
+Kodo Millet,Loamy,Summer,20,35,5.5,7.5,50,100,Low,90,45,70,400,1500,60,30,30,1.3,310,Medium
+Barnyard Millet,Loamy,Summer,20,35,5.5,7.5,60,120,Medium,80,50,75,300,1200,70,35,35,1.5,340,Easy
+Little Millet,Sandy,Summer,20,35,5.5,7.5,50,100,Low,85,40,70,400,1500,60,30,30,1.2,300,Medium
+Potato,Loamy,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
+Potato,Sandy,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
+Potato,Silty,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
+Sweet Potato,Sandy,Summer,20,30,5.5,7.0,40,80,Low,120,55,80,300,1500,80,40,80,15.0,1800,Easy
+Sweet Potato,Loamy,Summer,20,30,5.5,7.0,40,80,Low,120,55,80,300,1500,80,40,80,15.0,1800,Easy
+Tomato,Loamy,Summer,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
+Tomato,Loamy,Winter,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
+Tomato,Sandy,Summer,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
+Onion,Loamy,Winter,13,25,6.0,7.5,50,100,Medium,110,60,80,200,800,100,50,80,18.0,2200,Medium
+Onion,Sandy,Winter,13,25,6.0,7.5,50,100,Medium,110,60,80,200,800,100,50,80,18.0,2200,Medium
+Garlic,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,120,55,75,300,1200,120,60,80,12.0,2800,Hard
+Garlic,Sandy,Winter,10,25,6.0,7.5,40,80,Medium,120,55,75,300,1200,120,60,80,12.0,2800,Hard
+Cauliflower,Loamy,Winter,15,25,6.0,7.0,50,100,High,70,65,85,200,800,150,80,120,15.0,2000,Medium
+Cauliflower,Sandy,Winter,15,25,6.0,7.0,50,100,High,70,65,85,200,800,150,80,120,15.0,2000,Medium
+Cabbage,Loamy,Winter,15,25,6.0,7.0,50,100,High,80,65,85,200,800,140,70,110,20.0,2200,Medium
+Cabbage,Sandy,Winter,15,25,6.0,7.0,50,100,High,80,65,85,200,800,140,70,110,20.0,2200,Medium
+Broccoli,Loamy,Winter,15,25,6.0,7.0,60,120,High,75,65,85,300,1200,130,65,100,12.0,2400,Hard
+Carrot,Sandy,Winter,10,25,6.0,7.5,40,80,Medium,90,60,80,200,1000,100,50,100,25.0,2000,Easy
+Carrot,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,90,60,80,200,1000,100,50,100,25.0,2000,Easy
+Radish,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,60,55,75,200,800,80,40,60,15.0,1200,Easy
+Beetroot,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,80,55,75,200,1000,100,50,80,18.0,1500,Medium
+Spinach,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,50,60,80,200,800,80,40,60,12.0,1400,Easy
+Mustard Greens,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,60,55,75,200,800,80,40,60,10.0,1100,Easy
+Fenugreek,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,40,50,70,200,800,60,30,40,8.0,900,Easy
+Coriander,Loamy,Winter,15,25,6.0,7.5,40,80,Medium,50,55,75,200,800,60,30,40,6.0,800,Easy
+Brinjal,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,100,60,85,200,800,120,60,100,25.0,2800,Medium
+Brinjal,Clay,Summer,20,35,6.0,7.5,60,120,Medium,100,60,85,200,800,120,60,100,25.0,2800,Medium
+Chili,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,90,60,85,200,1000,100,50,80,10.0,2000,Medium
+Chili,Sandy,Summer,20,35,6.0,7.5,60,120,Medium,90,60,85,200,1000,100,50,80,10.0,2000,Medium
+Capsicum,Loamy,Summer,18,30,6.0,7.0,60,120,Medium,80,65,85,200,1000,110,55,90,15.0,2200,Medium
+Okra,Loamy,Summer,25,35,6.0,7.5,50,100,Medium,60,55,80,200,800,80,40,60,12.0,1500,Easy
+Pumpkin,Sandy,Summer,20,35,6.0,7.5,40,80,Medium,100,50,75,200,800,80,40,80,30.0,2000,Easy
+Pumpkin,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,100,50,75,200,800,80,40,80,30.0,2000,Easy
+Bottle Gourd,Loamy,Summer,20,35,6.0,7.5,50,100,High,90,60,85,200,800,90,45,70,25.0,1800,Easy
+Bitter Gourd,Loamy,Summer,25,35,6.0,7.5,60,120,Medium,80,60,85,200,800,100,50,80,15.0,1700,Medium
+Ridge Gourd,Loamy,Summer,25,35,6.0,7.5,50,100,Medium,70,60,85,200,800,80,40,60,18.0,1600,Easy
+Cucumber,Loamy,Summer,20,35,6.0,7.5,60,120,High,60,65,85,200,800,80,40,60,30.0,2200,Easy
+Peas,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,70,60,80,300,1200,60,30,40,8.0,1200,Medium
+Green Beans,Loamy,Summer,18,30,6.0,7.5,50,100,Medium,80,60,85,200,1000,70,35,50,10.0,1300,Medium
+Cowpea,Sandy,Summer,25,35,6.0,7.5,40,80,Low,90,50,75,200,800,60,30,40,6.0,800,Easy
+Drumstick,Loamy,Summer,25,40,6.0,7.5,50,100,Low,200,50,80,200,800,80,40,60,50.0,3000,Easy
+Mango,Loamy,Summer,24,35,5.5,7.5,80,150,Low,120,50,75,200,800,100,50,100,10.0,2500,Medium
+Mango,Sandy,Summer,24,35,5.5,7.5,80,150,Low,120,50,75,200,800,100,50,100,10.0,2500,Medium
+Banana,Loamy,Monsoon,20,35,5.5,7.0,100,200,High,330,65,85,200,800,200,100,300,35.0,4000,Medium
+Banana,Sandy,Monsoon,20,35,5.5,7.0,100,200,High,330,65,85,200,800,200,100,300,35.0,4000,Medium
+Apple,Loamy,Winter,15,25,6.0,7.0,80,150,Medium,150,55,75,1500,3000,120,60,120,15.0,3500,Hard
+Apple,Sandy,Winter,15,25,6.0,7.0,80,150,Medium,150,55,75,1500,3000,120,60,120,15.0,3500,Hard
+Orange,Loamy,Winter,15,35,5.5,7.5,100,200,Medium,180,60,80,500,1500,120,60,100,12.0,2800,Medium
+Orange,Sandy,Winter,15,35,5.5,7.5,100,200,Medium,180,60,80,500,1500,120,60,100,12.0,2800,Medium
+Lemon,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,120,55,80,200,1000,100,50,80,15.0,2000,Easy
+Papaya,Sandy,Summer,22,35,6.0,7.5,80,150,Medium,270,60,85,200,800,150,80,150,40.0,3500,Easy
+Papaya,Loamy,Summer,22,35,6.0,7.5,80,150,Medium,270,60,85,200,800,150,80,150,40.0,3500,Easy
+Guava,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,180,55,80,200,1000,100,50,100,20.0,2500,Easy
+Pomegranate,Loamy,Summer,15,35,5.5,7.5,60,120,Low,180,45,70,500,1500,120,60,100,12.0,3200,Medium
+Grapes,Sandy,Summer,15,35,6.0,7.5,50,100,Medium,150,50,75,300,1000,150,80,120,20.0,4000,Hard
+Watermelon,Sandy,Summer,25,35,6.0,7.5,40,80,Medium,90,50,75,200,800,100,50,100,30.0,2500,Easy
+Muskmelon,Sandy,Summer,25,35,6.0,7.5,40,80,Medium,80,50,75,200,800,90,45,90,25.0,2200,Easy
+Litchi,Loamy,Summer,20,35,5.5,7.0,100,200,High,120,65,85,200,800,150,80,120,8.0,3000,Medium
+Jackfruit,Loamy,Summer,25,35,5.5,7.5,100,200,Medium,180,60,85,200,800,100,50,100,20.0,2500,Easy
+Pineapple,Sandy,Summer,20,30,4.5,6.5,80,150,Medium,180,65,85,200,800,120,60,120,25.0,3000,Medium
+Strawberry,Loamy,Winter,15,25,5.5,7.0,60,120,Medium,90,65,85,500,1500,100,50,100,15.0,5000,Hard
+Pear,Loamy,Winter,10,25,6.0,7.0,80,150,Medium,120,55,75,1000,2500,100,50,100,12.0,2800,Hard
+Plum,Loamy,Winter,10,25,6.0,7.0,80,150,Medium,120,55,75,1000,2500,90,45,90,10.0,2500,Hard
+Peach,Loamy,Summer,15,30,6.0,7.0,80,150,Medium,120,55,75,500,2000,100,50,100,12.0,2600,Hard
+Apricot,Loamy,Summer,10,30,6.0,7.5,60,120,Medium,120,50,70,1000,2500,90,45,90,8.0,2400,Hard
+Walnut,Loamy,Winter,5,25,6.0,7.5,80,150,Medium,180,50,70,1500,3000,100,50,100,5.0,3500,Hard
+Almond,Sandy,Winter,5,30,6.0,8.0,40,80,Low,180,40,65,500,2000,80,40,80,3.0,4000,Hard
+Cashew,Sandy,Summer,25,35,5.5,7.5,60,120,Low,240,55,80,200,800,80,40,60,1.5,2000,Medium
+Coconut,Sandy,Summer,25,35,5.5,8.0,100,200,Medium,365,60,85,200,500,120,60,120,2.5,1800,Medium
+Areca Nut,Loamy,Monsoon,20,35,5.5,7.5,150,250,High,365,70,90,200,800,150,80,150,2.0,3000,Medium
+Tea,Loamy,Monsoon,15,30,4.5,6.0,150,300,High,365,70,90,500,2000,150,80,100,2.0,2500,Medium
+Coffee,Loamy,Summer,15,25,5.5,6.5,120,200,Medium,365,65,85,800,2000,120,60,100,1.5,3000,Hard
+Rubber,Loamy,Monsoon,25,35,5.5,7.0,150,300,High,365,75,95,200,800,100,50,100,1.8,2200,Medium
+Sugarcane,Loamy,Summer,20,35,6.0,7.5,100,200,High,365,60,85,200,800,150,80,150,70.0,2500,Medium
+Sugarcane,Clay,Summer,20,35,6.0,7.5,100,200,High,365,60,85,200,800,150,80,150,70.0,2500,Medium
+Cotton,Black,Summer,20,35,6.5,8.0,40,80,Low,180,40,65,200,600,100,50,100,2.5,1200,Medium
+Cotton,Loamy,Summer,20,35,6.5,8.0,40,80,Low,180,40,65,200,600,100,50,100,2.5,1200,Medium
+Jute,Loamy,Summer,24,35,6.0,7.5,100,200,High,120,70,90,200,600,80,40,80,2.5,800,Medium
+Tobacco,Sandy,Winter,15,30,5.5,7.5,40,80,Medium,120,50,70,300,1000,120,60,120,2.0,2500,Hard
+Chickpea,Loamy,Winter,15,25,6.0,7.5,30,60,Low,100,40,65,300,1000,60,30,40,1.5,700,Medium
+Chickpea,Sandy,Winter,15,25,6.0,7.5,30,60,Low,100,40,65,300,1000,60,30,40,1.5,700,Medium
+Lentil,Loamy,Winter,15,25,6.0,7.5,30,60,Low,90,40,65,300,1000,50,25,30,1.2,600,Medium
+Lentil,Sandy,Winter,15,25,6.0,7.5,30,60,Low,90,40,65,300,1000,50,25,30,1.2,600,Medium
+Pigeon Pea,Loamy,Summer,20,35,6.0,7.5,40,80,Low,180,45,70,300,1000,60,30,40,1.2,650,Medium
+Black Gram,Loamy,Summer,25,35,6.0,7.5,40,80,Medium,90,50,75,200,800,50,25,30,1.0,550,Easy
+Green Gram,Sandy,Summer,25,35,6.0,7.5,30,60,Low,80,45,70,200,800,40,20,25,0.8,450,Easy
+Soybean,Loamy,Summer,20,35,6.0,7.5,50,100,Medium,110,55,80,300,1000,80,40,60,1.8,700,Medium
+Red Kidney Bean,Loamy,Summer,15,25,6.0,7.0,60,120,Medium,120,60,85,500,1500,70,35,50,1.2,800,Hard
+Horse Gram,Loamy,Summer,20,35,5.5,7.5,30,60,Low,120,40,65,300,1000,40,20,25,0.8,400,Easy
+Mustard,Loamy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,300,1000,80,40,40,1.2,600,Medium
+Mustard,Sandy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,300,1000,80,40,40,1.2,600,Medium
+Sunflower,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,110,45,70,300,1000,80,40,80,1.5,700,Medium
+Sesame,Sandy,Summer,25,35,6.0,7.5,30,60,Low,90,40,65,200,800,60,30,30,0.8,500,Easy
+Groundnut,Sandy,Summer,20,35,6.0,7.5,40,80,Medium,120,45,70,200,800,60,30,60,1.5,800,Medium
+Groundnut,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,120,45,70,200,800,60,30,60,1.5,800,Medium
+Linseed,Loamy,Winter,10,25,6.0,7.0,30,60,Low,120,40,65,300,1000,60,30,30,1.0,550,Medium
+Safflower,Loamy,Winter,15,30,6.0,7.5,30,60,Low,130,40,65,300,1000,60,30,30,1.2,580,Medium
+Castor,Sandy,Summer,20,40,6.0,8.0,30,60,Low,180,35,60,200,800,80,40,40,1.5,600,Medium
+Cumin,Sandy,Winter,15,30,6.0,8.0,20,40,Low,120,35,55,300,1000,60,30,30,0.6,1200,Hard
+Coriander Seed,Loamy,Winter,15,25,6.0,7.5,30,60,Medium,90,45,70,300,1000,60,30,40,0.8,900,Medium
+Turmeric,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,240,65,85,200,800,120,60,120,6.0,2500,Medium
+Ginger,Loamy,Summer,20,35,5.5,7.0,100,200,High,240,70,90,300,1200,150,80,150,8.0,3500,Hard
+Fenugreek Seed,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,90,45,70,300,1000,60,30,30,0.8,700,Medium
+Fennel,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,150,45,70,300,1000,80,40,60,1.0,1100,Medium
+Black Pepper,Loamy,Monsoon,25,35,5.5,7.0,150,250,High,365,70,90,200,800,120,60,120,1.0,3500,Hard
+Cardamom,Loamy,Monsoon,15,30,5.0,6.5,150,300,High,365,75,95,800,2000,100,50,100,0.5,5000,Hard
+Red Chili,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,120,55,80,300,1000,100,50,80,1.5,1800,Medium

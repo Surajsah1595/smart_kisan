@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'ai_service.dart';
 import 'localization_service.dart';
 
@@ -18,8 +20,67 @@ class _AiChatPageState extends State<AiChatPage> {
   // Stores chat history
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
+  bool _isLoadingHistory = true;
 
   String tr(String key) => LocalizationService.translate(key);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChatHistory();
+  }
+
+  Future<void> _loadChatHistory() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      if (mounted) setState(() => _isLoadingHistory = false);
+      return;
+    }
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('aiChats')
+          .orderBy('timestamp', descending: false)
+          .get();
+      
+      if (mounted) {
+        setState(() {
+          _messages.clear();
+          for (var doc in snapshot.docs) {
+            final data = doc.data();
+            _messages.add({
+              'role': data['role'] as String? ?? 'user',
+              'text': data['text'] as String? ?? '',
+            });
+          }
+          _isLoadingHistory = false;
+        });
+        _scrollToBottom();
+      }
+    } catch (e) {
+      print("Error loading chat history: $e");
+      if (mounted) setState(() => _isLoadingHistory = false);
+    }
+  }
+
+  Future<void> _saveMessageToFirestore(String role, String text) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('aiChats')
+          .add({
+        'role': role,
+        'text': text,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print("Error saving message: $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -40,17 +101,25 @@ class _AiChatPageState extends State<AiChatPage> {
     _controller.clear();
     _scrollToBottom();
 
-    // Call API
-    final response = await _aiService.sendMessage(text);
+    // Save to firestore
+    _saveMessageToFirestore('user', text);
+
+    // Call API with full history
+    final response = await _aiService.sendMessageWithHistory(_messages);
+
+    final aiResponseText = response ?? tr('I am having trouble connecting. Try again.');
 
     setState(() {
       _messages.add({
         'role': 'ai', 
-        'text': response ?? tr('I am having trouble connecting. Try again.')
+        'text': aiResponseText
       });
       _isLoading = false;
     });
     _scrollToBottom();
+
+    // Save AI response to firestore
+    _saveMessageToFirestore('ai', aiResponseText);
   }
 
   void _scrollToBottom() {
@@ -77,9 +146,11 @@ class _AiChatPageState extends State<AiChatPage> {
             
             // 2. Chat Area
             Expanded(
-              child: _messages.isEmpty 
-                  ? _buildQuickQuestions() // Show buttons if chat is empty
-                  : _buildChatList(),      // Show chat if messages exist
+              child: _isLoadingHistory 
+                  ? const Center(child: CircularProgressIndicator())
+                  : _messages.isEmpty 
+                      ? _buildQuickQuestions() // Show buttons if chat is empty
+                      : _buildChatList(),      // Show chat if messages exist
             ),
             
             // 3. Input Area

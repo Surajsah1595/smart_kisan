@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 import 'ai_service.dart';
+import 'enhanced_ai_service.dart';
 import 'notification_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'localization_service.dart';
@@ -823,32 +824,28 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       prompt.writeln('Suggest 5-7 suitable crops for planting.');
       prompt.writeln('At the end output ONLY a JSON array under the exact marker SUGGESTED_CROPS_JSON: []; example: SUGGESTED_CROPS_JSON: [{"name":"Wheat","reason":"Clay holds moisture well","season":"Winter"},{"name":"Lentils","reason":"Pulses thrive in clay soil","season":"Winter"}]');
 
-      final ai = AiService();
-      final response = await ai.sendMessage(prompt.toString());
+      final enhancedAi = EnhancedAiService();
+      final cropName = await enhancedAi.getCropRecommendation(
+        selectedFieldObject!.soilType,
+        currentSeason,
+      );
 
       Navigator.pop(context);
 
-      if (response == null || response.startsWith('Error:')) {
+      if (cropName.startsWith('Error:')) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('AI returned no response.'))));
         return;
       }
 
-      final regex = RegExp(r'SUGGESTED_CROPS_JSON:\s*(\[.*?\])', dotAll: true);
-      final match = regex.firstMatch(response);
-      List<dynamic>? suggested;
-      if (match != null) {
-        try {
-          final jsonPart = match.group(1)!;
-          print('🌾 Found JSON: $jsonPart');
-          suggested = jsonDecode(jsonPart) as List<dynamic>;
-          print('🌾 Parsed ${suggested.length} crops from AI');
-        } catch (e) {
-          print('❌ JSON parse error: $e');
-          suggested = null;
-        }
-      } else {
-        print('⚠️ No SUGGESTED_CROPS_JSON marker found in response');
-      }
+      final response = 'Based on your selected field parameters (Soil: ${selectedFieldObject!.soilType}, Season: $currentSeason), our enhanced AI model recommends planting **$cropName**.';
+      
+      List<dynamic>? suggested = [{
+        'name': cropName,
+        'reason': 'Recommended for ${selectedFieldObject!.soilType} soil in $currentSeason',
+        'season': currentSeason,
+        'duration': 'Seasonal',
+        'waterNeed': 'Medium'
+      }];
 
       showModalBottomSheet(
         context: context,

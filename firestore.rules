@@ -59,6 +59,21 @@ service cloud.firestore {
       match /pestScans/{scanId} {
         allow create, read, update, delete: if request.auth.uid == userId;
       }
+
+      // Smart Plots
+      match /smartPlots/{plotId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+      
+      // AI Chats
+      match /aiChats/{chatId} {
+        allow create, read, update, delete: if request.auth.uid == userId;
+      }
+
+      // Product Selection History - track which products users select
+      match /productSelections/{selectionId} {
+        allow create, read: if request.auth.uid == userId;
+      }
       
       // Notifications - user-specific
       match /notifications/{notificationId} {
@@ -86,6 +101,12 @@ service cloud.firestore {
     // User Security Settings
     match /security/{userId} {
       allow read, write: if request.auth.uid == userId;
+    }
+
+    // Product Recommendations - readable by all authenticated users
+    match /products/{productId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Products managed by admin only
     }
     
     // Deny everything else

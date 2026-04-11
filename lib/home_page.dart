@@ -13,7 +13,8 @@ import 'dart:io';
 import 'weather_service.dart';
 import 'ai_chat_page.dart';
 import 'localization_service.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'smart_plot_editor.dart';
 class HomePage extends StatefulWidget {
   final bool isNewUser;
   final String userName;
@@ -1294,56 +1295,8 @@ class _HomePageState extends State<HomePage> {
                   _buildNavItem(Icons.auto_awesome, tr('Ask AI'), 1),
                   _buildNavItem(Icons.bug_report, tr('Pest & Disease'), 2),
                   _buildNavItem(Icons.eco, tr('Add Crop'), 3),
+                  _buildPlotMapperNavItem(),
                 ],
-              ),
-            ),
-            
-            // Language Button
-            GestureDetector(
-              onTap: _showLanguageDialog,
-              child: Container(
-                width: 72,
-                margin: const EdgeInsets.only(left: 8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [Color(0xFFF0B000), Color(0xFFFF6800)],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.language, color: Colors.white, size: 16),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: _white.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          LocalizationService.currentLanguage,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontFamily: 'Arimo',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ],
@@ -1413,5 +1366,114 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildPlotMapperNavItem() {
+    return GestureDetector(
+      onTap: () {
+        _showImageSourceDialog();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        color: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF00C950),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.center_focus_strong, color: Colors.white, size: 16),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              tr('Plot Mapper'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _gray,
+                fontSize: 10,
+                fontFamily: 'Arimo',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                tr('Upload Plot Image'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildSourceOption(
+                    icon: Icons.camera_alt,
+                    label: tr('Camera'),
+                    onTap: () => _pickPlotImage(ImageSource.camera),
+                  ),
+                  _buildSourceOption(
+                    icon: Icons.photo_library,
+                    label: tr('Gallery'),
+                    onTap: () => _pickPlotImage(ImageSource.gallery),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSourceOption({required IconData icon, required String label, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: _lightGreen,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _primaryGreen.withOpacity(0.3)),
+            ),
+            child: Icon(icon, size: 40, color: _primaryGreen),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickPlotImage(ImageSource source) async {
+    Navigator.pop(context); // Close bottom sheet
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null && mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SmartPlotEditorScreen(imagePath: pickedFile.path),
+        ),
+      );
+    }
   }
 }
