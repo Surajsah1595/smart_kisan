@@ -9,7 +9,7 @@ import 'localization_service.dart';
 
 // For better logging visibility
 void _log(String message) {
-  debugPrint('🎯 PEST_DISEASE: $message');
+  debugPrint(' PEST_DISEASE: $message');
 }
 
 // Active Alert Item Widget (Separate class)
@@ -51,20 +51,20 @@ class ActiveAlertItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border(
             left: BorderSide(color: borderColor, width: 4),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
               spreadRadius: -1,
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 3,
               offset: const Offset(0, 1),
               spreadRadius: 0,
@@ -94,8 +94,8 @@ class ActiveAlertItem extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
-                            color: Color(0xFF101727),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: 18,
                             fontFamily: 'Arimo',
                             fontWeight: FontWeight.w400,
@@ -103,8 +103,8 @@ class ActiveAlertItem extends StatelessWidget {
                         ),
                         Text(
                           subtitle,
-                          style: const TextStyle(
-                            color: Color(0xFF495565),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                             fontSize: 16,
                             fontFamily: 'Arimo',
                             fontWeight: FontWeight.w400,
@@ -136,8 +136,7 @@ class ActiveAlertItem extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 48),
                 child: Text(
                   description,
-                  style: const TextStyle(
-                    color: Color(0xFF354152),
+                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -148,16 +147,15 @@ class ActiveAlertItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Treatment: ',
+                    Text(LocalizationService.translate('Treatment: '),
                       style: TextStyle(
-                        color: Color(0xFF101727),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.bold,
@@ -166,8 +164,7 @@ class ActiveAlertItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         treatment,
-                        style: const TextStyle(
-                          color: Color(0xFF354152),
+                        style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
@@ -181,23 +178,22 @@ class ActiveAlertItem extends StatelessWidget {
               if (productRecommendations.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF3E0),
-                    border: Border.all(color: Colors.orange.shade200),
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(Icons.shopping_bag, size: 16, color: Color(0xFFFB2C36)),
+                          Icon(Icons.shopping_bag, size: 16, color: Theme.of(context).colorScheme.primary),
                           SizedBox(width: 8),
-                          Text(
-                            'Recommended Products',
+                          Text(LocalizationService.translate('Recommended Products'),
                             style: TextStyle(
-                              color: Color(0xFFFB2C36),
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -207,8 +203,7 @@ class ActiveAlertItem extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         _getProductsPreview(),
-                        style: const TextStyle(
-                          color: Color(0xFF354152),
+                        style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 13,
                         ),
                         maxLines: 2,
@@ -223,8 +218,8 @@ class ActiveAlertItem extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 48),
                 child: Text(
                   'Detected: $detectedDate',
-                  style: const TextStyle(
-                    color: Color(0xFF495565),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -287,17 +282,17 @@ class RecentScanItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
               spreadRadius: -1,
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 3,
               offset: const Offset(0, 1),
               spreadRadius: 0,
@@ -324,8 +319,8 @@ class RecentScanItem extends StatelessWidget {
                   children: [
                     Text(
                       cropName,
-                      style: const TextStyle(
-                        color: Color(0xFF101727),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 18,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.w400,
@@ -333,8 +328,8 @@ class RecentScanItem extends StatelessWidget {
                     ),
                     Text(
                       date,
-                      style: const TextStyle(
-                        color: Color(0xFF495565),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.w400,
@@ -357,8 +352,8 @@ class RecentScanItem extends StatelessWidget {
                   ),
                   Text(
                     confidence,
-                    style: const TextStyle(
-                      color: Color(0xFF495565),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontSize: 16,
                       fontFamily: 'Arimo',
                       fontWeight: FontWeight.w400,
@@ -388,7 +383,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -396,11 +391,10 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: Color(0xFFFB2C36),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
@@ -415,29 +409,26 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
                       ),
-                      const SizedBox(width: 16),
-                      const Text(
-                        'Pest & Disease Help',
+                      SizedBox(width: 16),
+                      Text(LocalizationService.translate('Pest & Disease Help'),
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
+                          color: Theme.of(context).colorScheme.onPrimary, fontSize: 24,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const Row(
+                  SizedBox(height: 16),
+                  Row(
                     children: [
-                      Icon(Icons.bug_report, color: Colors.white, size: 20),
+                      Icon(Icons.bug_report, color: Theme.of(context).colorScheme.onPrimary, size: 20),
                       SizedBox(width: 8),
-                      Text(
-                        'Early detection and treatment guidance',
+                      Text(LocalizationService.translate('Early detection and treatment guidance'),
                         style: TextStyle(
-                          color: Color(0xE5FFFEFE),
+                          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
@@ -484,13 +475,13 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFB2C36), Color(0xFFE7000B)],
+        gradient: LinearGradient(
+          colors: [Theme.of(context).colorScheme.surface, Theme.of(context).colorScheme.surface],
         ),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -502,20 +493,16 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Scan Your Crop',
+                Text(LocalizationService.translate('Scan Your Crop'),
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                    color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 20,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Use your camera to identify pests and diseases',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
+                Text(LocalizationService.translate('Use your camera to identify pests and diseases'),
+                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -524,24 +511,23 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           ElevatedButton(
             onPressed: () => _showScanDialog(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.camera_alt, color: Color(0xFFFB2C36)),
+                Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.onPrimary),
                 SizedBox(width: 8),
-                Text(
-                  'Scan Now',
+                Text(LocalizationService.translate('Scan Now'),
                   style: TextStyle(
-                    color: Color(0xFFFB2C36),
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -559,10 +545,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Active Alerts',
+        Text(LocalizationService.translate('Active Alerts'),
           style: TextStyle(
-            color: Color(0xFF101727),
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 16,
             fontFamily: 'Arimo',
             fontWeight: FontWeight.w400,
@@ -579,12 +564,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Text(
-                  'No active alerts. Your crops are looking healthy!',
-                  style: TextStyle(color: Color(0xFF495565)),
+                child: Text(LocalizationService.translate('No active alerts. Your crops are looking healthy!'),
+                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
                 ),
               );
             }
@@ -596,14 +580,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 final Color severityBgColor;
                 
                 if (severity == 'High') {
-                  severityColor = const Color(0xFFC10007);
-                  severityBgColor = const Color(0xFFFFE2E2);
+                  severityColor = Theme.of(context).colorScheme.error;
+                  severityBgColor = Theme.of(context).colorScheme.error.withOpacity(0.1);
                 } else if (severity == 'Medium') {
-                  severityColor = const Color(0xFFA65F00);
-                  severityBgColor = const Color(0xFFFEF9C2);
+                  severityColor = Theme.of(context).colorScheme.secondary;
+                  severityBgColor = Theme.of(context).colorScheme.secondary.withOpacity(0.1);
                 } else {
-                  severityColor = const Color(0xFF008236);
-                  severityBgColor = const Color(0xFFE2FFFB);
+                  severityColor = Theme.of(context).colorScheme.primary;
+                  severityBgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
                 }
 
                 return Padding(
@@ -619,7 +603,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                     icon: Icons.bug_report,
                     iconBgColor: severityBgColor,
                     detectedDate: _formatDate(alert.detectedDate),
-                    borderColor: const Color(0xFFFB2C36),
+                    borderColor: Theme.of(context).colorScheme.error,
                     productRecommendations: alert.productRecommendations,
                     onTap: () => _showAlertDetails(context, alert),
                   ),
@@ -636,10 +620,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Recent Scans',
+        Text(LocalizationService.translate('Recent Scans'),
           style: TextStyle(
-            color: Color(0xFF101727),
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 16,
             fontFamily: 'Arimo',
             fontWeight: FontWeight.w400,
@@ -656,12 +639,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Text(
-                  'No scans yet. Start by scanning a crop!',
-                  style: TextStyle(color: Color(0xFF495565)),
+                child: Text(LocalizationService.translate('No scans yet. Start by scanning a crop!'),
+                  style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
                 ),
               );
             }
@@ -674,19 +656,19 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 final String displayStatus;
 
                 if (scan.status == 'Healthy') {
-                  statusColor = const Color(0xFF008236);
+                  statusColor = Theme.of(context).colorScheme.primary;
                   icon = Icons.agriculture;
-                  iconBgColor = const Color(0xFFDCFCE7);
+                  iconBgColor = Theme.of(context).colorScheme.primary.withOpacity(0.1);
                   displayStatus = 'Healthy';
                 } else if (scan.status == 'Disease Detected') {
-                  statusColor = const Color(0xFFC10007);
+                  statusColor = Theme.of(context).colorScheme.error;
                   icon = Icons.sick;
-                  iconBgColor = const Color(0xFFFFE2E2);
+                  iconBgColor = Theme.of(context).colorScheme.error.withOpacity(0.1);
                   displayStatus = 'Disease Detected';
                 } else {
-                  statusColor = const Color(0xFFA65F00);
+                  statusColor = Theme.of(context).colorScheme.secondary;
                   icon = Icons.bug_report;
-                  iconBgColor = const Color(0xFFFEF9C2);
+                  iconBgColor = Theme.of(context).colorScheme.secondary.withOpacity(0.1);
                   displayStatus = 'Pest Alert';
                 }
 
@@ -723,10 +705,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Prevention Tips',
+        Text(LocalizationService.translate('Prevention Tips'),
           style: TextStyle(
-            color: Color(0xFF101727),
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 16,
             fontFamily: 'Arimo',
             fontWeight: FontWeight.w400,
@@ -736,17 +717,17 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 2,
                 offset: const Offset(0, 1),
                 spreadRadius: -1,
               ),
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 3,
                 offset: const Offset(0, 1),
                 spreadRadius: 0,
@@ -760,13 +741,12 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.check_circle, size: 16, color: Color(0xFF008236)),
+                    Icon(Icons.check_circle, size: 16, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         tip,
-                        style: const TextStyle(
-                          color: Color(0xFF354152),
+                        style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w400,
@@ -787,32 +767,30 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF2F4F6), Color(0xFFE5E7EB)],
+        gradient: LinearGradient(
+          colors: [Theme.of(context).cardColor, Theme.of(context).cardColor],
         ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, size: 24, color: Color(0xFF354152)),
-          const SizedBox(width: 12),
-          const Expanded(
+          Icon(Icons.search, size: 24, color: Theme.of(context).textTheme.bodyMedium?.color),
+          SizedBox(width: 12),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Search Knowledge Base',
+                Text(LocalizationService.translate('Search Knowledge Base'),
                   style: TextStyle(
-                    color: Color(0xFF101727),
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     fontSize: 18,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Text(
-                  'Find information about pests and diseases',
+                Text(LocalizationService.translate('Find information about pests and diseases'),
                   style: TextStyle(
-                    color: Color(0xFF495565),
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -825,7 +803,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           ElevatedButton(
             onPressed: () => _showSearchDialog(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFB2C36),
+              
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -833,8 +811,8 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             ),
             child: Text(
               LocalizationService.translate('Search'),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).cardColor,
                 fontSize: 16,
                 fontFamily: 'Arimo',
                 fontWeight: FontWeight.w400,
@@ -881,7 +859,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               _openCamera();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFB2C36),
+              
             ),
             child: Text(LocalizationService.translate('Open Camera')),
           ),
@@ -903,7 +881,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       
       if (photo != null) {
         _log('Processing image...');
-        print('📸 DEBUG: photo.path = ${photo.path}');
+        print(' DEBUG: photo.path = ${photo.path}');
         if (!mounted) return;
 
         // Attempt to upload image to Firebase Storage and pass URL to analysis
@@ -911,12 +889,12 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         try {
           uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
         } catch (e) {
-          print('⚠️ Upload failed, continuing without imageUrl: $e');
+          print(' Upload failed, continuing without imageUrl: $e');
         }
 
-        print('✅ DEBUG: About to call _showScanningDialog');
+        print(' DEBUG: About to call _showScanningDialog');
         await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
-        print('✅ DEBUG: _showScanningDialog completed');
+        print(' DEBUG: _showScanningDialog completed');
       } else {
         _log('No image selected');
         if (!mounted) return;
@@ -951,7 +929,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         try {
           uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
         } catch (e) {
-          print('⚠️ Upload failed, continuing without imageUrl: $e');
+          print(' Upload failed, continuing without imageUrl: $e');
         }
 
         await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
@@ -962,7 +940,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         );
       }
     } catch (e) {
-      print('❌ Gallery error: $e');
+      print(' Gallery error: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${LocalizationService.translate('Error accessing gallery:')} $e')),
@@ -971,24 +949,23 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
   }
 
   Future<void> _showScanningDialog(BuildContext context, String imagePath, {String? imageUrl}) async {
-    _log('🔍 Showing scanning dialog for: $imagePath');
-    print('🔍 DEBUG: _showScanningDialog START');
+    _log(' Showing scanning dialog for: $imagePath');
+    print(' DEBUG: _showScanningDialog START');
     
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        print('🔍 DEBUG: Dialog builder called');
+        print(' DEBUG: Dialog builder called');
         return Dialog(
           child: Container(
-            padding: const EdgeInsets.all(24),
-            child: const Column(
+            padding: EdgeInsets.all(24),
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                 SizedBox(height: 16),
-                Text(
-                  'Analyzing crop image...',
+                Text(LocalizationService.translate('Analyzing crop image...'),
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Arimo',
@@ -1001,66 +978,76 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       },
     );
 
-    print('🔍 DEBUG: Dialog shown, about to call _analyzeCropWithAI');
-    _log('🔍 Dialog shown, calling analysis...');
+    print(' DEBUG: Dialog shown, about to call _analyzeCropWithAI');
+    _log(' Dialog shown, calling analysis...');
     
     try {
       await _analyzeCropWithAI(context, imagePath, imageUrl: imageUrl);
-      print('🔍 DEBUG: _analyzeCropWithAI completed successfully');
+      print(' DEBUG: _analyzeCropWithAI completed successfully');
     } catch (e) {
-      print('❌ DEBUG: _analyzeCropWithAI threw error: $e');
+      print(' DEBUG: _analyzeCropWithAI threw error: $e');
       rethrow;
     }
   }
 
   Future<void> _analyzeCropWithAI(BuildContext context, String imagePath, {String? imageUrl}) async {
     try {
-      print('🔍 DEBUG: _analyzeCropWithAI START');
-      _log('🔍 [START] _analyzeCropWithAI called');
-      _log('🔍 Image path: $imagePath');
+      print(' DEBUG: _analyzeCropWithAI START');
+      _log(' [START] _analyzeCropWithAI called');
+      _log(' Image path: $imagePath');
       
-      print('🔍 DEBUG: About to call analyzeImageWithAI');
-      _log('🔍 About to call analyzeImageWithAI...');
+      print(' DEBUG: About to call analyzeImageWithAI');
+      _log(' About to call analyzeImageWithAI...');
       
       final result = await _pestDiseaseService.analyzeImageWithAI(imagePath, imageUrl: imageUrl);
       
-      print('🔍 DEBUG: analyzeImageWithAI returned');
-      _log('🔍 [DONE] analyzeImageWithAI returned');
+      print(' DEBUG: analyzeImageWithAI returned');
+      _log(' [DONE] analyzeImageWithAI returned');
       
-      _log('🔍 Analysis result keys: ${result.keys.toList()}');
-      _log('🔍 Status: ${result['status']}');
+      _log(' Analysis result keys: ${result.keys.toList()}');
+      _log(' Status: ${result['status']}');
       
       if (!context.mounted) {
-        print('❌ DEBUG: Context NOT mounted after analysis');
-        _log('❌ Context NOT mounted after analysis');
+        print(' DEBUG: Context NOT mounted after analysis');
+        _log(' Context NOT mounted after analysis');
         return;
       }
       
-      print('✅ DEBUG: Context still mounted');
-      _log('✅ Context still mounted');
+      print(' DEBUG: Context still mounted');
+      _log(' Context still mounted');
       await Future.delayed(const Duration(milliseconds: 500));
       
-      print('✅ DEBUG: About to pop dialog');
+      print(' DEBUG: About to pop dialog');
       Navigator.pop(context);
-      _log('✅ Dialog closed, showing results');
+      _log(' Dialog closed, showing results');
       
       if (!context.mounted) {
-        print('❌ DEBUG: Context lost after pop');
-        _log('❌ Context lost');
+        print(' DEBUG: Context lost after pop');
+        _log(' Context lost');
         return;
       }
       
-      print('✅ DEBUG: About to show results');
+      print(' DEBUG: About to show results');
       _showScanResults(context, result);
-      _log('✅ Results shown');
+      _log(' Results shown');
       
     } catch (e) {
-      print('❌ DEBUG: _analyzeCropWithAI caught error: $e');
-      _log('❌ ERROR: $e');
+      print(' DEBUG: _analyzeCropWithAI caught error: $e');
+      _log(' ERROR: $e');
       if (context.mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${LocalizationService.translate('Error:')} $e')),
+        Navigator.pop(context); // Close the scanning dialog
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(LocalizationService.translate('Error')),
+            content: Text(LocalizationService.translate('AI service temporarily unavailable. Please try again.')),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(LocalizationService.translate('OK')),
+              ),
+            ],
+          ),
         );
       }
     }
@@ -1068,17 +1055,17 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
 
   void _showScanResults(BuildContext context, Map<String, dynamic> result) {
     // Determine color based on status
-    Color descriptionColor = const Color(0xFF008236); // Default green for healthy
+    Color descriptionColor = Theme.of(context).colorScheme.primary; // Default green for healthy
     
     final status = result['status'] ?? 'Unknown';
     if (status == 'Healthy') {
-      descriptionColor = const Color(0xFF008236); // Green
+      descriptionColor = Theme.of(context).colorScheme.primary; // Green
     } else if (status == 'Not a Plant') {
-      descriptionColor = const Color(0xFFC10007); // Red
+      descriptionColor = Theme.of(context).colorScheme.error; // Red
     } else if (status == 'Pest Alert' || status == 'Disease Detected') {
-      descriptionColor = const Color(0xFFA65F00); // Orange
+      descriptionColor = Theme.of(context).colorScheme.secondary; // Orange
     } else {
-      descriptionColor = const Color(0xFFC10007); // Red for errors
+      descriptionColor = Theme.of(context).colorScheme.error; // Red for errors
     }
 
     // Get product recommendations if pest/disease is detected
@@ -1112,11 +1099,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               if (recommendations.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 Text(
-                  LocalizationService.translate('🛒 Recommended Products:'),
-                  style: const TextStyle(
+                  LocalizationService.translate(' Recommended Products:'),
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFFFB2C36),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1138,7 +1125,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                   SnackBar(content: Text(LocalizationService.translate('Scan saved to history'))),
                 );
               },
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB2C36)),
+              style: ElevatedButton.styleFrom(),
               child: Text(LocalizationService.translate('Save Result')),
             ),
         ],
@@ -1170,10 +1157,10 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: alert.severity.toLowerCase() == 'high' 
-                    ? Colors.red.withValues(alpha: 0.2)
+                    ? Theme.of(context).colorScheme.error.withOpacity(0.2)
                     : alert.severity.toLowerCase() == 'medium'
-                      ? Colors.orange.withValues(alpha: 0.2)
-                      : Colors.yellow.withValues(alpha: 0.2),
+                      ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
+                      : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -1181,17 +1168,17 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: alert.severity.toLowerCase() == 'high' 
-                      ? Colors.red[700]
+                      ? Theme.of(context).colorScheme.error
                       : alert.severity.toLowerCase() == 'medium'
-                        ? Colors.orange[700]
-                        : Colors.yellow[700],
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               
               // Description as bullet points
-              Text(LocalizationService.translate('📋 Description:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(LocalizationService.translate(' Description:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.only(left: 16),
@@ -1203,7 +1190,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               const SizedBox(height: 16),
               
               // Treatment as bullet points
-              Text(LocalizationService.translate('💊 Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(LocalizationService.translate(' Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.only(left: 16),
@@ -1217,11 +1204,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               if (alert.productRecommendations.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 Text(
-                  LocalizationService.translate('🛒 Recommended Products:'),
-                  style: const TextStyle(
+                  LocalizationService.translate(' Recommended Products:'),
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFFFB2C36),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1287,7 +1274,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('• ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(LocalizationService.translate('• '), style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
             Expanded(
               child: Text(
                 point,
@@ -1333,7 +1320,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1), width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
@@ -1350,10 +1337,10 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                     children: [
                       Text(
                         productName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF101727),
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1361,9 +1348,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                       const SizedBox(height: 4),
                       Text(
                         category,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: Color(0xFF495565),
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -1376,9 +1363,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             // short description
             Text(
               description,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFF495565),
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 height: 1.4,
               ),
               maxLines: 2,
@@ -1389,11 +1376,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             if (rating > 0 || reviews > 0)
               Row(
                 children: [
-                  Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                  Icon(Icons.star, size: 14, color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 4),
                   Text(
                     '$rating ($reviews)',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF495565)),
+                    style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                 ],
               ),
@@ -1402,7 +1389,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             if (manufacturer.isNotEmpty)
               Text(
                 'Manufacturer: $manufacturer',
-                style: const TextStyle(fontSize: 10, color: Color(0xFF495565)),
+                style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium?.color),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1411,7 +1398,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             if (dosage.isNotEmpty)
               Text(
                 'Dosage (quantity per area): $dosage',
-                style: const TextStyle(fontSize: 10, color: Color(0xFF495565)),
+                style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium?.color),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1464,7 +1451,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                   child: Text('${LocalizationService.translate('Severity:')} $severity'),
                 ),
               if ((description as String).isNotEmpty) ...[
-                Text(LocalizationService.translate('📋 Description:'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(LocalizationService.translate(' Description:'), style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
@@ -1475,7 +1462,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 ),
               ],
               if ((treatment as String).isNotEmpty) ...[
-                Text(LocalizationService.translate('💊 Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(LocalizationService.translate(' Treatment Options:'), style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
@@ -1505,7 +1492,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       );
     }
 
-    return const Text('No additional details');
+    return Text(LocalizationService.translate('No additional details'));
   }
 
   void _showScanDetails(BuildContext context, PestScanData scan) {
@@ -1555,11 +1542,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               if (recommendations.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 Text(
-                  LocalizationService.translate('🛒 Recommended Products:'),
-                  style: const TextStyle(
+                  LocalizationService.translate(' Recommended Products:'),
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFFFB2C36),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1623,7 +1610,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               Navigator.pop(context);
               _performSearch(context, searchController.text);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB2C36)),
+            style: ElevatedButton.styleFrom(),
             child: Text(LocalizationService.translate('Search')),
           ),
         ],
@@ -1650,7 +1637,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator(color: Color(0xFFFB2C36)),
+                CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 16),
                 Text(LocalizationService.translate('Fetching information...')),
               ],
@@ -1665,7 +1652,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
 
   Future<void> _searchKnowledgeBase(BuildContext dialogContext, String query) async {
     try {
-      print('🔍 Searching for: $query');
+      print(' Searching for: $query');
       
       final prompt = '''You are an agriculture expert. Provide SHORT and PRACTICAL information about: "$query"
 
@@ -1679,11 +1666,11 @@ Keep it SHORT and practical for farmers. Use bullet points and bold for importan
 
       final response = await AiService().sendMessage(prompt);
       
-      print('✅ Search response received');
+      print(' Search response received');
       
       // Use the page's context, not the dialog context
       if (!mounted) {
-        print('❌ Widget no longer mounted');
+        print(' Widget no longer mounted');
         return;
       }
 
@@ -1712,10 +1699,10 @@ Keep it SHORT and practical for farmers. Use bullet points and bold for importan
                         fontSize: 14,
                         height: 1.6,
                       ),
-                      strong: const TextStyle(
+                      strong: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF354152),
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                       em: const TextStyle(
                         fontSize: 14,
@@ -1736,7 +1723,7 @@ Keep it SHORT and practical for farmers. Use bullet points and bold for importan
                     ),
                   )
                 else
-                  const Text('No information found. Please try another search.'),
+                  Text(LocalizationService.translate('No information found. Please try another search.')),
               ],
             ),
           ),
@@ -1749,7 +1736,7 @@ Keep it SHORT and practical for farmers. Use bullet points and bold for importan
         ),
       );
     } catch (e) {
-      print('❌ Search error: $e');
+      print(' Search error: $e');
       
       if (!mounted) return;
       

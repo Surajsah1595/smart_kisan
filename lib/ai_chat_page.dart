@@ -137,7 +137,7 @@ class _AiChatPageState extends State<AiChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : const Color(0xFFF0FDF4),
       body: SafeArea(
         child: Column(
           children: [
@@ -165,7 +165,7 @@ class _AiChatPageState extends State<AiChatPage> {
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C7C48),
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -180,11 +180,11 @@ class _AiChatPageState extends State<AiChatPage> {
             onTap: () => Navigator.pop(context),
             child: Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle, 
-                color: Colors.white24
+                color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).dividerColor.withOpacity(0.1) : Colors.white.withOpacity(0.2)
               ),
-              child: const Icon(Icons.arrow_back, color: Colors.white),
+              child: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white),
             ),
           ),
           const SizedBox(width: 15),
@@ -194,7 +194,7 @@ class _AiChatPageState extends State<AiChatPage> {
                Text(
                 tr('Smart Kisan AI'),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : Colors.white,
                   fontSize: 20,
                   fontFamily: 'Arimo',
                   fontWeight: FontWeight.bold,
@@ -202,22 +202,21 @@ class _AiChatPageState extends State<AiChatPage> {
               ),
                Text(
                 tr('Your Expert Assistant'),
-                style: TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : Colors.white.withOpacity(0.9),
                   fontSize: 12,
                   fontFamily: 'Arimo',
                 ),
               ),
             ],
           ),
-          const Spacer(),
+          Spacer(),
           if (_isLoading) 
-            const SizedBox(
+            SizedBox(
               width: 20, height: 20, 
-              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+              child: CircularProgressIndicator(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, strokeWidth: 2)
             )
           else 
-            const Icon(Icons.auto_awesome, color: Colors.white),
+            Icon(Icons.auto_awesome, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white),
         ],
       ),
     );
@@ -301,17 +300,17 @@ class _AiChatPageState extends State<AiChatPage> {
             padding: const EdgeInsets.all(12),
             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
             decoration: BoxDecoration(
-              color: isUser ? const Color(0xFF2C7C48) : Colors.grey[100],
+              color: isUser ? Theme.of(context).colorScheme.primary : Theme.of(context).cardColor,
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
                 topRight: const Radius.circular(12),
                 bottomLeft: isUser ? const Radius.circular(12) : Radius.zero,
                 bottomRight: isUser ? Radius.zero : const Radius.circular(12),
               ),
-              border: isUser ? null : Border.all(color: Colors.grey.shade300),
+              border: isUser ? null : Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
             ),
             child: isUser 
-              ? Text(msg['text']!, style: const TextStyle(color: Colors.white))
+              ? Text(msg['text']!, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
               : MarkdownBody(data: msg['text']!),
           ),
         );
@@ -323,21 +322,26 @@ class _AiChatPageState extends State<AiChatPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
-      ),
+          color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
+          border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
+        ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                hintText: tr('Ask about farming...'),
-                filled: true,
-                fillColor: const Color(0xFFF3F4F6),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
+                  hintText: tr('Ask about farming...'),
+                  hintStyle: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10), 
+                    borderSide: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+              style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
               onSubmitted: (_) => _sendMessage(),
             ),
           ),
@@ -347,10 +351,10 @@ class _AiChatPageState extends State<AiChatPage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _isLoading ? Colors.grey : const Color(0xFF2C7C48),
+                color: _isLoading ? Colors.grey : Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.send, color: Colors.white, size: 20),
+              child: Icon(Icons.send, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white, size: 20),
             ),
           ),
         ],

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'localization_service.dart';
 import 'package:http/http.dart' as http;
 
 class AiService {
-  static const String _apiKey = '';
+  static const String apiKey = 'AIzaSyCLAUyhq-lLrTiSfB8mZa0kfkXv4f-x5nM';
 
   // We will try these models in order. The app will use the first one that works.
   static const List<String> _modelCandidates = [
@@ -16,11 +17,11 @@ class AiService {
 
   Future<String?> sendMessage(String message) async {
     for (String modelName in _modelCandidates) {
-      print("🔄 Trying model: $modelName...");
+      print(" Trying model: $modelName...");
       final result = await _tryModel(modelName, message);
       
       if (result != null) {
-        print("✅ Success! Connected using: $modelName");
+        print(" Success! Connected using: $modelName");
         return result;
       }
     }
@@ -29,7 +30,7 @@ class AiService {
 
   Future<String?> _tryModel(String modelName, String message) async {
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$_apiKey'
+      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$apiKey'
     );
 
     try {
@@ -66,7 +67,7 @@ class AiService {
       }
       return null; // Failed or empty response, try next model
     } catch (e) {
-      print("⚠️ Failed to connect to $modelName: $e");
+      print(" Failed to connect to $modelName: $e");
       return null; // Network error, try next model
     }
   }
@@ -83,24 +84,24 @@ class AiService {
       final base64Image = base64Encode(imageBytes);
 
       for (String modelName in _modelCandidates) {
-        print("🔄 [IMAGE] Trying model: $modelName...");
+        print(" [IMAGE] Trying model: $modelName...");
         final result = await _tryImageModel(modelName, base64Image);
         
         if (result != null) {
-          print("✅ [IMAGE] Success! Connected using: $modelName");
+          print(" [IMAGE] Success! Connected using: $modelName");
           return result;
         }
       }
       return null;
     } catch (e) {
-      print("❌ [IMAGE] analyzeImage error: $e");
+      print(" [IMAGE] analyzeImage error: $e");
       return null;
     }
   }
 
   Future<String?> _tryImageModel(String modelName, String base64Image) async {
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$_apiKey'
+      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$apiKey'
     );
 
     try {
@@ -147,7 +148,7 @@ Respond with ONLY a JSON object (no markdown, no extra text):
       }
       return null;
     } catch (e) {
-      print("⚠️ [IMAGE] Failed with $modelName: $e");
+      print(" [IMAGE] Failed with $modelName: $e");
       return null;
     }
   }
@@ -163,24 +164,24 @@ Respond with ONLY a JSON object (no markdown, no extra text):
       final base64Image = base64Encode(imageBytes);
 
       for (String modelName in _modelCandidates) {
-        print("🔄 [PLOT] Trying model: $modelName...");
+        print(" [PLOT] Trying model: $modelName...");
         final result = await _tryPlotImageModel(modelName, base64Image, selectedSoil, waterAvailable);
         
         if (result != null) {
-          print("✅ [PLOT] Success! Connected using: $modelName");
+          print(" [PLOT] Success! Connected using: $modelName");
           return result;
         }
       }
       return null;
     } catch (e) {
-      print("❌ [PLOT] analyzePlotImage error: $e");
+      print(" [PLOT] analyzePlotImage error: $e");
       return null;
     }
   }
 
   Future<Map<String, dynamic>?> _tryPlotImageModel(String modelName, String base64Image, String selectedSoil, bool waterAvailable) async {
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$_apiKey'
+      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$apiKey'
     );
 
     try {
@@ -231,18 +232,18 @@ Respond with ONLY a JSON object (no markdown, no extra text):
       }
       return null;
     } catch (e) {
-      print("⚠️ [PLOT] Failed with $modelName: $e");
+      print(" [PLOT] Failed with $modelName: $e");
       return null;
     }
   }
 
   Future<String?> sendMessageWithHistory(List<Map<String, String>> history) async {
     for (String modelName in _modelCandidates) {
-      print("🔄 Trying model with history: $modelName...");
+      print(" Trying model with history: $modelName...");
       final result = await _tryModelWithHistory(modelName, history);
       
       if (result != null) {
-         print("✅ Success! Connected using: $modelName");
+         print(" Success! Connected using: $modelName");
          return result;
       }
     }
@@ -251,7 +252,7 @@ Respond with ONLY a JSON object (no markdown, no extra text):
 
   Future<String?> _tryModelWithHistory(String modelName, List<Map<String, String>> history) async {
     final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$_apiKey'
+      'https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent?key=$apiKey'
     );
 
     // Map roles to Gemini roles
@@ -294,7 +295,7 @@ User Question: $text
       }
       return null;
     } catch (e) {
-      print("⚠️ Failed to connect to $modelName: $e");
+      print(" Failed to connect to $modelName: $e");
       return null;
     }
   }

@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification.dart';
+import 'localization_service.dart';
 
 /// Service to manage all notifications in the app
 /// Integrates with Weather, Pest, Water, Crop, and other services
@@ -17,6 +20,40 @@ class NotificationService {
 
   String get userId => _auth.currentUser?.uid ?? '';
   bool get isAuthenticated => userId.isNotEmpty;
+
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+
+  Future<void> initFCM() async {
+    NotificationSettings settings = await _fcm.requestPermission(alert: true, badge: true, sound: true);
+    if (settings.authorizationStatus != AuthorizationStatus.authorized) return;
+
+    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
+    const InitializationSettings initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
+    await _localNotifications.initialize(settings: initSettings);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      if (notification == null) return;
+      _localNotifications.show(
+        id: notification.hashCode,
+        title: notification.title,
+        body: notification.body,
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails('smart_kisan_channel', 'Smart Kisan Alerts', importance: Importance.high),
+          iOS: DarwinNotificationDetails(),
+        ),
+      );
+    });
+  }
+
+  Future<void> saveFcmToken(String userId) async {
+    String? token = await _fcm.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({'fcmToken': token});
+    }
+  }
 
   
   /// WEATHER NOTIFICATIONS
@@ -410,7 +447,7 @@ class NotificationService {
   }) async {
     final notification = NotificationModel(
       id: '',
-      title: '$alertName Resolved ✓',
+      title: '$alertName Resolved ',
       message: 'Alert has been resolved with: $resolutionAction',
       time: Timestamp.now(),
       type: _getTypeFromAlertType(alertType),
@@ -426,7 +463,7 @@ class NotificationService {
   }) async {
     final notification = NotificationModel(
       id: '',
-      title: 'Pest Alert Resolved ✓',
+      title: 'Pest Alert Resolved ',
       message: '$pestName pest has been treated with: $treatment',
       time: Timestamp.now(),
       type: NotificationType.pest,
@@ -442,7 +479,7 @@ class NotificationService {
   }) async {
     final notification = NotificationModel(
       id: '',
-      title: 'Disease Alert Resolved ✓',
+      title: 'Disease Alert Resolved ',
       message: '$diseaseName has been treated with: $treatment',
       time: Timestamp.now(),
       type: NotificationType.pest,
@@ -458,7 +495,7 @@ class NotificationService {
   }) async {
     final notification = NotificationModel(
       id: '',
-      title: 'Water Alert Resolved ✓',
+      title: 'Water Alert Resolved ',
       message: '$fieldName: $action',
       time: Timestamp.now(),
       type: NotificationType.irrigation,
@@ -475,7 +512,7 @@ class NotificationService {
   }) async {
     final notification = NotificationModel(
       id: '',
-      title: 'Crop Health Alert Resolved ✓',
+      title: 'Crop Health Alert Resolved ',
       message: '$cropName - $issue: $solution',
       time: Timestamp.now(),
       type: NotificationType.crop,
@@ -545,7 +582,7 @@ class NotificationService {
 
   Future<void> _saveNotification(NotificationModel notification) async {
     if (!isAuthenticated) {
-      print('✗ User not authenticated, cannot save notification');
+      print(' User not authenticated, cannot save notification');
       return;
     }
     
@@ -555,9 +592,9 @@ class NotificationService {
           .doc(userId)
           .collection('notifications')
           .add(notification.toFirestore());
-      print('✓ Notification saved: ${notification.title}');
+      print(' Notification saved: ${notification.title}');
     } catch (e) {
-      print('✗ Error saving notification: $e');
+      print(' Error saving notification: $e');
     }
   }
 
@@ -574,7 +611,7 @@ class NotificationService {
           .get();
       return snapshot.docs.length;
     } catch (e) {
-      print('✗ Error getting unread count: $e');
+      print(' Error getting unread count: $e');
       return 0;
     }
   }
@@ -591,7 +628,7 @@ class NotificationService {
           .doc(notificationId)
           .update({'isRead': true});
     } catch (e) {
-      print('✗ Error marking as read: $e');
+      print(' Error marking as read: $e');
     }
   }
 
@@ -607,7 +644,7 @@ class NotificationService {
           .doc(notificationId)
           .delete();
     } catch (e) {
-      print('✗ Error deleting notification: $e');
+      print(' Error deleting notification: $e');
     }
   }
 
@@ -639,4 +676,9 @@ class NotificationService {
         .orderBy('time', descending: true)
         .snapshots();
   }
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print('Background message: ${message.messageId}');
 }

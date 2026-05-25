@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'notification_service.dart';
+import 'localization_service.dart';
 
 class WeatherService {
   final NotificationService _notificationService = NotificationService();
@@ -107,7 +108,7 @@ class WeatherService {
           location: cityName,
         );
       } else if (temperature < 15) {
-        print('❄️ Temperature alert triggered (${temperature}°C < 15°C)');
+        print(' Temperature alert triggered (${temperature}°C < 15°C)');
         await _notificationService.notifyLowTemperature(
           temperature: temperature,
           location: cityName,
@@ -116,25 +117,25 @@ class WeatherService {
 
       // Humidity alerts
       if (humidity > 70 || humidity < 50) {
-        print('💧 Humidity alert triggered (${humidity}% > 70% or < 50%)');
+        print(' Humidity alert triggered (${humidity}% > 70% or < 50%)');
         await _notificationService.notifyHumidityLevel(
           humidity: humidity.toDouble(),
           location: cityName,
         );
       } else {
-        print('✓ Humidity OK (${humidity}% is between 50-70%)');
+        print(' Humidity OK (${humidity}% is between 50-70%)');
       }
 
       // Rain alerts
       if (condition.toLowerCase().contains('rain')) {
-        print('🌧️ Rain alert triggered');
+        print(' Rain alert triggered');
         await _notificationService.notifyRainAlert(
           rainType: condition,
           location: cityName,
         );
       }
     } catch (e) {
-      print('❌ Error checking weather: $e');
+      print(' Error checking weather: $e');
     }
   }
 }

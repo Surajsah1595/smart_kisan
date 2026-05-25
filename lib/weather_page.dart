@@ -275,14 +275,13 @@ class _WeatherPageState extends State<WeatherPage> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Center(
-                        child: Text(
-                          'Weather Forecast',
-                          style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w600),
+                        child: Text(LocalizationService.translate('Weather Forecast'),
+                          style: TextStyle(color: Theme.of(context).cardColor, fontSize: 25, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -358,7 +357,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2, offset: const Offset(0, 1))],
       ),
@@ -407,7 +406,7 @@ class _WeatherPageState extends State<WeatherPage> {
               Expanded(
                 child: Text(
                   _selectedLocation,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -421,14 +420,13 @@ class _WeatherPageState extends State<WeatherPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Today',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                  Text(LocalizationService.translate('Today'),
+                    style: TextStyle(color: Theme.of(context).cardColor, fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _currentWeather['condition'].toString(),
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7), fontSize: 16),
                   ),
                 ],
               ),
@@ -440,20 +438,20 @@ class _WeatherPageState extends State<WeatherPage> {
                     children: [
                       Icon(
                         _getWeatherIcon(_currentWeather['condition'].toString()),
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         size: 40,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '${_currentWeather['temp']}°C',
-                        style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w600),
+                        style: TextStyle(color: Theme.of(context).cardColor, fontSize: 36, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Feels like ${_currentWeather['feelsLike']}°C',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7), fontSize: 14),
                   ),
                 ],
               ),
@@ -468,9 +466,8 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Current Conditions',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
+        Text(LocalizationService.translate('Current Conditions'),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
         const SizedBox(height: 12),
         SingleChildScrollView(
@@ -493,7 +490,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2, offset: const Offset(0, 1))],
       ),
@@ -501,9 +498,9 @@ class _WeatherPageState extends State<WeatherPage> {
         children: [
           Icon(icon, color: Colors.orange, size: 24),
           const SizedBox(height: 8),
-          Text(LocalizationService.translate(title), style: const TextStyle(fontSize: 12, color: Color(0xFF495565))),
+          Text(LocalizationService.translate(title), style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+          Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
         ],
       ),
     );
@@ -513,7 +510,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          Text(LocalizationService.translate('Hourly Forecast'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+          Text(LocalizationService.translate('Hourly Forecast'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
         const SizedBox(height: 12),
         SizedBox(
           height: 140, 
@@ -531,16 +528,16 @@ class _WeatherPageState extends State<WeatherPage> {
                 ),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2, offset: const Offset(0, 1))],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(data['time'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF101727)), textAlign: TextAlign.center),
+                    Text(data['time'] as String, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color), textAlign: TextAlign.center),
                     Icon(_getWeatherIcon('Partly Cloudy'), color: Colors.orange, size: 28),
-                    Text('${data['temp']}°', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+                    Text('${data['temp']}°', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: const Color(0xFFEFF6FF), borderRadius: BorderRadius.circular(12)),
@@ -567,7 +564,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(LocalizationService.translate('7-Day Forecast'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
+        Text(LocalizationService.translate('7-Day Forecast'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
         const SizedBox(height: 12),
         Column(
           children: _weeklyData.map((day) {
@@ -575,7 +572,7 @@ class _WeatherPageState extends State<WeatherPage> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2, offset: const Offset(0, 1))],
               ),
@@ -586,8 +583,8 @@ class _WeatherPageState extends State<WeatherPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(day['day'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF101727)), overflow: TextOverflow.ellipsis),
-                        Text(day['date'] as String, style: const TextStyle(fontSize: 12, color: Color(0xFF495565))),
+                        Text(day['day'] as String, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color), overflow: TextOverflow.ellipsis),
+                        Text(day['date'] as String, style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                     ),
                   ),
@@ -612,8 +609,8 @@ class _WeatherPageState extends State<WeatherPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('${day['high']}°', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF101727))),
-                      Text('${day['low']}°', style: const TextStyle(fontSize: 14, color: Color(0xFF495565))),
+                      Text('${day['high']}°', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
+                      Text('${day['low']}°', style: TextStyle(fontSize: 14, color: Theme.of(context).textTheme.bodyMedium?.color)),
                     ],
                   ),
                 ],
@@ -631,7 +628,7 @@ class _WeatherPageState extends State<WeatherPage> {
       children: [
         Text(
           LocalizationService.translate('Farming Advice'),
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
         const SizedBox(height: 12),
         if (_adviceData.isEmpty)
@@ -645,7 +642,7 @@ class _WeatherPageState extends State<WeatherPage> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2, offset: const Offset(0, 1))],
               ),
@@ -662,7 +659,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(advice['title'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF101727))),
+                        Text(advice['title'] as String, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color)),
                         const SizedBox(height: 4),
                         Text(advice['desc'] as String, style: const TextStyle(fontSize: 12, color: Color(0xFF354152)), maxLines: 2, overflow: TextOverflow.ellipsis),
                       ],

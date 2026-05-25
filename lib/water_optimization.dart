@@ -20,17 +20,198 @@ class WaterOptimizationService {
   }
 
   double _convertToHectares(double area, String unit) {
-    switch (unit.toLowerCase()) {
-      case 'acres':
-        return area * 0.404686;
-      case 'hectares':
-        return area;
-      case 'sqm':
-        return area / 10000.0;
-      default:
-        return area;
+    try {
+      if (area <= 0 || area.isNaN) return 1.0;
+      switch (unit.toLowerCase()) {
+        case 'acres':
+          return area * 0.404686;
+        case 'hectares':
+          return area;
+        case 'sqm':
+          return area / 10000.0;
+        default:
+          return area;
+      }
+    } catch (e) {
+      return 1.0;
     }
   }
+
+  // 1. Expand the Local Crop Database to 100-200 Crops
+  // Baseline water requirements (L/m²/day) for 3 lifecycle stages.
+  final Map<String, Map<String, double>> _cropWaterRequirements = {
+    // Cereals & Grains
+    'rice': {'Seedling': 4.0, 'Mid-Season': 11.0, 'Harvesting': 7.0},
+    'wheat': {'Seedling': 2.0, 'Mid-Season': 6.0, 'Harvesting': 3.0},
+    'maize': {'Seedling': 2.5, 'Mid-Season': 7.0, 'Harvesting': 4.0},
+    'corn': {'Seedling': 2.5, 'Mid-Season': 7.0, 'Harvesting': 4.0},
+    'barley': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.0},
+    'millet': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'sorghum': {'Seedling': 1.5, 'Mid-Season': 5.0, 'Harvesting': 2.5},
+    'oats': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.0},
+    'rye': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.0},
+    'triticale': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.0},
+    'fonio': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'teff': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'quinoa': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 2.5},
+    'amaranth': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 2.5},
+    'buckwheat': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 2.5},
+
+    // Vegetables
+    'cabbage': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'cauliflower': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'spinach': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.5},
+    'lettuce': {'Seedling': 2.0, 'Mid-Season': 4.0, 'Harvesting': 3.0},
+    'kale': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.5},
+    'celery': {'Seedling': 2.5, 'Mid-Season': 5.0, 'Harvesting': 4.0},
+    'potato': {'Seedling': 2.5, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'onion': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'carrot': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'beetroot': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'radish': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'turnip': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'tomato': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'chili': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'brinjal': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'eggplant': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'cucumber': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'pumpkin': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'okra': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'bell pepper': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'pepper': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'sweet potato': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'zucchini': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'garlic': {'Seedling': 1.5, 'Mid-Season': 4.0, 'Harvesting': 2.5},
+    'yam': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'cassava': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'taro': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'artichoke': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'asparagus': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'broccoli': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'brussels sprouts': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'leek': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'parsnip': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'rutabaga': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'watercress': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+
+    // Fruits
+    'banana': {'Seedling': 4.0, 'Mid-Season': 8.0, 'Harvesting': 6.0},
+    'mango': {'Seedling': 3.0, 'Mid-Season': 7.0, 'Harvesting': 5.0},
+    'citrus': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'papaya': {'Seedling': 3.5, 'Mid-Season': 7.0, 'Harvesting': 5.0},
+    'apple': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'pear': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'peach': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'plum': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'grapes': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'strawberry': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'watermelon': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'melon': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'pomegranate': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'guava': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'lychee': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 5.0},
+    'kiwi': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'fig': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'dates': {'Seedling': 4.0, 'Mid-Season': 8.0, 'Harvesting': 6.0},
+    'avocado': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'pineapple': {'Seedling': 2.0, 'Mid-Season': 4.0, 'Harvesting': 3.0},
+    'blueberries': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'cranberries': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'raspberries': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'blackberries': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'gooseberries': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'passion fruit': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'dragon fruit': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'star fruit': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'durian': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 5.0},
+    'jackfruit': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 5.0},
+    'rambutan': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 5.0},
+    'mangosteen': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 5.0},
+
+    // Cash & Industrial Crops
+    'sugarcane': {'Seedling': 3.5, 'Mid-Season': 9.0, 'Harvesting': 6.0},
+    'cotton': {'Seedling': 2.5, 'Mid-Season': 7.0, 'Harvesting': 4.0},
+    'tea': {'Seedling': 3.0, 'Mid-Season': 5.5, 'Harvesting': 4.5},
+    'coffee': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'cocoa': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'tobacco': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'rubber': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 5.0},
+    'oil palm': {'Seedling': 3.5, 'Mid-Season': 7.5, 'Harvesting': 6.0},
+    'jute': {'Seedling': 3.0, 'Mid-Season': 7.0, 'Harvesting': 5.0},
+    'hemp': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'flax': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'safflower': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'sunflower': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+    'mustard': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'sesame': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'castor': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.5},
+    'bamboo': {'Seedling': 3.0, 'Mid-Season': 7.0, 'Harvesting': 5.0},
+    'sago': {'Seedling': 3.5, 'Mid-Season': 7.5, 'Harvesting': 6.0},
+
+    // Pulses & Legumes
+    'chickpea': {'Seedling': 1.5, 'Mid-Season': 4.5, 'Harvesting': 2.5},
+    'lentil': {'Seedling': 1.5, 'Mid-Season': 4.0, 'Harvesting': 2.5},
+    'pigeon pea': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.0},
+    'mung bean': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'black gram': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'soybean': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'cowpea': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'faba bean': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.0},
+    'green gram': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'peas': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+    'beans': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.0},
+
+    // Spices & Herbs
+    'cumin': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'coriander': {'Seedling': 1.5, 'Mid-Season': 4.0, 'Harvesting': 2.5},
+    'turmeric': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'ginger': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'cardamom': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'black pepper': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'clove': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'nutmeg': {'Seedling': 3.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'saffron': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.0},
+    'vanilla': {'Seedling': 2.5, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'mint': {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 4.0},
+    'basil': {'Seedling': 2.0, 'Mid-Season': 4.5, 'Harvesting': 3.5},
+    'rosemary': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'thyme': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'oregano': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'lavender': {'Seedling': 1.5, 'Mid-Season': 3.5, 'Harvesting': 2.5},
+    'hops': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.0},
+
+    // Forage & Fodder
+    'alfalfa': {'Seedling': 2.5, 'Mid-Season': 7.0, 'Harvesting': 5.0},
+    'clover': {'Seedling': 2.0, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'ryegrass': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'napier grass': {'Seedling': 3.0, 'Mid-Season': 7.5, 'Harvesting': 5.5},
+    'sudan grass': {'Seedling': 2.5, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'bermuda grass': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'fescue': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'timothy grass': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'vetiver': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+
+    // Nuts & Oilseeds
+    'groundnut': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'peanut': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 3.5},
+    'almond': {'Seedling': 2.5, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'walnut': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'cashew': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'pistachio': {'Seedling': 2.0, 'Mid-Season': 5.5, 'Harvesting': 4.0},
+    'hazelnut': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'coconut': {'Seedling': 3.5, 'Mid-Season': 7.0, 'Harvesting': 5.5},
+    'macadamia': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    'pecan': {'Seedling': 3.0, 'Mid-Season': 6.5, 'Harvesting': 4.5},
+    'chestnut': {'Seedling': 2.5, 'Mid-Season': 6.0, 'Harvesting': 4.5},
+    
+    // Miscellaneous
+    'agave': {'Seedling': 1.0, 'Mid-Season': 2.5, 'Harvesting': 1.5},
+    'aloe vera': {'Seedling': 1.0, 'Mid-Season': 2.0, 'Harvesting': 1.5},
+    'ginseng': {'Seedling': 2.0, 'Mid-Season': 4.0, 'Harvesting': 3.0},
+  };
+
+  // Expose the list of available crops for the UI Autocomplete
+  List<String> get availableCrops => _cropWaterRequirements.keys.toList();
 
   Map<String, dynamic> calculateWaterRequirement({
     required double area,
@@ -38,79 +219,91 @@ class WaterOptimizationService {
     required String cropType,
     required String soilType,
     required int growingDays,
+    double forecastRainMm = 0.0,
+    String irrigationMethod = 'Sprinkler Irrigation',
   }) {
-    if (area <= 0) {
+    try {
+      // 4. Robust Error Handling & Edge Cases
+      double safeArea = (area <= 0 || area.isNaN) ? 1.0 : area;
+      int safeDays = (growingDays <= 0) ? 120 : growingDays;
+      double safeRain = (forecastRainMm < 0 || forecastRainMm.isNaN) ? 0.0 : forecastRainMm;
+
+      double areaHectares = _convertToHectares(safeArea, areaUnit);
+      double areaSqm = areaHectares * 10000.0;
+
+      String crop = cropType.toLowerCase().trim();
+      
+      // Fallback default for unknown crops
+      Map<String, double> cropStages = _cropWaterRequirements[crop] ?? 
+          {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.0};
+
+      // 1. Calculate Average Daily Baseline Requirement (L/m²/day) over the season
+      // Assuming typical distribution: 20% Seedling, 60% Mid-Season, 20% Harvesting
+      double avgDailyBaseline = (cropStages['Seedling']! * 0.2) + 
+                                (cropStages['Mid-Season']! * 0.6) + 
+                                (cropStages['Harvesting']! * 0.2);
+
+      // 3. Fix the Rainfall Logic (Effective Rainfall Subtraction)
+      // P_eff = Measured Rainfall (mm) × 0.7
+      double pEff = safeRain * 0.7;
+
+      // Net Irrigation Requirement (I_net)
+      // I_net = Baseline - P_eff
+      double iNet = avgDailyBaseline - pEff;
+      if (iNet < 0.0) {
+        iNet = 0.0; // gracefully floor at 0.0
+      }
+
+      // 2. Fix the Irrigation System Efficiency Formula
+      double efficiencyRating;
+      if (irrigationMethod.contains('Drip')) {
+        efficiencyRating = 0.90;
+      } else if (irrigationMethod.contains('Sprinkler')) {
+        efficiencyRating = 0.75;
+      } else if (irrigationMethod.contains('Surface') || irrigationMethod.contains('Flood')) {
+        efficiencyRating = 0.50;
+      } else {
+        efficiencyRating = 0.75; // safe operational constant
+      }
+
+      // I_gross = I_net / Efficiency Rating
+      double iGross = iNet / efficiencyRating;
+
+      // Calculate Total Liters
+      // I_gross is in L/m²/day.
+      double dailyWaterLiters = iGross * areaSqm;
+      double totalWaterLiters = dailyWaterLiters * safeDays;
+
+      String methodMessage = "I_gross = I_net / Efficiency ($efficiencyRating)\n"
+          "Crop Baseline: ${avgDailyBaseline.toStringAsFixed(1)} L/m²/day";
+      
+      if (pEff > 0) {
+        methodMessage += "\nEffective rainfall (${pEff.toStringAsFixed(1)}mm) subtracted.";
+      }
+
+      return {
+        'success': true,
+        'crop': cropType,
+        'area': safeArea,
+        'areaUnit': areaUnit,
+        'areaHectares': areaHectares.toStringAsFixed(2),
+        'water': totalWaterLiters.ceil(),
+        'dailyWater': dailyWaterLiters.ceil(),
+        'soilType': soilType,
+        'growingDays': safeDays,
+        'message': 'Total: ${totalWaterLiters.ceil()} liters\n'
+                   'Daily: ${dailyWaterLiters.ceil()} liters/day\n'
+                   'Method: $methodMessage',
+      };
+    } catch (e) {
       return {
         'success': false,
-        'message': 'Land area must be greater than 0',
+        'message': 'Calculation Error: $e',
         'water': 0,
+        'dailyWater': 0,
+        'growingDays': growingDays,
       };
     }
-
-    double areaHectares = _convertToHectares(area, areaUnit);
-    const double mmToLitersPerHa = 10000.0;
-
-    final cropEtcDaily = {
-      'rice': 6.0, 'wheat': 4.0, 'corn': 5.0, 'sugarcane': 8.0, 'cotton': 6.0,
-      'potato': 5.0, 'tomato': 4.5, 'onion': 3.0, 'cabbage': 4.0, 'carrot': 4.0,
-      'cucumber': 4.5, 'pepper': 5.0, 'spinach': 3.5, 'lettuce': 3.0, 'radish': 2.5,
-      'brinjal': 5.0, 'cauliflower': 4.0, 'peas': 3.5, 'beans': 3.5, 'okra': 5.0,
-      'mustard': 3.5, 'rice_transplant': 6.0, 'soybean': 4.5, 'maize': 5.0,
-      'barley': 3.5, 'oats': 3.0, 'sunflower': 5.5,
-    };
-
-    final soilPercolationDaily = {
-      'sandy': 25.0, 'sandy-loam': 15.0, 'loamy': 7.0,
-      'clay-loam': 3.0, 'clay': 1.5, 'silty': 5.0,
-    };
-
-    final soilEfficiencyMultiplier = {
-      'sandy': 1.30,
-      'sandy-loam': 1.15,
-      'loamy': 1.0,
-      'clay-loam': 0.95,
-      'clay': 0.90,
-      'silty': 1.05,
-    };
-
-    String crop = cropType.toLowerCase();
-    String soil = soilType.toLowerCase();
-    bool isFloodedCrop = crop.contains('rice');
-    double etcMmPerDay = cropEtcDaily[crop] ?? 4.0;
-
-    double dailyMm;
-    double landPrepLiters = 0.0;
-    String methodMessage = '';
-
-    if (isFloodedCrop) {
-      double percolation = soilPercolationDaily[soil] ?? 7.0;
-      dailyMm = etcMmPerDay + percolation;
-      landPrepLiters = 200.0 * mmToLitersPerHa * areaHectares;
-      methodMessage = "Flooded Crop Logic (ETc + Percolation)";
-    } else {
-      double efficiency = soilEfficiencyMultiplier[soil] ?? 1.0;
-      dailyMm = etcMmPerDay * efficiency;
-      landPrepLiters = 0.0;
-      methodMessage = "Upland Irrigation Logic (ETc * Soil Efficiency)";
-    }
-
-    double dailyWaterLiters = dailyMm * mmToLitersPerHa * areaHectares;
-    double totalWaterLiters = (dailyWaterLiters * growingDays) + landPrepLiters;
-
-    return {
-      'success': true,
-      'crop': cropType,
-      'area': area,
-      'areaUnit': areaUnit,
-      'areaHectares': areaHectares.toStringAsFixed(2),
-      'water': totalWaterLiters.ceil(),
-      'dailyWater': dailyWaterLiters.ceil(),
-      'soilType': soilType,
-      'growingDays': growingDays,
-      'message': 'Total: ${totalWaterLiters.ceil()} liters\n'
-                 'Daily: ${dailyWaterLiters.ceil()} liters/day\n'
-                 'Method: $methodMessage',
-    };
   }
 
   Map<String, dynamic> calculateWaterRequirementCustom({
@@ -120,60 +313,17 @@ class WaterOptimizationService {
     required String soilType,
     required int growingDays,
     required Map<String, dynamic> cropDetails,
+    double forecastRainMm = 0.0,
   }) {
-    if (area <= 0) {
-      return {'success': false, 'message': 'Land area must be greater than 0', 'water': 0};
-    }
-
-    double areaHectares = _convertToHectares(area, areaUnit);
-    const double mmToLitersPerHa = 10000.0;
-
-    double etcMmPerDay = (cropDetails['waterPerDay'] ?? 4.0).toDouble();
-    bool isFloodedCrop = cropType.toLowerCase().contains('rice');
-    String soil = soilType.toLowerCase();
-
-    final soilPercolationDaily = {
-      'sandy': 25.0, 'sandy-loam': 15.0, 'loamy': 7.0,
-      'clay-loam': 3.0, 'clay': 1.5, 'silty': 5.0,
-    };
-    final soilEfficiencyMultiplier = {
-      'sandy': 1.30, 'sandy-loam': 1.15, 'loamy': 1.0,
-      'clay-loam': 0.95, 'clay': 0.90, 'silty': 1.05,
-    };
-
-    double dailyMm;
-    double landPrepLiters = 0.0;
-    String methodMessage = '';
-
-    if (isFloodedCrop) {
-      double percolation = soilPercolationDaily[soil] ?? 7.0;
-      dailyMm = etcMmPerDay + percolation;
-      landPrepLiters = 200.0 * mmToLitersPerHa * areaHectares;
-      methodMessage = "Flooded Crop Logic (AI Data + Percolation)";
-    } else {
-      double efficiency = soilEfficiencyMultiplier[soil] ?? 1.0;
-      dailyMm = etcMmPerDay * efficiency;
-      landPrepLiters = 0.0;
-      methodMessage = "Upland Irrigation Logic (AI Data * Efficiency)";
-    }
-
-    double dailyWaterLiters = dailyMm * mmToLitersPerHa * areaHectares;
-    double totalWaterLiters = (dailyWaterLiters * growingDays) + landPrepLiters;
-
-    return {
-      'success': true,
-      'crop': cropType,
-      'area': area,
-      'areaUnit': areaUnit,
-      'areaHectares': areaHectares.toStringAsFixed(2),
-      'water': totalWaterLiters.ceil(),
-      'dailyWater': dailyWaterLiters.ceil(),
-      'soilType': soilType,
-      'growingDays': growingDays,
-      'message': 'Total: ${totalWaterLiters.ceil()} liters\n'
-                 'Daily: ${dailyWaterLiters.ceil()} liters/day\n'
-                 'Method: $methodMessage',
-    };
+    // Directly route through the refactored mathematical engine
+    return calculateWaterRequirement(
+      area: area,
+      areaUnit: areaUnit,
+      cropType: cropType,
+      soilType: soilType,
+      growingDays: growingDays,
+      forecastRainMm: forecastRainMm,
+    );
   }
 
   Stream<List<Map<String, dynamic>>> getZonesFromCrops() {
@@ -304,17 +454,26 @@ class WaterOptimizationService {
       final weather = await _weatherService.getCurrentWeather();
       final weatherList = weather['weather'] as List? ?? [];
       final condition = weatherList.isNotEmpty ? weatherList[0]['main'] ?? '' : '';
-      bool shouldSkip = condition.toLowerCase().contains('rain');
+      
+      double rainMm = 0.0;
+      if (weather['rain'] != null) {
+        if (weather['rain']['1h'] != null) {
+          rainMm = (weather['rain']['1h'] as num).toDouble();
+        } else if (weather['rain']['3h'] != null) {
+          rainMm = (weather['rain']['3h'] as num).toDouble();
+        }
+      } else if (condition.toLowerCase().contains('rain')) {
+        rainMm = 5.0; // fallback if rain is mentioned but no volume provided
+      }
 
       return {
-        'shouldSkipWatering': shouldSkip,
         'condition': condition,
-        'message': shouldSkip ? '🌧️ Rain detected - Skip watering' : '☀️ Clear - Safe to water',
+        'rainMm': rainMm,
         'temperature': weather['main']?['temp'],
         'humidity': weather['main']?['humidity'],
       };
     } catch (e) {
-      return {'shouldSkipWatering': false, 'message': '⚪ Weather data unavailable'};
+      return {'condition': 'Unknown', 'rainMm': 0.0, 'message': ' Weather data unavailable'};
     }
   }
 
@@ -323,17 +482,15 @@ class WaterOptimizationService {
     required String soilType, required int growingDays,
   }) async {
     final weatherCheck = await checkWeatherForWatering();
-    if (weatherCheck['shouldSkipWatering'] == true) {
-      return {'recommendation': weatherCheck['message'], 'action': 'skip'};
-    }
+    double rainMm = weatherCheck['rainMm'] ?? 0.0;
 
     final calculation = calculateWaterRequirement(
       area: area, areaUnit: areaUnit, cropType: cropType,
-      soilType: soilType, growingDays: growingDays,
+      soilType: soilType, growingDays: growingDays, forecastRainMm: rainMm,
     );
 
     return {
-      'recommendation': '💧 Apply ${calculation['dailyWater']} L today',
+      'recommendation': calculation['message'],
       'action': 'water',
       'details': calculation,
     };
@@ -397,9 +554,12 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
   final AiService _aiService = AiService();
   final TextEditingController _areaController = TextEditingController();
   final TextEditingController _cropController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _selectedUnit = 'acres';
   String _selectedSoil = 'loamy';
+  // NEW: Irrigation dropdown state
+  String _selectedIrrigationMethod = 'Sprinkler (75% efficient)';
   bool _isLoading = false;
   Map<String, dynamic>? _result;
   Map<String, dynamic>? _weatherData;
@@ -415,6 +575,13 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
   ];
 
   final List<String> areaUnits = ['acres', 'hectares', 'sqm'];
+
+  // NEW: Irrigation dropdown options
+  final List<String> irrigationMethods = [
+    'Drip (90% efficient)',
+    'Sprinkler (75% efficient)',
+    'Flood (50% efficient)',
+  ];
 
   final Map<String, Map<String, String>> _translations = {
     'en': {
@@ -471,9 +638,8 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
   }
 
   Future<void> _calculateWater() async {
-    if (_areaController.text.isEmpty) {
-      _showSnackBar(tr('enter_area'));
-      return;
+    if (!_formKey.currentState!.validate()) {
+      return; // Form validation will handle showing error messages in red under fields
     }
 
     if (_cropController.text.isEmpty) {
@@ -487,12 +653,41 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
     });
 
     try {
-      final area = double.parse(_areaController.text);
+      // Robust Area Parsing
+      double area = 1.0;
+      bool areaInvalid = false;
+      try {
+        area = double.parse(_areaController.text);
+        if (area <= 0 || area.isNaN) {
+          area = 1.0; // Safe default operational constant
+          areaInvalid = true;
+        }
+      } catch (_) {
+        area = 1.0;
+        areaInvalid = true;
+      }
+
+      // NEW: User-friendly Error Message for Invalid Inputs
+      if (areaInvalid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(" Invalid area entered. Using 1.0 as a placeholder. Please enter a positive number."),
+            duration: Duration(seconds: 4),
+          ),
+        );
+      }
+
       final cropName = _cropController.text.trim();
 
-      // Use AI to validate crop and get details
-      final cropDetailsFromAi = await _getAiCropDetails(cropName);
-      print('Crop details from AI: $cropDetailsFromAi');
+      // Use AI to validate crop and get details with safe wrapper
+      Map<String, dynamic>? cropDetailsFromAi;
+      try {
+        cropDetailsFromAi = await _getAiCropDetails(cropName);
+        print('Crop details from AI: $cropDetailsFromAi');
+      } catch (e) {
+        print('AI Validation Exception Caught: $e');
+        cropDetailsFromAi = null;
+      }
 
       // If AI explicitly validated the crop as invalid, stop and show a message
       if (cropDetailsFromAi != null && cropDetailsFromAi['valid'] == false) {
@@ -505,30 +700,46 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         // AI validation failed or AI service unavailable — fallback to local calculation
         print('AI validation failed for "$cropName". Falling back to local calculation.');
 
-        // Use the service's built-in accurate ETc value (NOT AI's waterPerDay)
-        // The service has scientifically-accurate ETc values for all crops
+        final weatherResult = await _service.checkWeatherForWatering();
+        double forecastRainMm = 0.0;
+        try {
+          forecastRainMm = (weatherResult['rainMm'] as num?)?.toDouble() ?? 0.0;
+          if (forecastRainMm < 0 || forecastRainMm.isNaN) forecastRainMm = 0.0;
+        } catch (_) {
+          forecastRainMm = 0.0;
+        }
+
+        // Use the service's built-in accurate calculation
         final waterResultFallback = _service.calculateWaterRequirement(
           area: area,
           areaUnit: _selectedUnit,
           cropType: cropName,
           soilType: _selectedSoil,
-          growingDays: 120,
+          growingDays: 120, // Default operational constant
+          forecastRainMm: forecastRainMm,
+          irrigationMethod: _selectedIrrigationMethod, // NEW: Irrigation dropdown parameter
         );
 
-        final weatherResult = await _service.checkWeatherForWatering();
+        weatherResult['message'] = forecastRainMm > 0 
+            ? ' Rain forecast: ${forecastRainMm}mm. Adjusted watering.'
+            : ' Clear - Safe to water';
 
         // Save fallback calculation
         if (waterResultFallback['success'] == true) {
-          await _service.saveCalculation(
-            area: area,
-            areaUnit: _selectedUnit,
-            cropType: cropName,
-            soilType: _selectedSoil,
-            waterRequired: waterResultFallback['water'] ?? 0,
-            dailyWater: waterResultFallback['dailyWater'] ?? 0,
-            growingDays: waterResultFallback['growingDays'] ?? 120,
-            weatherCondition: weatherResult['condition'] ?? 'Unknown',
-          );
+          try {
+            await _service.saveCalculation(
+              area: area,
+              areaUnit: _selectedUnit,
+              cropType: cropName,
+              soilType: _selectedSoil,
+              waterRequired: waterResultFallback['water'] ?? 0,
+              dailyWater: waterResultFallback['dailyWater'] ?? 0,
+              growingDays: waterResultFallback['growingDays'] ?? 120,
+              weatherCondition: weatherResult['condition'] ?? 'Unknown',
+            );
+          } catch (e) {
+            print('Failed to save calculation: $e');
+          }
         }
 
         setState(() {
@@ -547,6 +758,20 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         return;
       }
 
+      // Get weather check
+      final weatherResult = await _service.checkWeatherForWatering();
+      double forecastRainMm = 0.0;
+      try {
+        forecastRainMm = (weatherResult['rainMm'] as num?)?.toDouble() ?? 0.0;
+        if (forecastRainMm < 0 || forecastRainMm.isNaN) forecastRainMm = 0.0;
+      } catch (_) {
+        forecastRainMm = 0.0;
+      }
+      
+      weatherResult['message'] = forecastRainMm > 0 
+          ? ' Rain forecast: ${forecastRainMm}mm. Adjusted watering.'
+          : ' Clear - Safe to water';
+
       // Use AI for water calculation
       final waterResult = await _getAiWaterCalculation(
         cropName: cropName,
@@ -554,12 +779,11 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         areaUnit: _selectedUnit,
         soilType: _selectedSoil,
         cropDetails: cropDetailsFromAi,
+        forecastRainMm: forecastRainMm,
+        irrigationMethod: _selectedIrrigationMethod, // NEW: Irrigation dropdown parameter
       );
 
       print('AI water calculation result: $waterResult');
-
-      // Get weather check
-      final weatherResult = await _service.checkWeatherForWatering();
 
       // Save to history
       if (waterResult != null && waterResult['success'] == true) {
@@ -589,16 +813,18 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
       }
 
       setState(() {
-        _result = waterResult;
+        _result = waterResult ?? {
+          'success': false, 'message': 'Engine Failure: Fallback triggered.'
+        };
         _weatherData = weatherResult;
         _isLoading = false;
       });
 
-      if (waterResult != null) {
+      if (_result != null && _result!['success'] == true) {
         _showResultDialog();
       }
     } catch (e) {
-      _showSnackBar('Error: $e');
+      _showSnackBar('Engine Error: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -625,14 +851,13 @@ RESPOND ONLY WITH JSON.''';
         return null;
       }
 
-      // Parse JSON
+      // Safe JSON Parse
       final jsonData = _parseJsonResponse(response);
       if (jsonData != null) {
-        // Return whatever the AI returned (may include valid: false)
         return jsonData;
       }
     } catch (e) {
-      print('Error getting crop details: $e');
+      print('Error getting crop details securely caught: $e');
     }
     return null;
   }
@@ -643,20 +868,30 @@ RESPOND ONLY WITH JSON.''';
     required String areaUnit,
     required String soilType,
     required Map<String, dynamic> cropDetails,
+    required double forecastRainMm,
+    required String irrigationMethod, // NEW: Irrigation dropdown parameter
   }) async {
     try {
+      int days = 120; // safe default
+      try {
+        if (cropDetails['growingDays'] != null) {
+          days = (cropDetails['growingDays'] as num).toInt();
+          if (days <= 0) days = 120;
+        }
+      } catch (_) { }
+
       // Use the service's accurate calculation
-      // IGNORE the AI's waterPerDay - use the service's built-in ETc values instead
-      // The service has scientifically-accurate ETc values from FAO standards
       final result = _service.calculateWaterRequirement(
         area: area,
         areaUnit: areaUnit,
         cropType: cropName,
         soilType: soilType,
-        growingDays: cropDetails['growingDays'] ?? 120,
+        growingDays: days,
+        forecastRainMm: forecastRainMm,
+        irrigationMethod: irrigationMethod, // NEW: Pass irrigation method to engine
       );
 
-      print('✅ Water calculation result: $result');
+      print(' Water calculation result: $result');
       
       if (result['success'] == true) {
         return {
@@ -664,13 +899,13 @@ RESPOND ONLY WITH JSON.''';
           'cropName': result['crop'] ?? cropName,
           'totalWater': result['water'] ?? 0,
           'dailyWater': result['dailyWater'] ?? 0,
-          'growingDays': result['growingDays'] ?? 120,
+          'growingDays': result['growingDays'] ?? days,
           'soilFactor': _getSoilFactor(soilType),
           'recommendation': result['message'] ?? 'Watering optimization calculated',
         };
       }
     } catch (e) {
-      print('❌ Error in water calculation: $e');
+      print(' Error in water calculation caught: $e');
     }
     return null;
   }
@@ -692,11 +927,21 @@ RESPOND ONLY WITH JSON.''';
 
   String _formatNum(dynamic n, {int decimals = 0}) {
     if (n == null) return '0';
-    if (n is num) return n.toDouble().toStringAsFixed(decimals);
-    // try parsing
-    final parsed = num.tryParse(n.toString());
-    if (parsed != null) return parsed.toDouble().toStringAsFixed(decimals);
-    return n.toString();
+    double val;
+    if (n is num) {
+      val = n.toDouble();
+    } else {
+      final parsed = num.tryParse(n.toString());
+      if (parsed != null) {
+        val = parsed.toDouble();
+      } else {
+        return n.toString();
+      }
+    }
+    String str = val.toStringAsFixed(decimals);
+    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    String mathFunc(Match match) => '${match[1]},';
+    return str.replaceAllMapped(reg, mathFunc);
   }
 
   String _capitalize(String? s) {
@@ -722,37 +967,39 @@ RESPOND ONLY WITH JSON.''';
 
   Map<String, dynamic> _simpleJsonParse(String jsonString) {
     final result = <String, dynamic>{};
+    try {
+      // Parse success
+      result['success'] = jsonString.contains('"success": true');
 
-    // Parse success
-    result['success'] = jsonString.contains('"success": true');
+      // Parse valid
+      result['valid'] = jsonString.contains('"valid": true');
 
-    // Parse valid
-    result['valid'] = jsonString.contains('"valid": true');
-
-    // Parse string fields
-    final fields = ['cropName', 'season', 'region', 'recommendation'];
-    for (final field in fields) {
-      final match = RegExp('"$field":\\s*"([^"]+)"').firstMatch(jsonString);
-      if (match != null) result[field] = match.group(1);
-    }
-
-    // Parse number fields
-    final numberFields = {
-      'growingDays': 'growingDays',
-      'waterPerDay': 'waterPerDay',
-      'totalWater': 'totalWater',
-      'dailyWater': 'dailyWater',
-      'soilFactor': 'soilFactor',
-    };
-
-    for (final entry in numberFields.entries) {
-      final match = RegExp('"${entry.key}":\\s*([\\d.]+)').firstMatch(jsonString);
-      if (match != null) {
-        final value = match.group(1)!;
-        result[entry.value] = value.contains('.') ? double.parse(value) : int.parse(value);
+      // Parse string fields
+      final fields = ['cropName', 'season', 'region', 'recommendation'];
+      for (final field in fields) {
+        final match = RegExp('"$field":\\s*"([^"]+)"').firstMatch(jsonString);
+        if (match != null) result[field] = match.group(1);
       }
-    }
 
+      // Parse number fields
+      final numberFields = {
+        'growingDays': 'growingDays',
+        'waterPerDay': 'waterPerDay',
+        'totalWater': 'totalWater',
+        'dailyWater': 'dailyWater',
+        'soilFactor': 'soilFactor',
+      };
+
+      for (final entry in numberFields.entries) {
+        final match = RegExp('"${entry.key}":\\s*([\\d.]+)').firstMatch(jsonString);
+        if (match != null) {
+          final value = match.group(1)!;
+          result[entry.value] = value.contains('.') ? double.parse(value) : int.parse(value);
+        }
+      }
+    } catch (e) {
+      print('Safe JSON Parse failure: $e');
+    }
     return result;
   }
 
@@ -764,7 +1011,7 @@ RESPOND ONLY WITH JSON.''';
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Container(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -775,13 +1022,12 @@ RESPOND ONLY WITH JSON.''';
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
-                      const Icon(Icons.water_drop, color: Colors.white, size: 28),
+                      Icon(Icons.water_drop, color: Theme.of(context).cardColor, size: 28),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          'Water Recommendation',
+                        child: Text(LocalizationService.translate('Water Recommendation'),
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -818,7 +1064,7 @@ RESPOND ONLY WITH JSON.''';
                       ),
                       const SizedBox(height: 16),
 
-                      // Total Water
+                      // Daily Water (Main Highlight)
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -829,17 +1075,16 @@ RESPOND ONLY WITH JSON.''';
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Total Water Required',
+                            Text(LocalizationService.translate('Daily Water Needed'),
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue.shade700,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '${_formatNum(_result?['totalWater'], decimals: 0)} Liters',
+                              '${_formatNum(_result?['dailyWater'], decimals: 0)} L/day',
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
@@ -851,7 +1096,7 @@ RESPOND ONLY WITH JSON.''';
                       ),
                       const SizedBox(height: 12),
 
-                      // Daily Water
+                      // Total Water (Secondary)
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -862,8 +1107,7 @@ RESPOND ONLY WITH JSON.''';
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Daily Water',
+                            Text(LocalizationService.translate('Total Season Water'),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -871,7 +1115,7 @@ RESPOND ONLY WITH JSON.''';
                               ),
                             ),
                             Text(
-                              '${_formatNum(_result?['dailyWater'], decimals: 0)} L/day',
+                              '${_formatNum(_result?['totalWater'], decimals: 0)} L',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -894,8 +1138,7 @@ RESPOND ONLY WITH JSON.''';
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Growing Season',
+                            Text(LocalizationService.translate('Growing Season'),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -927,8 +1170,7 @@ RESPOND ONLY WITH JSON.''';
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'AI Recommendation',
+                              Text(LocalizationService.translate('AI Recommendation'),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -961,9 +1203,8 @@ RESPOND ONLY WITH JSON.''';
                         backgroundColor: Colors.blue.shade700,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: const Text(
-                        'Close',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(LocalizationService.translate('Close'),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -991,11 +1232,11 @@ RESPOND ONLY WITH JSON.''';
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete'),
-        content: const Text('Delete this calculation from history?'),
+        title: Text(LocalizationService.translate('Delete')),
+        content: Text(LocalizationService.translate('Delete this calculation from history?')),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(LocalizationService.translate('Cancel'))),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(LocalizationService.translate('Delete'))),
         ],
       ),
     );
@@ -1010,20 +1251,94 @@ RESPOND ONLY WITH JSON.''';
     }
   }
 
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade700,
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+              ),
+              const SizedBox(width: 16),
+              Text(LocalizationService.translate('Water Optimization'),
+                style: TextStyle(
+                  color: Theme.of(context).cardColor,
+                  fontSize: 24,
+                  fontFamily: 'Arimo',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const Spacer(),
+              // NEW: Info button for data sources
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(LocalizationService.translate("Data Sources")),
+                      content: const Text(
+                        "• Water requirement values are derived from FAO Irrigation and Drainage Paper 56 (Crop Evapotranspiration) and adapted for South Asian conditions.\n\n"
+                        "• Crop database includes over 20 crops with stage-specific coefficients.\n\n"
+                        "• Effective rainfall formula: P_eff = Rainfall × 0.7 (FAO generalized guideline)."
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(LocalizationService.translate("Close")),
+                        )
+                      ],
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.info_outline, color: Colors.white),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(Icons.water_drop, color: Theme.of(context).cardColor, size: 20),
+              const SizedBox(width: 8),
+              Text(LocalizationService.translate('Calculate Your Water Requirements'),
+                style: TextStyle(
+                  color: Color(0xE5FFFEFE),
+                  fontSize: 16,
+                  fontFamily: 'Arimo',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _capitalize(tr('water Optimization')),
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.white),
-        toolbarHeight: 68,
-      ),
-      body: SingleChildScrollView(
+      
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1033,107 +1348,155 @@ RESPOND ONLY WITH JSON.''';
               elevation: 2,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Container(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Land Area with Unit
-                    Text(
-                      _capitalize(tr('Land Area')),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade900,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: TextFormField(
-                            controller: _areaController,
-                            keyboardType:
-                                const TextInputType.numberWithOptions(decimal: true),
-                            decoration: InputDecoration(
-                              hintText: 'Enter area',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.blue.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    BorderSide(color: Colors.blue.shade700, width: 2),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Land Area with Unit
+                          Text(
+                            _capitalize(tr('Land Area')),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade900,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue.shade300),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: DropdownButton<String>(
-                              value: _selectedUnit,
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              items: areaUnits
-                                  .map((unit) => DropdownMenuItem(
-                                        value: unit,
-                                        child: Text(unit),
-                                      ))
-                                  .toList(),
-                              onChanged: (value) {
-                                if (value != null) setState(() => _selectedUnit = value);
-                              },
-                            ),
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start, // Align top for validation errors
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: TextFormField(
+                                  controller: _areaController,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(decimal: true),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) return 'Required';
+                                    if (double.tryParse(value) == null || double.parse(value) <= 0) return 'Invalid';
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: LocalizationService.translate('Enter area'),
+                                    prefixIcon: Icon(Icons.square_foot, color: Colors.blue.shade300),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(color: Colors.blue.shade300),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide:
+                                          BorderSide(color: Colors.blue.shade700, width: 2),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  height: 48, // Fixed height to match text field before error
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.blue.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: _selectedUnit,
+                                      isExpanded: true,
+                                      items: areaUnits
+                                          .map((unit) => DropdownMenuItem(
+                                                value: unit,
+                                                child: Text(unit),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        if (value != null) setState(() => _selectedUnit = value);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                    // Crop Type - Free Text Input
-                    Text(
-                      _capitalize(tr('Crop Type')),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade900,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _cropController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter any crop (e.g., wheat, tomato, rice)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.blue.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: Colors.blue.shade700,
-                            width: 2,
+                          // Crop Type - Autocomplete
+                          Text(
+                            _capitalize(tr('Crop Type')),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade900,
+                            ),
                           ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
+                          const SizedBox(height: 8),
+                          Autocomplete<String>(
+                            optionsBuilder: (TextEditingValue textEditingValue) {
+                              if (textEditingValue.text == '') {
+                                return const Iterable<String>.empty();
+                              }
+                              return _service.availableCrops.where((String option) {
+                                return option.contains(textEditingValue.text.toLowerCase());
+                              });
+                            },
+                            onSelected: (String selection) {
+                              _cropController.text = selection;
+                            },
+                            fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                              // Ensure the main controller stays in sync
+                              controller.addListener(() {
+                                if (_cropController.text != controller.text) {
+                                  _cropController.text = controller.text;
+                                }
+                              });
+                              // Initialize with existing value if any
+                              if (controller.text.isEmpty && _cropController.text.isNotEmpty) {
+                                controller.text = _cropController.text;
+                              }
+                              return TextFormField(
+                                controller: controller,
+                                focusNode: focusNode,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) return 'Please enter crop name';
+                                  if (!_service.availableCrops.contains(value.toLowerCase())) {
+                                    return 'Crop not found in database';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: LocalizationService.translate('Search crop (e.g., wheat, rice)'),
+                                  prefixIcon: Icon(Icons.grass, color: Colors.green.shade400),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.blue.shade300),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.blue.shade700,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                     const SizedBox(height: 16),
 
                     // Soil Type
@@ -1173,38 +1536,82 @@ RESPOND ONLY WITH JSON.''';
                         if (value != null) setState(() => _selectedSoil = value);
                       },
                     ),
+                    const SizedBox(height: 16),
+
+                    // NEW: Irrigation Method Dropdown
+                    Text(LocalizationService.translate('Irrigation Method'),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade900,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: _selectedIrrigationMethod,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.blue.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              BorderSide(color: Colors.blue.shade700, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                      ),
+                      items: irrigationMethods
+                          .map((method) => DropdownMenuItem(
+                                value: method,
+                                child: Text(method),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) setState(() => _selectedIrrigationMethod = value);
+                      },
+                    ),
                     const SizedBox(height: 24),
 
                     // Calculate Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _calculateWater,
+                        onPressed: _isLoading ? null : () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            _calculateWater();
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue.shade700,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: 16),
                           disabledBackgroundColor: Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
+                                  color: Theme.of(context).cardColor,
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation(Colors.white),
                                 ),
                               )
-                            : Text(
-                                tr('calculate'),
-                                style: const TextStyle(
+                            : Text(LocalizationService.translate('Calculate'),
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Theme.of(context).cardColor,
                                 ),
                               ),
+                      ),
+                    ),
+                        ],
                       ),
                     ),
                   ],
@@ -1352,6 +1759,10 @@ RESPOND ONLY WITH JSON.''';
                   },
                 );
               },
+            ),
+          ],
+        ),
+      ),
             ),
           ],
         ),

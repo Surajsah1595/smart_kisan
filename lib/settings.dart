@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:io';
 import 'dart:convert' as json;
 import 'auth_service.dart';
@@ -144,7 +145,7 @@ class _SettingsBackend {
       if (!doc.exists) return null;
       return UserProfile.fromMap(doc.data()!, _userId);
     } catch (e) {
-      print('❌ Error getting profile: $e');
+      print(' Error getting profile: $e');
       return null;
     }
   }
@@ -169,10 +170,10 @@ class _SettingsBackend {
       }, SetOptions(merge: true));
       
       await _auth.currentUser?.updateDisplayName(fullName);
-      print('✅ Profile updated');
+      print(' Profile updated');
       return true;
     } catch (e) {
-      print('❌ Error updating profile: $e');
+      print(' Error updating profile: $e');
       return false;
     }
   }
@@ -183,11 +184,11 @@ class _SettingsBackend {
       // Request camera permission
       final cameraStatus = await Permission.camera.request();
       if (cameraStatus.isDenied) {
-        print('❌ Camera permission denied');
+        print(' Camera permission denied');
         throw Exception('Camera permission is required to take photos');
       }
       if (cameraStatus.isPermanentlyDenied) {
-        print('❌ Camera permission permanently denied');
+        print(' Camera permission permanently denied');
         openAppSettings();
         throw Exception('Camera permission is permanently denied. Please enable it in settings.');
       }
@@ -199,13 +200,13 @@ class _SettingsBackend {
         maxWidth: 1024,
       );
       if (pickedFile == null) {
-        print('ℹ️ User cancelled camera selection');
+        print('ℹ User cancelled camera selection');
         return null;
       }
-      print('✅ Image picked from camera: ${pickedFile.path}');
+      print(' Image picked from camera: ${pickedFile.path}');
       return File(pickedFile.path);
     } catch (e) {
-      print('❌ Camera error: $e');
+      print(' Camera error: $e');
       throw Exception('Failed to pick image from camera: $e');
     }
   }
@@ -215,11 +216,11 @@ class _SettingsBackend {
       // Request storage permission - use storage instead of photos for broader compatibility
       final storageStatus = await Permission.storage.request();
       if (storageStatus.isDenied) {
-        print('❌ Storage permission denied');
+        print(' Storage permission denied');
         throw Exception('Storage permission is required to access gallery');
       }
       if (storageStatus.isPermanentlyDenied) {
-        print('❌ Storage permission permanently denied');
+        print(' Storage permission permanently denied');
         openAppSettings();
         throw Exception('Storage permission is permanently denied. Please enable it in settings.');
       }
@@ -231,13 +232,13 @@ class _SettingsBackend {
         maxWidth: 1024,
       );
       if (pickedFile == null) {
-        print('ℹ️ User cancelled gallery selection');
+        print('ℹ User cancelled gallery selection');
         return null;
       }
-      print('✅ Image picked from gallery: ${pickedFile.path}');
+      print(' Image picked from gallery: ${pickedFile.path}');
       return File(pickedFile.path);
     } catch (e) {
-      print('❌ Gallery error: $e');
+      print(' Gallery error: $e');
       throw Exception('Failed to pick image from gallery: $e');
     }
   }
@@ -283,7 +284,7 @@ class _SettingsBackend {
 
       return dest.path;
     } catch (e) {
-      print('❌ Upload error: $e');
+      print(' Upload error: $e');
       throw Exception('Failed to save profile image: $e');
     }
   }
@@ -297,7 +298,7 @@ class _SettingsBackend {
       }
       return null;
     } catch (e) {
-      print('❌ Error getting profile image path: $e');
+      print(' Error getting profile image path: $e');
       return null;
     }
   }
@@ -316,9 +317,9 @@ class _SettingsBackend {
         'profileImagePath': null,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      print('✅ Image deleted');
+      print(' Image deleted');
     } catch (e) {
-      print('❌ Delete error: $e');
+      print(' Delete error: $e');
       throw Exception('Failed to delete image');
     }
   }
@@ -343,7 +344,7 @@ class _SettingsBackend {
       );
       return true;
     } catch (e) {
-      print('❌ Theme error: $e');
+      print(' Theme error: $e');
       return false;
     }
   }
@@ -482,10 +483,10 @@ class _SettingsBackend {
 
       await user.reauthenticateWithCredential(cred);
       await user.updatePassword(newPassword);
-      print('✅ Password changed');
+      print(' Password changed');
       return true;
     } catch (e) {
-      print('❌ Password change error: $e');
+      print(' Password change error: $e');
       return false;
     }
   }
@@ -532,10 +533,10 @@ class _SettingsBackend {
       await _firestore.collection('security').doc(_userId).delete();
 
       await user.delete();
-      print('✅ Account deleted');
+      print(' Account deleted');
       return true;
     } catch (e) {
-      print('❌ Account deletion error: $e');
+      print(' Account deletion error: $e');
       return false;
     }
   }
@@ -560,10 +561,10 @@ class _SettingsBackend {
       };
 
       await file.writeAsString(json.jsonEncode(exportData));
-      print('✅ Data exported to: ${file.path}');
+      print(' Data exported to: ${file.path}');
       return true;
     } catch (e) {
-      print('❌ Export error: $e');
+      print(' Export error: $e');
       return false;
     }
   }
@@ -583,17 +584,17 @@ class _SettingsBackend {
     }
   }
 }
-const Color _lightGreen = Color(0xFFDCFCE7);
-const Color _darkGreen = Color(0xFF008236);
-const Color _white = Colors.white;
-const Color _black = Colors.black;
-const Color _gray = Color(0xFF4A5565);
-const Color _lightGray = Color(0xFFF9FAFB);
-const Color _borderGray = Color(0xFFE5E7EB);
-const Color _textDark = Color(0xFF101727);
-const Color _textGray = Color(0xFF495565);
-const Color _textLightGray = Color(0xFF354152);
-const Color _red = Color(0xFFE7000B);
+
+
+
+
+
+
+
+
+
+
+
 
 // Main Settings Screen
 class SettingsScreen extends StatefulWidget {
@@ -635,7 +636,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadSettings() async {
     try {
-      print('⏳ Loading settings...');
+      print(' Loading settings...');
       
       final profile = await _backend.getUserProfile();
       final unitsPrefs = await _backend.getUnitsPreferences();
@@ -663,9 +664,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _isLoading = false;
         });
       }
-      print('✅ Settings loaded: Theme=$selectedTheme');
+      print(' Settings loaded: Theme=$selectedTheme');
     } catch (e) {
-      print('❌ Error loading settings: $e');
+      print(' Error loading settings: $e');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -673,6 +674,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _setLanguage(String languageName, String languageCode) {
     setState(() => selectedLanguage = languageName);
     LocalizationService.setLanguage(languageCode);
+    context.setLocale(Locale(languageCode));
     if (Navigator.of(context).canPop()) {
       Navigator.pop(context, true);
     }
@@ -689,7 +691,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(tr('Privacy settings saved successfully')),
-          backgroundColor: _darkGreen,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
     }
@@ -699,13 +701,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: _lightGray,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: _lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -729,15 +731,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [_darkGreen, Color(0xFF00A63D)],
+          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary],
         ),
         boxShadow: [
-          BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -751,20 +753,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: _white.withValues(alpha: 0.2),
+                    color: Theme.of(context).cardColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.arrow_back, color: _white, size: 20),
+                  child: Icon(Icons.arrow_back, color: Theme.of(context).cardColor, size: 20),
                 ),
               ),
               const SizedBox(width: 16),
               Text(LocalizationService.translate('Settings'),
-                  style: const TextStyle(color: _white, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  style: TextStyle(color: Theme.of(context).cardColor, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
           const SizedBox(height: 16),
           Text(LocalizationService.translate('Manage your account and preferences'),
-              style: TextStyle(color: _white.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              style: TextStyle(color: Theme.of(context).cardColor.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -783,17 +785,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFF00A63D), _darkGreen],
+                    colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary],
                   ),
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: Center(
                   child: Text(
                     (_userProfile?.fullName ?? 'R')[0].toUpperCase(),
-                    style: const TextStyle(color: _white, fontSize: 30, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+                    style: TextStyle(color: Theme.of(context).cardColor, fontSize: 30, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
                   ),
                 ),
               ),
@@ -802,9 +804,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_userProfile?.fullName ?? 'Farmer', style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                    Text(_userProfile?.fullName ?? 'Farmer', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     const SizedBox(height: 4),
-                    Text(_userProfile?.farmName ?? 'Farm', style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                    Text(_userProfile?.farmName ?? 'Farm', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                   ],
                 ),
               ),
@@ -827,8 +829,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-              child: Center(child: Text(LocalizationService.translate('Edit Profile'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(10)),
+              child: Center(child: Text(LocalizationService.translate('Edit Profile'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
             ),
           ),
         ],
@@ -839,9 +841,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildContactInfo(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: _textGray, size: 16),
+        Icon(icon, color: Theme.of(context).textTheme.bodyMedium?.color, size: 16),
         const SizedBox(width: 8),
-        Expanded(child: Text(text, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+        Expanded(child: Text(text, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
       ],
     );
   }
@@ -859,14 +861,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(LocalizationService.translate('Active Notifications'), style: TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(LocalizationService.translate('Active Notifications'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                   const SizedBox(height: 4),
-                  Text(LocalizationService.translate('You have 7 notifications enabled'), style: TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(LocalizationService.translate('You have 7 notifications enabled'), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                 child: Text(LocalizationService.translate('7/9'), style: const TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
               ),
             ],
@@ -877,8 +879,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-              child: Center(child: Text(LocalizationService.translate('Manage Notifications'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(10)),
+              child: Center(child: Text(LocalizationService.translate('Manage Notifications'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
             ),
           ),
         ],
@@ -890,30 +892,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: _borderGray, width: 1.3))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.3))),
             child: Row(
               children: [
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
-                  child: Icon(icon, color: _darkGreen, size: 20),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                  child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: const TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                      Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(subtitle, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -997,30 +999,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
       if (myAppState != null) {
         myAppState.setTheme(theme);
-        print('✅ Theme changed to: $theme');
+        print(' Theme changed to: $theme');
       } else {
-        print('⚠️ Could not find MyApp state to apply theme');
+        print(' Could not find MyApp state to apply theme');
       }
 
       // Show confirmation
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Theme changed to $theme'),
-            backgroundColor: _darkGreen,
-            duration: const Duration(seconds: 2),
+            content: Text('${LocalizationService.translate('Theme changed to')} $theme'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
+            margin: EdgeInsets.all(16),
           ),
         );
       }
     } catch (e) {
-      print('❌ Error updating theme: $e');
+      print(' Error updating theme: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to update theme'),
-            backgroundColor: Color(0xFFE7000B),
+          SnackBar(
+            content: Text(LocalizationService.translate('Failed to update theme')),
+            
             duration: Duration(seconds: 2),
           ),
         );
@@ -1034,15 +1036,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? _lightGreen : _lightGray,
+          color: isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1) : Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(10),
-          border: isSelected ? Border.all(color: _darkGreen, width: 1.3) : null,
+          border: isSelected ? Border.all(color: Theme.of(context).colorScheme.primary, width: 1.3) : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(text, style: TextStyle(color: isSelected ? const Color(0xFF0D532B) : _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-            if (isSelected) const Icon(Icons.check_circle, color: _darkGreen, size: 20),
+            Text(text, style: TextStyle(color: isSelected ? Color(0xFF0D532B) : Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+            if (isSelected) Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 20),
           ],
         ),
       ),
@@ -1079,7 +1081,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
         Row(
           children: options.map((option) {
@@ -1090,14 +1092,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   margin: option == options.first ? null : const EdgeInsets.only(left: 8),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: selected == option ? _lightGreen : _lightGray,
+                    color: selected == option ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1) : Theme.of(context).scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(10),
-                    border: selected == option ? Border.all(color: _darkGreen, width: 1.3) : null,
+                    border: selected == option ? Border.all(color: Theme.of(context).colorScheme.primary, width: 1.3) : null,
                   ),
                   child: Center(
                     child: Text(option,
                         style: TextStyle(
-                            color: selected == option ? const Color(0xFF0D532B) : _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                            color: selected == option ? Color(0xFF0D532B) : Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                   ),
                 ),
               ),
@@ -1148,7 +1150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildPrivacySwitch(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(color: _lightGray, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(10)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1156,15 +1158,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 if (subtitle.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(subtitle, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ],
             ),
           ),
-          Switch(value: value, onChanged: onChanged, activeThumbColor: _darkGreen),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: Theme.of(context).colorScheme.primary),
         ],
       ),
     );
@@ -1175,13 +1177,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(color: _lightGray, borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(10)),
         child: Row(
           children: [
-            Icon(icon, color: _textDark, size: 20),
+            Icon(icon, color: Theme.of(context).textTheme.bodyLarge?.color, size: 20),
             const SizedBox(width: 8),
-            Expanded(child: Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
-            const Icon(Icons.chevron_right, color: _gray),
+            Expanded(child: Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+            Icon(Icons.chevron_right, color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey),
           ],
         ),
       ),
@@ -1196,12 +1198,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(LocalizationService.translate('Smart Kisan App'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(LocalizationService.translate('Smart Kisan App'), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
-        Text(LocalizationService.translate('Version 1.0.0'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(LocalizationService.translate('Version 1.0.0'), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 8),
         Text(LocalizationService.translate('© 2026 Smart Kisan. All rights reserved.'),
-            style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -1215,16 +1217,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: _red,
+            color: Colors.red,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.logout, color: _white, size: 20),
+              Icon(Icons.logout, color: Theme.of(context).cardColor, size: 20),
               const SizedBox(width: 8),
-              Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('Logout'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
         ),
@@ -1238,7 +1240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? 'Data exported successfully' : 'Export failed'),
-          backgroundColor: success ? _darkGreen : _red,
+          backgroundColor: success ? Theme.of(context).colorScheme.primary : Colors.red,
         ),
       );
     }
@@ -1248,19 +1250,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Account', style: TextStyle(color: _textDark, fontFamily: 'Arimo')),
-        content: const Text('This action cannot be undone. All your data will be permanently deleted.', style: TextStyle(fontFamily: 'Arimo')),
+        title: Text(LocalizationService.translate('Delete Account'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontFamily: 'Arimo')),
+        content: Text(LocalizationService.translate('This action cannot be undone. All your data will be permanently deleted.'), style: TextStyle(fontFamily: 'Arimo')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(LocalizationService.translate('Cancel')),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _showPasswordConfirmDialog();
             },
-            child: const Text('Delete', style: TextStyle(color: _red)),
+            child: Text(LocalizationService.translate('Delete'), style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -1272,14 +1274,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Password'),
+        title: Text(LocalizationService.translate('Confirm Password')),
         content: TextField(
           controller: passwordController,
           obscureText: true,
-          decoration: const InputDecoration(hintText: 'Enter your password'),
+          decoration: InputDecoration(hintText: LocalizationService.translate('Enter your password')),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(LocalizationService.translate('Cancel'))),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -1292,7 +1294,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               }
             },
-            child: const Text('Delete Account', style: TextStyle(color: _red)),
+            child: Text(LocalizationService.translate('Delete Account'), style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -1303,12 +1305,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _textDark, fontFamily: 'Arimo')),
+        title: Text(LocalizationService.translate('Logout'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontFamily: 'Arimo')),
         content: Text(LocalizationService.translate('Are you sure you want to logout?'), style: const TextStyle(fontFamily: 'Arimo', fontSize: 16)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context), 
-            child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _gray, fontFamily: 'Arimo'))
+            child: Text(LocalizationService.translate('Cancel'), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey, fontFamily: 'Arimo'))
           ),
           TextButton(
             onPressed: () async {
@@ -1333,7 +1335,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 (route) => false,
               );
             },
-            child: Text(LocalizationService.translate('Logout'), style: const TextStyle(color: _red, fontFamily: 'Arimo')),
+            child: Text(LocalizationService.translate('Logout'), style: const TextStyle(color: Colors.red, fontFamily: 'Arimo')),
           ),
         ],
       ),
@@ -1386,7 +1388,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         setState(() => _profileImageUrl = url);
       }
     } catch (e) {
-      print('❌ Error loading profile image: $e');
+      print(' Error loading profile image: $e');
     }
   }
 
@@ -1421,27 +1423,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(LocalizationService.translate('Profile updated successfully!')),
-              backgroundColor: _darkGreen,
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to update profile. Please try again.'),
-              backgroundColor: _red,
+            SnackBar(
+              content: Text(LocalizationService.translate('Failed to update profile. Please try again.')),
+              backgroundColor: Colors.red,
             ),
           );
         }
       }
     } catch (e) {
-      print('❌ Error: $e');
+      print(' Error: $e');
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: _red,
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -1451,7 +1453,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void _showPhotoOptions() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: _white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1472,7 +1474,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               const SizedBox(height: 20),
               Text(
                 LocalizationService.translate('Select Photo Source'),
-                style: const TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
+                style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 20),
               GestureDetector(
@@ -1484,17 +1486,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: _borderGray),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.camera_alt, color: _darkGreen, size: 24),
+                      Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.primary, size: 24),
                       const SizedBox(width: 12),
                       Text(
                         LocalizationService.translate('Take Photo'),
-                        style: const TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -1510,17 +1512,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    border: Border.all(color: _borderGray),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.image, color: _darkGreen, size: 24),
+                      Icon(Icons.image, color: Theme.of(context).colorScheme.primary, size: 24),
                       const SizedBox(width: 12),
                       Text(
                         LocalizationService.translate('Choose from Gallery'),
-                        style: const TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -1537,17 +1539,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: _red),
+                      border: Border.all(color: Colors.red),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.delete, color: _red, size: 24),
+                        const Icon(Icons.delete, color: Colors.red, size: 24),
                         const SizedBox(width: 12),
                         Text(
                           LocalizationService.translate('Remove Photo'),
-                          style: const TextStyle(color: _red, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
+                          style: const TextStyle(color: Colors.red, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -1566,7 +1568,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   child: Center(
                     child: Text(
                       LocalizationService.translate('Cancel'),
-                      style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -1587,10 +1589,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         await _uploadProfileImage(imageFile);
       }
     } catch (e) {
-      print('❌ Error picking image from camera: $e');
+      print(' Error picking image from camera: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: _red),
+          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -1606,10 +1608,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         await _uploadProfileImage(imageFile);
       }
     } catch (e) {
-      print('❌ Error picking image from gallery: $e');
+      print(' Error picking image from gallery: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: _red),
+          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -1626,15 +1628,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(LocalizationService.translate('Profile photo updated successfully!')),
-            backgroundColor: _darkGreen,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       }
     } catch (e) {
-      print('❌ Error uploading profile image: $e');
+      print(' Error uploading profile image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: ${e.toString()}'), backgroundColor: _red),
+          SnackBar(content: Text('Upload failed: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     }
@@ -1648,15 +1650,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(LocalizationService.translate('Profile photo removed')),
-            backgroundColor: _darkGreen,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       }
     } catch (e) {
-      print('❌ Error deleting profile image: $e');
+      print(' Error deleting profile image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: _red),
+          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     }
@@ -1665,7 +1667,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -1674,14 +1676,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: _white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
                 ),
                 child: Form(
                   key: _formKey,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     child: Column(
                       children: [
                         Column(
@@ -1690,10 +1692,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                               width: 96,
                               height: 96,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
+                                gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [Color(0xFF00A63D), _darkGreen],
+                                  colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary],
                                 ),
                                 borderRadius: BorderRadius.circular(48),
                               ),
@@ -1705,28 +1707,28 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                   : Center(
                                       child: Text(
                                         (_nameController.text.isEmpty ? 'R' : _nameController.text[0]).toUpperCase(),
-                                        style: const TextStyle(color: _white, fontSize: 36, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+                                        style: TextStyle(color: Theme.of(context).cardColor, fontSize: 36, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
                                       ),
                                     ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             GestureDetector(
                               onTap: _isUploadingPhoto ? null : _showPhotoOptions,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                                 child: _isUploadingPhoto
-                                    ? const SizedBox(
+                                    ? SizedBox(
                                         width: 20,
                                         height: 20,
-                                        child: CircularProgressIndicator(color: _darkGreen, strokeWidth: 2),
+                                        child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary, strokeWidth: 2),
                                       )
                                     : Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(Icons.camera_alt, color: _darkGreen, size: 16),
+                                          Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.primary, size: 16),
                                           const SizedBox(width: 8),
-                                          Text(LocalizationService.translate('Change Photo'), style: const TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                                          Text(LocalizationService.translate('Change Photo'), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                                         ],
                                       ),
                               ),
@@ -1751,15 +1753,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 onTap: _isSaving ? null : _saveProfile,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(10)),
                                   child: Center(
                                     child: _isSaving
-                                        ? const SizedBox(
+                                        ? SizedBox(
                                             width: 20,
                                             height: 20,
-                                            child: CircularProgressIndicator(color: _white, strokeWidth: 2),
+                                            child: CircularProgressIndicator(color: Theme.of(context).cardColor, strokeWidth: 2),
                                           )
-                                        : Text(LocalizationService.translate('Save Changes'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                                        : Text(LocalizationService.translate('Save Changes'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                                   ),
                                 ),
                               ),
@@ -1771,7 +1773,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -1793,7 +1795,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Widget _buildHeader(String title) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(color: _white, border: Border(bottom: BorderSide(color: _borderGray, width: 1.3))),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.3))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1803,10 +1805,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.arrow_back, color: _textDark),
+              child: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ),
-          Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           Container(width: 36, height: 36, decoration: BoxDecoration(borderRadius: BorderRadius.circular(8))),
         ],
       ),
@@ -1817,16 +1819,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(label, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         TextFormField(
           controller: controller,
-          style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _darkGreen, width: 1.3)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.3)),
           ),
           validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
         ),
@@ -1885,18 +1887,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(LocalizationService.translate('Password changed successfully!')),
-              backgroundColor: _darkGreen,
-              duration: const Duration(seconds: 2),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              duration: Duration(seconds: 2),
             ),
           );
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(Duration(seconds: 2), () {
             if (mounted) Navigator.pop(context);
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to change password. Please verify your old password and try again.'),
-              backgroundColor: _red,
+            SnackBar(
+              content: Text(LocalizationService.translate('Failed to change password. Please verify your old password and try again.')),
+              backgroundColor: Colors.red,
             ),
           );
         }
@@ -1908,7 +1910,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: _red,
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -1918,7 +1920,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -1926,9 +1928,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               // Header for Change Password Screen
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: _white,
-                  border: Border(bottom: BorderSide(color: _borderGray, width: 1.3)),
+                decoration: BoxDecoration(color: Theme.of(context).cardColor,
+                  border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.3)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1939,13 +1940,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                        child: const Icon(Icons.arrow_back, color: _textDark),
+                        child: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyLarge?.color),
                       ),
                     ),
-                    const Text(
-                      'Change Password',
+                    Text(LocalizationService.translate('Change Password'),
                       style: TextStyle(
-                        color: _textDark,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.w400,
@@ -1963,9 +1963,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: _white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
                 ),
                 child: Form(
                   key: _formKey,
@@ -1990,15 +1990,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 onTap: _isChanging ? null : _changePassword,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(10)),
                                   child: Center(
                                     child: _isChanging
-                                        ? const SizedBox(
+                                        ? SizedBox(
                                             width: 20,
                                             height: 20,
-                                            child: CircularProgressIndicator(color: _white, strokeWidth: 2),
+                                            child: CircularProgressIndicator(color: Theme.of(context).cardColor, strokeWidth: 2),
                                           )
-                                        : Text(LocalizationService.translate('Change Password'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                                        : Text(LocalizationService.translate('Change Password'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                                   ),
                                 ),
                               ),
@@ -2010,7 +2010,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                                  child: Center(child: Text(LocalizationService.translate('Cancel'), style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                                 ),
                               ),
                             ),
@@ -2033,18 +2033,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(label, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         const SizedBox(height: 4),
         TextFormField(
           controller: controller,
           obscureText: !isVisible,
-          style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFD0D5DB), width: 1.3)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: _darkGreen, width: 1.3)),
-            suffixIcon: IconButton(icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off, color: _gray), onPressed: onToggle),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.3)),
+            suffixIcon: IconButton(icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off, color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey), onPressed: onToggle),
           ),
           validator: validator ??
               (value) {
@@ -2079,9 +2079,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(children: [
-        const Icon(Icons.check_circle, color: _darkGreen, size: 16),
+        Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 16),
         const SizedBox(width: 8),
-        Text(text, style: const TextStyle(color: _darkGreen, fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+        Text(text, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 14, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
       ]),
     );
   }
@@ -2137,7 +2137,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         });
       }
     } catch (e) {
-      print('❌ Error loading notification preferences: $e');
+      print(' Error loading notification preferences: $e');
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -2159,7 +2159,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(LocalizationService.translate('Notification preferences saved')),
-            backgroundColor: _darkGreen,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -2169,13 +2169,13 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         setState(() => _isSaving = false);
       }
     } catch (e) {
-      print('❌ Error saving notification preferences: $e');
+      print(' Error saving notification preferences: $e');
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            backgroundColor: _red,
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -2214,7 +2214,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: _lightGray,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -2223,7 +2223,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     int maxCount = alertTypes.length + notificationChannels.length;
 
     return Scaffold(
-      backgroundColor: _lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -2247,8 +2247,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [_darkGreen, Color(0xFF00A63D)]),
-        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4))],
+        gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary]),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2260,16 +2260,16 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 child: Container(
                   width: 24,
                   height: 24,
-                  decoration: BoxDecoration(color: _white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
-                  child: const Icon(Icons.arrow_back, color: _white, size: 16),
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
+                  child: Icon(Icons.arrow_back, color: Theme.of(context).cardColor, size: 16),
                 ),
               ),
               const SizedBox(width: 16),
-              Text(title, style: const TextStyle(color: _white, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(title, style: TextStyle(color: Theme.of(context).cardColor, fontSize: 24, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
           const SizedBox(height: 16),
-          Text(subtitle, style: TextStyle(color: _white.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(subtitle, style: TextStyle(color: Theme.of(context).cardColor.withValues(alpha: 0.8), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
         ],
       ),
     );
@@ -2280,9 +2280,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2290,14 +2290,14 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(LocalizationService.translate('Active Notifications'), style: const TextStyle(color: _textDark, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('Active Notifications'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
               const SizedBox(height: 4),
-              Text(LocalizationService.translate('You have {count} notifications enabled').replaceAll('{count}', '$enabledCount'), style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+              Text(LocalizationService.translate('You have {count} notifications enabled').replaceAll('{count}', '$enabledCount'), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
             ],
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
             child: Text('$enabledCount/$maxCount', style: const TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           ),
         ],
@@ -2309,30 +2309,30 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: _white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: _borderGray, width: 1.3))),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.3))),
             child: Row(
               children: [
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(10)),
-                  child: Icon(icon, color: _darkGreen, size: 20),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+                  child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: const TextStyle(color: _textDark, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
-                      Text(subtitle, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 20, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                      Text(subtitle, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     ],
                   ),
                 ),
@@ -2358,7 +2358,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: _lightGray, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(10)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2368,24 +2368,24 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               children: [
                 Row(
                   children: [
-                    Text(title, style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                    Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                     const SizedBox(width: 8),
                     if (value)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(color: _lightGreen, borderRadius: BorderRadius.circular(4)),
-                        child: Text(LocalizationService.translate('Active'), style: const TextStyle(color: _darkGreen, fontSize: 12, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                        child: Text(LocalizationService.translate('Active'), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 12, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                       ),
                   ],
                 ),
                 if (description.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(description, style: const TextStyle(color: _textGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                  Text(description, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 ],
               ],
             ),
           ),
-          Switch(value: value, onChanged: onChanged, activeThumbColor: _darkGreen),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: Theme.of(context).colorScheme.primary),
         ],
       ),
     );
@@ -2396,14 +2396,14 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(LocalizationService.translate('Quick Actions'), style: const TextStyle(color: _textDark, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+          Text(LocalizationService.translate('Quick Actions'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -2415,8 +2415,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   }),
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(color: _darkGreen, borderRadius: BorderRadius.circular(10)),
-                    child: Center(child: Text(LocalizationService.translate('Enable All'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(10)),
+                    child: Center(child: Text(LocalizationService.translate('Enable All'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                   ),
                 ),
               ),
@@ -2430,7 +2430,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(color: const Color(0xFFD1D5DC), borderRadius: BorderRadius.circular(10)),
-                    child: Center(child: Text(LocalizationService.translate('Disable All'), style: const TextStyle(color: _textLightGray, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
+                    child: Center(child: Text(LocalizationService.translate('Disable All'), style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400))),
                   ),
                 ),
               ),
@@ -2456,19 +2456,18 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           Container(
             width: 6,
             height: 6,
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(color: const Color(0xFF0D532B), borderRadius: BorderRadius.circular(3)),
+            margin: EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(color: Color(0xFF0D532B), borderRadius: BorderRadius.circular(3)),
           ),
-          const SizedBox(width: 12),
-          const Expanded(
+          SizedBox(width: 12),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('About Notifications', style: TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                Text(LocalizationService.translate('About Notifications'), style: TextStyle(color: Color(0xFF0D532B), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
                 SizedBox(height: 4),
-                Text(
-                  'We recommend keeping critical alerts like weather and pest notifications enabled to stay informed about important farming conditions.',
-                  style: TextStyle(color: _darkGreen, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
+                Text(LocalizationService.translate('We recommend keeping critical alerts like weather and pest notifications enabled to stay informed about important farming conditions.'),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400),
                 ),
               ],
             ),
@@ -2486,18 +2485,18 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: _darkGreen,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [BoxShadow(color: _black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2))],
           ),
           child: Center(
             child: _isSaving
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(color: _white, strokeWidth: 2),
+                    child: CircularProgressIndicator(color: Theme.of(context).cardColor, strokeWidth: 2),
                   )
-                : Text(LocalizationService.translate('Save Preferences'), style: const TextStyle(color: _white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
+                : Text(LocalizationService.translate('Save Preferences'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.w400)),
           ),
         ),
       ),

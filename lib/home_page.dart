@@ -14,7 +14,7 @@ import 'weather_service.dart';
 import 'ai_chat_page.dart';
 import 'localization_service.dart';
 import 'package:image_picker/image_picker.dart';
-import 'smart_plot_editor.dart';
+import 'market_price_page.dart';
 class HomePage extends StatefulWidget {
   final bool isNewUser;
   final String userName;
@@ -51,12 +51,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    print('🏠 HomePage initState called');
+    print(' HomePage initState called');
     // Initialize with the name passed from navigation
     displayName = widget.userName;
     // Try to fetch the latest name from database
     _fetchUserName();
-    print('🔄 Calling _fetchHomeWeather from initState');
+    print(' Calling _fetchHomeWeather from initState');
     _fetchHomeWeather(); // Fetch weather when app starts
     _fetchFarmOverviewData(); // Fetch farm overview data
     _fetchRecentActivities(); // Fetch recent activities
@@ -70,14 +70,14 @@ class _HomePageState extends State<HomePage> {
   // Fetch Weather for Home Card
   Future<void> _fetchHomeWeather() async {
     try {
-      print('🔄 _fetchHomeWeather() called');
+      print(' _fetchHomeWeather() called');
       final data = await _weatherService.getCurrentWeather();
-      print('✅ Weather data fetched: ${data['main']?['temp']}°C');
+      print(' Weather data fetched: ${data['main']?['temp']}°C');
       
       // Check weather and create notifications
-      print('📌 Calling checkWeatherAndNotify()...');
+      print(' Calling checkWeatherAndNotify()...');
       await _weatherService.checkWeatherAndNotify();
-      print('✅ checkWeatherAndNotify() completed');
+      print(' checkWeatherAndNotify() completed');
       
       if (mounted) {
         setState(() {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     } catch (e) {
-      print("❌ Home Weather Error: $e");
+      print(" Home Weather Error: $e");
       if (mounted) {
         setState(() {
           _loadingWeather = false;
@@ -199,9 +199,9 @@ class _HomePageState extends State<HomePage> {
           _totalTasks = completedTasks + 2; // Estimated total
         });
       }
-          print('ℹ️ Farm overview: crops=$totalCrops alerts=${alertsSnapshot.docs.length} tasksDone=$completedTasks');
+          print('ℹ Farm overview: crops=$totalCrops alerts=${alertsSnapshot.docs.length} tasksDone=$completedTasks');
     } catch (e) {
-      print('❌ Error fetching farm overview: $e');
+      print(' Error fetching farm overview: $e');
     }
   }
 
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
             .limit(10)
             .get();
         docs = alt.docs;
-        if (docs.isNotEmpty) print('ℹ️ Using notifications ordered by "timestamp"');
+        if (docs.isNotEmpty) print('ℹ Using notifications ordered by "timestamp"');
       }
 
       // Fetch pest alerts
@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> {
         final severity = data['severity'] ?? 'Medium';
 
         activities.add({
-          'title': '⚠️ $pestName detected (${severity.toLowerCase()})',
+          'title': ' $pestName detected (${severity.toLowerCase()})',
           'time': timeAgo,
           'type': 'pest',
         });
@@ -292,9 +292,9 @@ class _HomePageState extends State<HomePage> {
           _recentActivities = activities;
         });
       }
-      print('ℹ️ Recent Activities: ${activities.length} items (${docs.length} notifications, ${alertsSnapshot.docs.length} pest alerts)');
+      print('ℹ Recent Activities: ${activities.length} items (${docs.length} notifications, ${alertsSnapshot.docs.length} pest alerts)');
     } catch (e) {
-      print('❌ Error fetching recent activities: $e');
+      print(' Error fetching recent activities: $e');
       // Show default welcome message
       if (mounted) {
         setState(() {
@@ -330,7 +330,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('English'),
+              title: Text(LocalizationService.translate('English')),
               onTap: () {
                 LocalizationService.setLanguage('en');
                 Navigator.pop(context);
@@ -339,7 +339,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('हिन्दी (Hindi)'),
+              title: Text(LocalizationService.translate('हिन्दी (Hindi)')),
               onTap: () {
                 LocalizationService.setLanguage('hi');
                 Navigator.pop(context);
@@ -348,7 +348,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('नेपाली (Nepali)'),
+              title: Text(LocalizationService.translate('नेपाली (Nepali)')),
               onTap: () {
                 LocalizationService.setLanguage('ne');
                 Navigator.pop(context);
@@ -364,8 +364,8 @@ class _HomePageState extends State<HomePage> {
   // Colors used in the app
   final Color _primaryGreen = const Color(0xFF2C7C48);
   final Color _lightGreen = const Color(0xFFF0FDF4);
-  final Color _accentGreen = const Color(0xFF00C950);
-  final Color _darkGreen = const Color(0xFF00A63E);
+  final Color _accentGreen = Color(0xFF00C950);
+  final Color _darkGreen = Color(0xFF00C950);
   final Color _warningYellow = const Color(0xFFF0B100);
   final Color _warningOrange = const Color(0xFFFF6900);
   final Color _errorRed = const Color(0xFFFB2C36);
@@ -381,7 +381,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -403,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       tr('Farm Overview'),
                       style: TextStyle(
-                        color: _darkGray,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 16,
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.w400,
@@ -439,11 +439,11 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: _primaryGreen,
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
-            color: _black.withValues(alpha: 0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -469,10 +469,10 @@ class _HomePageState extends State<HomePage> {
                     height: 45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22.5),
-                      color: Colors.white24,
-                      border: Border.all(color: Colors.white, width: 2),
+                      color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).dividerColor.withOpacity(0.1) : Colors.white.withOpacity(0.2),
+                      border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, width: 2),
                     ),
-                    child: const Icon(Icons.person, color: Colors.white, size: 24),
+                    child: Icon(Icons.person, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, size: 24),
                   );
                 }
                 
@@ -482,7 +482,7 @@ class _HomePageState extends State<HomePage> {
                     height: 45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22.5),
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, width: 2),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
@@ -491,8 +491,8 @@ class _HomePageState extends State<HomePage> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: Colors.white24,
-                            child: const Icon(Icons.person, color: Colors.white, size: 24),
+                            color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).dividerColor.withOpacity(0.1) : Colors.white.withOpacity(0.2),
+                            child: Icon(Icons.person, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, size: 24),
                           );
                         },
                       ),
@@ -505,10 +505,10 @@ class _HomePageState extends State<HomePage> {
                   height: 45,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(22.5),
-                    color: Colors.white24,
-                    border: Border.all(color: Colors.white, width: 2),
+                    color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).dividerColor.withOpacity(0.1) : Colors.white.withOpacity(0.2),
+                    border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, width: 2),
                   ),
-                  child: const Icon(Icons.person, color: Colors.white, size: 24),
+                  child: Icon(Icons.person, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white, size: 24),
                 );
               },
             ),
@@ -524,7 +524,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   tr('smart_kisan'),
                   style: TextStyle(
-                    color: _white,
+                    color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : Colors.white,
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w700,
@@ -533,7 +533,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   '${tr('Welcome ')}, $displayName',
                   style: TextStyle(
-                    color: _lightText,
+                    color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : Colors.white.withOpacity(0.9),
                     fontSize: 11,
                     fontFamily: 'Arimo',
                   ),
@@ -541,7 +541,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   _homeWeatherData != null ? _homeWeatherData!['name'] : tr('Locating...'),
                   style: TextStyle(
-                    color: _lightText,
+                    color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodySmall?.color : Colors.white.withOpacity(0.8),
                     fontSize: 10,
                     fontFamily: 'Arimo',
                   ),
@@ -568,7 +568,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Stack(
                 children: [
-                  const Center(child: Icon(Icons.notifications, color: Colors.white, size: 24)),
+                  Center(child: Icon(Icons.notifications, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface : Colors.white, size: 24)),
                   // StreamBuilder to get unread notification count
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -597,13 +597,13 @@ class _HomePageState extends State<HomePage> {
                           decoration: BoxDecoration(
                             color: _errorRed,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white, width: 1.5),
+                            border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white, width: 1.5),
                           ),
                           child: Center(
                             child: Text(
                               unreadCount > 99 ? '99+' : unreadCount.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
                                 fontSize: 8,
                                 fontFamily: 'Arimo',
                                 fontWeight: FontWeight.bold,
@@ -636,7 +636,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.settings, color: Colors.white, size: 24),
+              child: Icon(Icons.settings, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface : Colors.white, size: 24),
             ),
           ),
         ],
@@ -715,9 +715,9 @@ class _HomePageState extends State<HomePage> {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _primaryGreen,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _white.withValues(alpha: 0.2), width: 1.5),
+          border: Border.all(color: Theme.of(context).cardColor.withValues(alpha: 0.2), width: 1.5),
         ),
         child: Column(
           children: [
@@ -732,10 +732,10 @@ class _HomePageState extends State<HomePage> {
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: _white.withValues(alpha: 0.2),
+                          color: Theme.of(context).cardColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Icon(Icons.cloud, color: Colors.white, size: 16),
+                        child: Icon(Icons.cloud, color: Colors.white, size: 16),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -745,7 +745,7 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               tr('Current Weather'),
                               style: TextStyle(
-                                color: _white,
+                                color: Colors.white,
                                 fontSize: 12,
                                 fontFamily: 'Arimo',
                               ),
@@ -753,7 +753,7 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               '$temp°C • $condition',
                               style: TextStyle(
-                                color: _white,
+                                color: Colors.white,
                                 fontSize: 14,
                                 fontFamily: 'Arimo',
                               ),
@@ -778,8 +778,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Text(
                       advice,
-                      style: const TextStyle(
-                        color: Color(0xFF733E0A),
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : Colors.white ?? Colors.transparent,
                         fontSize: 12,
                         fontFamily: 'Arimo',
                       ),
@@ -814,17 +814,17 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: _white.withValues(alpha: 0.15),
+        color: Theme.of(context).cardColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          Icon(icon, color: _white, size: 16),
+          Icon(icon, color: Colors.white, size: 16),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: _lightText,
+              color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.primary : Colors.white.withValues(alpha: 0.2),
               fontSize: 11,
               fontFamily: 'Arimo',
             ),
@@ -833,7 +833,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             value,
             style: TextStyle(
-              color: _white,
+              color: Colors.white,
               fontSize: 14,
               fontFamily: 'Arimo',
             ),
@@ -915,7 +915,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: _black.withValues(alpha: 0.1),
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                     blurRadius: 6,
                     offset: const Offset(0, 4),
                   ),
@@ -924,13 +924,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(feature['icon'] as IconData, color: _white, size: 32),
+                  Icon(feature['icon'] as IconData, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white, size: 32),
                   const SizedBox(height: 8),
                   Text(
                     tr(feature['title'] as String),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: _white,
+                      color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
                       fontSize: 12,
                       fontFamily: 'Arimo',
                       fontWeight: FontWeight.w700,
@@ -950,11 +950,11 @@ class _HomePageState extends State<HomePage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _white,
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: _black.withValues(alpha: 0.1),
+            color: Theme.of(context).textTheme.bodyLarge?.color ?? Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -970,7 +970,7 @@ class _HomePageState extends State<HomePage> {
                 label: tr('Active Crops'),
                 value: _activeCropsCount.toString(),
                 subtitle: _activeCropsCount == 0 ? tr('Tap to add crops') : tr('Currently growing'),
-                color: _lightGreen,
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 textColor: _darkGreen,
               )),
               
@@ -981,7 +981,7 @@ class _HomePageState extends State<HomePage> {
                 label: tr('Yield Rate'),
                 value: '${_yieldRate.toStringAsFixed(0)}%',
                 subtitle: tr('Farm productivity'),
-                color: const Color(0xFFEFF6FF),
+                color: Theme.of(context).dividerColor.withOpacity(0.1),
                 textColor: _darkBlue,
               )),
             ],
@@ -997,7 +997,7 @@ class _HomePageState extends State<HomePage> {
                 label: tr('Alerts'),
                 value: _alertsCount.toString(),
                 subtitle: _alertsCount == 0 ? tr('All clear') : tr('Issues detected'),
-                color: const Color(0xFFFEF3F2),
+                color: Theme.of(context).dividerColor.withOpacity(0.1),
                 textColor: _darkRed,
               )),
               
@@ -1008,7 +1008,7 @@ class _HomePageState extends State<HomePage> {
                 label: tr('Tasks Done'),
                 value: '$_tasksDone/$_totalTasks',
                 subtitle: tr('This period'),
-                color: _lightGreen,
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 textColor: _darkGreen,
               )),
             ],
@@ -1038,12 +1038,12 @@ class _HomePageState extends State<HomePage> {
         children: [
           Row(
             children: [
-              Icon(icon, color: _gray, size: 16),
+              Icon(icon, color: Theme.of(context).textTheme.bodyMedium?.color, size: 16),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: _gray,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   fontSize: 12,
                   fontFamily: 'Arimo',
                 ),
@@ -1054,7 +1054,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             value,
             style: TextStyle(
-              color: _darkGray,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 20,
               fontFamily: 'Arimo',
             ),
@@ -1078,13 +1078,13 @@ class _HomePageState extends State<HomePage> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFFFDFBE8), Color(0xFFFFF7EC)],
+          colors: [Theme.of(context).cardColor, Theme.of(context).cardColor],
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFFEEF85), width: 1.6),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1), width: 1.6),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1095,10 +1095,10 @@ class _HomePageState extends State<HomePage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFEF9C2),
+                  color: Theme.of(context).dividerColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(Icons.language, color: Color(0xFF884A00), size: 20),
+                child: Icon(Icons.language, color: Theme.of(context).colorScheme.primary, size: 20),
               ),
               const SizedBox(width: 12),
               Column(
@@ -1106,16 +1106,16 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     tr('Language / भाषा'),
-                    style: const TextStyle(
-                      color: Color(0xFF884A00),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 16,
                       fontFamily: 'Arimo',
                     ),
                   ),
                   Text(
                     tr('Currently: English'),
-                    style: const TextStyle(
-                      color: Color(0xFFD08700),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                       fontFamily: 'Arimo',
                     ),
@@ -1128,15 +1128,15 @@ class _HomePageState extends State<HomePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [Color(0xFFF0B000), Color(0xFFFF6800)],
+                colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary],
               ),
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: _black.withValues(alpha: 0.1),
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Theme.of(context).shadowColor.withOpacity(0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -1145,7 +1145,7 @@ class _HomePageState extends State<HomePage> {
             child: Text(
               tr('Nepali'),
               style: TextStyle(
-                color: _white,
+                color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
                 fontSize: 14,
                 fontFamily: 'Arimo',
               ),
@@ -1172,7 +1172,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             tr('Recent Activity'),
             style: TextStyle(
-              color: _black,
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.transparent,
               fontSize: 14,
               fontFamily: 'Arimo',
             ),
@@ -1187,7 +1187,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                   tr('No recent activity'),
                   style: TextStyle(
-                    color: _gray,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 12,
                     fontFamily: 'Arimo',
                   ),
@@ -1205,7 +1205,7 @@ class _HomePageState extends State<HomePage> {
                 iconColor = _darkRed;
                 icon = Icons.bug_report;
               } else if (activityType.contains('weather')) {
-                iconColor = const Color(0xFFDBEAFE);
+                iconColor = Theme.of(context).colorScheme.primary.withOpacity(0.2);
                 icon = Icons.cloud;
               } else if (activityType.contains('crop') || activityType.contains('advisory')) {
                 iconColor = _primaryGreen;
@@ -1232,7 +1232,7 @@ class _HomePageState extends State<HomePage> {
                         color: iconColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(icon, color: _white, size: 10),
+                      child: Icon(icon, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white, size: 10),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -1242,7 +1242,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             activity['title'] ?? 'Activity',
                             style: TextStyle(
-                              color: _black,
+                              color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.transparent,
                               fontSize: 12,
                               fontFamily: 'Arimo',
                             ),
@@ -1252,7 +1252,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             activity['time'] ?? 'Recently',
                             style: TextStyle(
-                              color: _black.withValues(alpha: 0.6),
+                              color: Theme.of(context).textTheme.bodyLarge?.color ?? Theme.of(context).shadowColor.withOpacity(0.6),
                               fontSize: 11,
                               fontFamily: 'Arimo',
                             ),
@@ -1273,11 +1273,11 @@ class _HomePageState extends State<HomePage> {
     return Container(
       height: 66,
       decoration: BoxDecoration(
-        color: _white,
-        border: const Border(top: BorderSide(color: Color(0xFFB8F7CF), width: 0.8)),
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white,
+        border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1), width: 0.8)),
         boxShadow: [
           BoxShadow(
-            color: _black.withValues(alpha: 0.1),
+            color: Theme.of(context).textTheme.bodyLarge?.color ?? Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -1295,7 +1295,7 @@ class _HomePageState extends State<HomePage> {
                   _buildNavItem(Icons.auto_awesome, tr('Ask AI'), 1),
                   _buildNavItem(Icons.bug_report, tr('Pest & Disease'), 2),
                   _buildNavItem(Icons.eco, tr('Add Crop'), 3),
-                  _buildPlotMapperNavItem(),
+                  _buildMarketPriceNavItem(),
                 ],
               ),
             ),
@@ -1341,7 +1341,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? _lightGreen : Colors.transparent,
+          color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -1349,7 +1349,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Icon(
               icon,
-              color: isSelected ? _darkGreen : _gray,
+              color: isSelected ? Theme.of(context).colorScheme.primary : (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey),
               size: 16,
             ),
             const SizedBox(height: 4),
@@ -1357,7 +1357,7 @@ class _HomePageState extends State<HomePage> {
               tr(label),
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isSelected ? _darkGreen : _gray,
+                color: isSelected ? Theme.of(context).colorScheme.primary : (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey),
                 fontSize: label.contains('\n') ? 10 : 12,
                 fontFamily: 'Arimo',
               ),
@@ -1368,10 +1368,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPlotMapperNavItem() {
+  Widget _buildMarketPriceNavItem() {
     return GestureDetector(
       onTap: () {
-        _showImageSourceDialog();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MarketPricePage(),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1382,17 +1387,17 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: const Color(0xFF00C950),
+                color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.center_focus_strong, color: Colors.white, size: 16),
+              child: Icon(Icons.storefront, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor : Colors.white, size: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              tr('Plot Mapper'),
+              tr('Market Prices'),
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: _gray,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontSize: 10,
                 fontFamily: 'Arimo',
               ),
@@ -1401,79 +1406,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void _showImageSourceDialog() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                tr('Upload Plot Image'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildSourceOption(
-                    icon: Icons.camera_alt,
-                    label: tr('Camera'),
-                    onTap: () => _pickPlotImage(ImageSource.camera),
-                  ),
-                  _buildSourceOption(
-                    icon: Icons.photo_library,
-                    label: tr('Gallery'),
-                    onTap: () => _pickPlotImage(ImageSource.gallery),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSourceOption({required IconData icon, required String label, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: _lightGreen,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: _primaryGreen.withOpacity(0.3)),
-            ),
-            child: Icon(icon, size: 40, color: _primaryGreen),
-          ),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickPlotImage(ImageSource source) async {
-    Navigator.pop(context); // Close bottom sheet
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null && mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SmartPlotEditorScreen(imagePath: pickedFile.path),
-        ),
-      );
-    }
   }
 }

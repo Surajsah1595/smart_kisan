@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'notification_service.dart';
+import 'localization_service.dart';
 
 class AuthService {
   AuthService._();
@@ -36,6 +38,8 @@ class AuthService {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
+    await NotificationService().saveFcmToken(user.uid);
+
     return user;
   }
 
@@ -58,6 +62,9 @@ class AuthService {
       final UserCredential userCredential = 
           await _auth.signInWithCredential(credential);
       
+      if (userCredential.user != null) {
+        await NotificationService().saveFcmToken(userCredential.user!.uid);
+      }
       return userCredential.user;
 
     } catch (e) {
@@ -75,6 +82,9 @@ class AuthService {
       email: email,
       password: password,
     );
+    if (cred.user != null) {
+      await NotificationService().saveFcmToken(cred.user!.uid);
+    }
     return cred.user;
   }
 

@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'ai_service.dart';
 import 'notification_service.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'localization_service.dart';
 
 /// Product Recommendation Model
 class ProductRecommendation {
@@ -710,7 +712,7 @@ class PestDiseaseService {
             .map((doc) => PestAlertData.fromFirestore(doc))
             .toList())
         .handleError((error) {
-          print('⚠️ Error fetching alerts: $error');
+          print(' Error fetching alerts: $error');
           return [];
         });
   }
@@ -727,7 +729,7 @@ class PestDiseaseService {
             .map((doc) => PestScanData.fromFirestore(doc))
             .toList())
         .handleError((error) {
-          print('⚠️ Error fetching scans: $error');
+          print(' Error fetching scans: $error');
           return [];
         });
   }
@@ -737,70 +739,56 @@ class PestDiseaseService {
     if (uid == null) throw Exception('User not authenticated');
 
     try {
-      print('📸 [SERVICE] analyzeImageWithAI START');
-      print('📸 [SERVICE] Image path: $imagePath');
+      print(' [SERVICE] analyzeImageWithAI START');
+      print(' [SERVICE] Image path: $imagePath');
       
-      print('🤖 [SERVICE] Calling AiService.analyzeImage...');
-      final response = await AiService().analyzeImage(imagePath);
-      print('🤖 [SERVICE] AiService response received');
+      print(' [SERVICE] Calling AiService.analyzeImage...');
+      final textResponse = await AiService().analyzeImage(imagePath);
+      print(' [SERVICE] AiService response received');
       
-      if (response == null || response.isEmpty) {
-        // Save failed scan
-        print('💾 [SERVICE] Saving FAILED scan to Firestore...');
-        await _savePestScan(
-          cropName: 'Unknown',
-          status: 'Failed',
-          confidence: 0.0,
-          aiResponse: 'API Error: Unable to analyze image',
-        );
-        throw Exception('No response from AI');
+      if (textResponse == null || textResponse.isEmpty) {
+        throw Exception('AI service failed to analyze the image or returned an empty response.');
       }
 
-      print('📊 [SERVICE] Parsing response...');
-      // Try to extract JSON from response
+      print(' [SERVICE] Parsing response...');
       Map<String, dynamic> analysisData;
       try {
-        analysisData = jsonDecode(response);
-        print('✅ [SERVICE] JSON parsed directly');
-      } catch (e) {
-        print('⚠️ [SERVICE] Direct parse failed, trying regex...');
-        final jsonMatch = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(response);
-        if (jsonMatch != null) {
-          analysisData = jsonDecode(jsonMatch.group(0)!);
-          print('✅ [SERVICE] JSON extracted via regex');
-        } else {
-          print('⚠️ [SERVICE] Using fallback data');
-          analysisData = {
-            'cropName': 'Unknown',
-            'status': 'Failed',
-            'confidence': 0.0,
-            'pestName': null,
-            'description': 'Could not parse AI response',
-            'treatment': 'Please try again',
-            'severity': 'Low'
-          };
+        String cleanJson = textResponse.replaceAll('```json', '').replaceAll('```', '').trim();
+        // Try direct parse first
+        try {
+          analysisData = jsonDecode(cleanJson);
+        } catch (e) {
+          // Fallback to regex if there's surrounding text
+          final jsonMatch = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(cleanJson);
+          if (jsonMatch != null) {
+            analysisData = jsonDecode(jsonMatch.group(0)!);
+          } else {
+            throw Exception('Could not extract JSON from AI response.');
+          }
         }
+      } catch (e) {
+        throw Exception('Failed to parse AI response: $e');
       }
 
       // Check if it's a wrong object (not a plant)
       if (analysisData['status'] == 'Not a Plant') {
-        print('⚠️ [SERVICE] Wrong object detected - not a plant');
+        print(' [SERVICE] Wrong object detected - not a plant');
         analysisData['description'] = 'This image does not contain a plant or crop. Please scan a plant or crop image.';
         analysisData['confidence'] = 0.0;
       }
 
-      print('💾 [SERVICE] Saving scan to Firestore...');
+      print(' [SERVICE] Saving scan to Firestore...');
       await _savePestScan(
         cropName: analysisData['cropName'] ?? 'Unknown',
         status: analysisData['status'] ?? 'Pending',
         confidence: (analysisData['confidence'] as num?)?.toDouble() ?? 0.0,
-        aiResponse: response,
+        aiResponse: textResponse,
         imageUrl: imageUrl,
       );
-      print('✅ [SERVICE] Scan saved');
+      print(' [SERVICE] Scan saved');
 
-      if (analysisData['status'] != 'Healthy' && analysisData['pestName'] != null) {
-        print('⚠️ [SERVICE] Creating alert...');
+      if (analysisData['status'] != 'Healthy' && analysisData['status'] != 'Not a Plant' && analysisData['pestName'] != null) {
+        print(' [SERVICE] Creating alert...');
         await _createPestAlert(
           pestName: analysisData['pestName'] as String,
           cropName: analysisData['cropName'] as String,
@@ -808,13 +796,13 @@ class PestDiseaseService {
           treatment: analysisData['treatment'] as String? ?? '',
           severity: analysisData['severity'] as String? ?? 'Medium',
         );
-        print('✅ [SERVICE] Alert created');
+        print(' [SERVICE] Alert created');
       }
 
-      print('✅ [SERVICE] analyzeImageWithAI DONE');
+      print(' [SERVICE] analyzeImageWithAI DONE');
       return analysisData;
     } catch (e) {
-      print('❌ [SERVICE] analyzeImageWithAI ERROR: $e');
+      print(' [SERVICE] analyzeImageWithAI ERROR: $e');
       rethrow;
     }
   }
@@ -838,9 +826,9 @@ class PestDiseaseService {
         'aiResponse': aiResponse,
         if (imageUrl != null) 'imageUrl': imageUrl,
       });
-      print('✅ Pest scan saved with ID: ${docRef.id}');
+      print(' Pest scan saved with ID: ${docRef.id}');
     } catch (e) {
-      print('❌ Error saving scan: $e');
+      print(' Error saving scan: $e');
       rethrow;
     }
   }
@@ -855,10 +843,10 @@ class PestDiseaseService {
     try {
       final uploadTask = await ref.putFile(File(localPath));
       final downloadUrl = await ref.getDownloadURL();
-      print('✅ Image uploaded to Storage: $downloadUrl');
+      print(' Image uploaded to Storage: $downloadUrl');
       return downloadUrl;
     } catch (e) {
-      print('❌ Error uploading image to storage: $e');
+      print(' Error uploading image to storage: $e');
       rethrow;
     }
   }
@@ -890,7 +878,7 @@ class PestDiseaseService {
             .map((p) => p.toMap())
             .toList(),
       });
-      print('⚠️ Pest alert created with ID: ${docRef.id}');
+      print(' Pest alert created with ID: ${docRef.id}');
       
       // Send notification
       await _notificationService.notifyPestDetected(
@@ -900,7 +888,7 @@ class PestDiseaseService {
         treatment: treatment,
       );
     } catch (e) {
-      print('❌ Error creating alert: $e');
+      print(' Error creating alert: $e');
       rethrow;
     }
   }
@@ -913,9 +901,9 @@ class PestDiseaseService {
       await db.collection('users').doc(uid).collection('pestAlerts').doc(alertId).update({
         'resolved': true,
       });
-      print('✅ Alert resolved');
+      print(' Alert resolved');
     } catch (e) {
-      print('❌ Error resolving alert: $e');
+      print(' Error resolving alert: $e');
     }
   }
 
@@ -931,7 +919,7 @@ class PestDiseaseService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('⚠️ Audit log failed: $e');
+      print(' Audit log failed: $e');
     }
   }
 }

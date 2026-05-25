@@ -112,7 +112,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         : Stream.empty();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: notificationsStream,
@@ -170,12 +170,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   
   Widget _buildHeaderCounts(int unreadCount) {
     return Container(
-      height: 124,
       decoration: BoxDecoration(
-        color: const Color(0xFF2C7C48),
+        color: Theme.of(context).colorScheme.primary,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -190,13 +189,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  child: Icon(Icons.arrow_back, color: Theme.of(context).cardColor, size: 20),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   tr('Notifications'),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).cardColor,
                     fontSize: 24,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -208,12 +207,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Icon(Icons.circle, color: Colors.white, size: 20),
+                Icon(Icons.circle, color: Theme.of(context).cardColor, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   '$unreadCount ${tr('unread notifications')}',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
                     fontSize: 16,
                     fontFamily: 'Arimo',
                     fontWeight: FontWeight.w400,
@@ -241,7 +239,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   icon: Icons.filter_list,
                   label: tr('Filter'),
                   onTap: () => setState(() => showFilter = !showFilter),
-                  color: const Color(0xFF354152),
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.grey,
                 ),
               ),
               const SizedBox(width: 14),
@@ -250,7 +248,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   icon: Icons.check_circle_outline,
                   label: tr('Mark all read'),
                   onTap: _markAllAsRead,
-                  color: const Color(0xFF354152),
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.grey,
                 ),
               ),
               const SizedBox(width: 12),
@@ -259,7 +257,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   icon: Icons.delete_outline,
                   label: tr('Clear all'),
                   onTap: _clearAllNotifications,
-                  color: const Color(0xFFE7000B),
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
             ],
@@ -281,12 +279,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -325,12 +323,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 2,
                 offset: const Offset(0, 1),
               ),
@@ -343,8 +341,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: [
                   Text(
                     tr('Filter Notifications'),
-                    style: const TextStyle(
-                      color: Color(0xFF101727),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 16,
                       fontFamily: 'Arimo',
                       fontWeight: FontWeight.w500,
@@ -352,7 +350,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                   GestureDetector(
                     onTap: () => setState(() => showFilter = false),
-                    child: const Icon(Icons.close, size: 20, color: Color(0xFF6B7280)),
+                    child: Icon(Icons.close, size: 20, color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                 ],
               ),
@@ -397,13 +395,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF9810FA) : const Color(0xFFF3F4F6),
+          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           tr(labelKey),
           style: TextStyle(
-            color: isSelected ? Colors.white : const Color(0xFF354152),
+            color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 14,
             fontFamily: 'Arimo',
           ),
@@ -472,12 +470,12 @@ Widget _buildSummaryBox({
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),
@@ -487,10 +485,9 @@ Widget _buildSummaryBox({
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Notification Summary',
+          Text(LocalizationService.translate('Notification Summary'),
             style: TextStyle(
-              color: Color(0xFF101727),
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 18,
               fontFamily: 'Arimo',
               fontWeight: FontWeight.w500,
@@ -511,9 +508,9 @@ Widget _buildSummaryBox({
                             child: _buildSummaryBox(
                               title: 'Total',
                               value: totalCount.toString(),
-                              bgColor: const Color(0xFFFAF5FF),
-                              titleColor: const Color(0xFF9810FA),
-                              valueColor: const Color(0xFF59168B),
+                              bgColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              titleColor: Theme.of(context).colorScheme.primary,
+                              valueColor: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -521,9 +518,9 @@ Widget _buildSummaryBox({
                             child: _buildSummaryBox(
                               title: 'Unread',
                               value: unreadCount.toString(),
-                              bgColor: const Color(0xFFFFF7ED),
-                              titleColor: const Color(0xFFF44900),
-                              valueColor: const Color(0xFF7E2A0B),
+                              bgColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                              titleColor: Theme.of(context).colorScheme.secondary,
+                              valueColor: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
                         ],
@@ -537,9 +534,9 @@ Widget _buildSummaryBox({
                             child: _buildSummaryBox(
                               title: 'High Priority',
                               value: highPriorityCount.toString(),
-                              bgColor: const Color(0xFFFEF2F2),
-                              titleColor: const Color(0xFFE7000B),
-                              valueColor: const Color(0xFF82181A),
+                              bgColor: Theme.of(context).colorScheme.error.withOpacity(0.1),
+                              titleColor: Theme.of(context).colorScheme.error,
+                              valueColor: Theme.of(context).colorScheme.error,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -547,9 +544,9 @@ Widget _buildSummaryBox({
                             child: _buildSummaryBox(
                               title: 'Today',
                               value: todayCount.toString(),
-                              bgColor: const Color(0xFFEFF6FF),
-                              titleColor: const Color(0xFF155CFB),
-                              valueColor: const Color(0xFF1B388E),
+                              bgColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+                              titleColor: Theme.of(context).colorScheme.tertiary,
+                              valueColor: Theme.of(context).colorScheme.tertiary,
                             ),
                           ),
                         ],
@@ -649,34 +646,32 @@ class EmptyNotificationWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(48),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 2,
-            offset: const Offset(0, 1),
+            offset: Offset(0, 1),
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.notifications_none, size: 64, color: Color(0xFF6B7280)),
+          Icon(Icons.notifications_none, size: 64, color: Theme.of(context).textTheme.bodyMedium?.color),
           SizedBox(height: 16),
-          Text(
-            'No notifications',
+          Text(LocalizationService.translate('No notifications'),
             style: TextStyle(
-              color: Color(0xFF101727),
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 16,
               fontFamily: 'Arimo',
               fontWeight: FontWeight.w500,
             ),
           ),
           SizedBox(height: 8),
-          Text(
-            'No unread notifications to show',
+          Text(LocalizationService.translate('No unread notifications to show'),
             style: TextStyle(
-              color: Color(0xFF495565),
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 14,
               fontFamily: 'Arimo',
             ),
@@ -698,55 +693,58 @@ class NotificationItemWidget extends StatelessWidget {
     required this.onDelete,
   });
   
-  static final Map<NotificationType, Map<String, dynamic>> _typeStyles = {
-    NotificationType.weather: {
-      'border': const Color(0xFFBDDAFF),
-      'bg': const Color(0xFFEFF6FF),
-      'icon': const Color(0xFFBDDAFF),
-      'text': const Color(0xFF1B388E),
-      'iconData': Icons.cloud,
-    },
-    NotificationType.pest: {
-      'border': const Color(0xFFFEEF85),
-      'bg': const Color(0xFFFEFCE8),
-      'icon': const Color(0xFFFFF085),
-      'text': const Color(0xFF723D0A),
-      'iconData': Icons.bug_report,
-    },
-    NotificationType.irrigation: {
-      'border': const Color(0xFFBDDAFF),
-      'bg': const Color(0xFFEFF6FF),
-      'icon': const Color(0xFFBDDAFF),
-      'text': const Color(0xFF1B388E),
-      'iconData': Icons.water_drop,
-    },
-    NotificationType.crop: {
-      'border': const Color(0xFFB8F7CF),
-      'bg': const Color(0xFFF0FDF4),
-      'icon': const Color(0xFFB9F8CF),
-      'text': const Color(0xFF0D532B),
-      'iconData': Icons.eco,
-    },
-    NotificationType.system: {
-      'border': const Color(0xFFD1D5DB),
-      'bg': const Color(0xFFF9FAFB),
-      'icon': const Color(0xFFD1D5DB),
-      'text': const Color(0xFF374151),
-      'iconData': Icons.notifications,
-    },
-  };
+  Map<String, dynamic> _getTypeStyles(BuildContext context) {
+    final Map<NotificationType, Map<String, dynamic>> typeStyles = {
+      NotificationType.weather: {
+        'border': Theme.of(context).dividerColor.withOpacity(0.2),
+        'bg': Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+        'icon': Theme.of(context).dividerColor.withOpacity(0.2),
+        'text': Theme.of(context).colorScheme.tertiary,
+        'iconData': Icons.cloud,
+      },
+      NotificationType.pest: {
+        'border': Theme.of(context).dividerColor.withOpacity(0.2),
+        'bg': Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+        'icon': Theme.of(context).colorScheme.secondary,
+        'text': Theme.of(context).colorScheme.secondary,
+        'iconData': Icons.bug_report,
+      },
+      NotificationType.irrigation: {
+        'border': Theme.of(context).dividerColor.withOpacity(0.2),
+        'bg': Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+        'icon': Theme.of(context).dividerColor.withOpacity(0.2),
+        'text': Theme.of(context).colorScheme.tertiary,
+        'iconData': Icons.water_drop,
+      },
+      NotificationType.crop: {
+        'border': Theme.of(context).dividerColor.withOpacity(0.2),
+        'bg': Theme.of(context).colorScheme.primary.withOpacity(0.05),
+        'icon': Theme.of(context).colorScheme.primary,
+        'text': Theme.of(context).colorScheme.primary,
+        'iconData': Icons.eco,
+      },
+      NotificationType.system: {
+        'border': Theme.of(context).dividerColor.withOpacity(0.3),
+        'bg': Theme.of(context).cardColor,
+        'icon': Theme.of(context).dividerColor.withOpacity(0.3),
+        'text': Theme.of(context).textTheme.bodyLarge?.color ?? Colors.grey,
+        'iconData': Icons.notifications,
+      },
+    };
+    return typeStyles[notification.type]!;
+  }
   
-  Map<String, dynamic> get _styles {
+  Map<String, dynamic> _getStyles(BuildContext context) {
     if (!notification.isRead) {
       return {
-        'border': const Color(0xFFFFC9C9),
-        'bg': const Color(0xFFFEF2F2),
-        'icon': const Color(0xFFFFC9C9),
-        'text': const Color(0xFF82181A),
+        'border': Theme.of(context).colorScheme.error.withOpacity(0.4),
+        'bg': Theme.of(context).colorScheme.error.withOpacity(0.1),
+        'icon': Theme.of(context).colorScheme.error.withOpacity(0.4),
+        'text': Theme.of(context).colorScheme.error,
         'iconData': Icons.notifications,
       };
     }
-    return _typeStyles[notification.type]!;
+    return _getTypeStyles(context);
   }
   
   String get _timeAgo {
@@ -761,13 +759,14 @@ class NotificationItemWidget extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final styles = _getStyles(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _styles['bg'],
+        color: styles['bg'],
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: _styles['border'], width: notification.isRead ? 1 : 3),
+        border: Border.all(color: styles['border'], width: notification.isRead ? 1 : 3),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,10 +775,10 @@ class NotificationItemWidget extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: _styles['icon'],
+              color: styles['icon'],
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(_styles['iconData'], size: 20, color: _styles['text']),
+            child: Icon(styles['iconData'], size: 20, color: styles['text']),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -793,7 +792,7 @@ class NotificationItemWidget extends StatelessWidget {
                       child: Text(
                         notification.title,
                         style: TextStyle(
-                          color: _styles['text'],
+                          color: styles['text'],
                           fontSize: 16,
                           fontFamily: 'Arimo',
                           fontWeight: FontWeight.w600,
@@ -806,8 +805,7 @@ class NotificationItemWidget extends StatelessWidget {
                         width: 8,
                         height: 8,
                         margin: const EdgeInsets.only(left: 8, top: 4),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF9810FA),
+                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -817,7 +815,7 @@ class NotificationItemWidget extends StatelessWidget {
                 Text(
                   notification.message,
                   style: TextStyle(
-                    color: _styles['text'].withValues(alpha: 0.9),
+                    color: styles['text'].withValues(alpha: 0.9),
                     fontSize: 14,
                     fontFamily: 'Arimo',
                     height: 1.4,
@@ -832,39 +830,46 @@ class NotificationItemWidget extends StatelessWidget {
                     Text(
                       _timeAgo,
                       style: TextStyle(
-                        color: _styles['text'].withValues(alpha: 0.75),
+                        color: styles['text'].withValues(alpha: 0.75),
                         fontSize: 12,
                         fontFamily: 'Arimo',
                       ),
                     ),
-                    Row(
-                      children: [
-                        if (!notification.isRead)
-                          InkWell(
-                            onTap: onMarkAsRead,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: _styles['icon'],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                LocalizationService.translate('Mark as read'),
-                                style: TextStyle(
-                                  color: _styles['text'],
-                                  fontSize: 12,
-                                  fontFamily: 'Arimo',
-                                  fontWeight: FontWeight.w500,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (!notification.isRead)
+                            Flexible(
+                              child: InkWell(
+                                onTap: onMarkAsRead,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: styles['icon'],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    LocalizationService.translate('Mark as read'),
+                                    style: TextStyle(
+                                      color: styles['text'],
+                                      fontSize: 12,
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                             ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => _showActionMenu(context),
+                            child: Icon(Icons.more_vert, size: 20, color: styles['text']),
                           ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () => _showActionMenu(context),
-                          child: Icon(Icons.more_vert, size: 20, color: _styles['text']),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -889,7 +894,7 @@ class NotificationItemWidget extends StatelessWidget {
             children: [
               if (!notification.isRead)
                 ListTile(
-                  leading: const Icon(Icons.check_circle, color: Color(0xFF2C7C48)),
+                  leading: Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary),
                   title: Text(LocalizationService.translate('Mark as read'), style: const TextStyle(fontFamily: 'Arimo')),
                   onTap: () {
                     Navigator.pop(context);
@@ -897,8 +902,8 @@ class NotificationItemWidget extends StatelessWidget {
                   },
                 ),
               ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: Text(LocalizationService.translate('Delete'), style: const TextStyle(fontFamily: 'Arimo', color: Colors.red)),
+                leading: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                title: Text(LocalizationService.translate('Delete'), style: TextStyle(fontFamily: 'Arimo', color: Theme.of(context).colorScheme.error)),
                 onTap: () {
                   Navigator.pop(context);
                   onDelete();
@@ -911,7 +916,7 @@ class NotificationItemWidget extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48),
-                    backgroundColor: const Color(0xFFF3F4F6),
+                    
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

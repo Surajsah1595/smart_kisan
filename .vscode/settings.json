@@ -1,4 +1,5 @@
 {
     "cmake.sourceDirectory": "D:/HERALD/FYP/smart_kisan/linux",
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "git.ignoreLimitWarning": true
 }

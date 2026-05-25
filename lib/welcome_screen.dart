@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'user_registration.dart';
 import 'localization_service.dart';
-
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -40,7 +40,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         image: DecorationImage(
           image: const AssetImage('assets/sk.jpg'),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.4), BlendMode.darken),
+          colorFilter: ColorFilter.mode(Theme.of(context).shadowColor.withOpacity(0.4), BlendMode.darken),
         ),
       ),
       child: SafeArea(
@@ -76,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     tr('get_updates'),
                     16,
                     FontWeight.w700,
-                    color: const Color(0xCCFFFEFE),
+                    color: (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey,
                   ),
                   const SizedBox(height: 40),
                   _buildButton(tr('get_started'), () => setState(() => _currentScreen = 1)),
@@ -101,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -143,7 +143,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         width: 35,
                         height: 7,
                         decoration: ShapeDecoration(
-                          color: index == 0 ? const Color(0xFF2C7C48) : const Color(0xFFF3F3F3),
+                          color: index == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor.withOpacity(0.1),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
@@ -154,13 +154,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: _buildNavButton(tr('back'), const Color(0xFFF3F3F3), const Color(0xFFA1A1A1), 
+                        child: _buildNavButton(tr('back'), Theme.of(context).dividerColor.withOpacity(0.1), (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
                             () => setState(() => _currentScreen = 0)),
                       ),
                       const SizedBox(width: 15),
                       Expanded(
-                        child: _buildNavButton(tr('next'), _selectedLanguage != null ? const Color(0xFF2C7C48) : const Color(0xFFF3F3F3), 
-                            _selectedLanguage != null ? Colors.white : const Color(0xFFA1A1A1), 
+                        child: _buildNavButton(tr('next'), _selectedLanguage != null ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor.withOpacity(0.1), 
+                            _selectedLanguage != null ? Theme.of(context).cardColor : (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
                             _selectedLanguage != null ? () {
                               // Map selected language to language code
                               String languageCode = 'EN'; // default
@@ -174,6 +174,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               
                               // Set language globally and save preference
                               LocalizationService.setLanguage(languageCode);
+                              context.setLocale(Locale(languageCode));
                               
                               setState(() => _currentScreen = 2);
                             } : () {}),
@@ -209,7 +210,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -251,7 +252,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         width: 35,
                         height: 7,
                         decoration: ShapeDecoration(
-                          color: dotIndex == index + 1 ? const Color(0xFF2C7C48) : const Color(0xFFF3F3F3),
+                          color: dotIndex == index + 1 ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor.withOpacity(0.1),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
@@ -262,12 +263,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: _buildNavButton(tr('back'), const Color(0xFFF3F3F3), const Color(0xFFA1A1A1), 
+                        child: _buildNavButton(tr('back'), Theme.of(context).dividerColor.withOpacity(0.1), (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
                             () => setState(() => _currentScreen = index + 1)),
                       ),
                       const SizedBox(width: 15),
                       Expanded(
-                        child: _buildNavButton(tr('next'), const Color(0xFF2C7C48), Colors.white, () => setState(() {
+                        child: _buildNavButton(tr('next'), Theme.of(context).colorScheme.primary, Theme.of(context).cardColor, () => setState(() {
                           if (index < 2) {
                             _currentScreen = index + 3;
                           } else {
@@ -287,17 +288,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   // Helper Widgets
-  Widget _buildText(String text, double fontSize, FontWeight weight, {Color color = Colors.white}) {
+  Widget _buildText(String text, double fontSize, FontWeight weight, {Color? color}) {
     return Text(
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: color,
+        color: color ?? Theme.of(context).cardColor,
         fontSize: fontSize,
         fontFamily: 'Arimo',
         fontWeight: weight,
         height: 1.4,
-        shadows: [Shadow(blurRadius: 5, color: Colors.black.withValues(alpha: 0.3), offset: const Offset(1, 1))],
+        shadows: [Shadow(blurRadius: 5, color: Theme.of(context).shadowColor.withOpacity(0.3), offset: const Offset(1, 1))],
       ),
     );
   }
@@ -306,11 +307,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF00C850), Color(0xFF00A63D)]),
+        gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary]),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Color(0x19000000), blurRadius: 6, offset: Offset(0, 4)),
-          BoxShadow(color: Color(0x19000000), blurRadius: 15, offset: Offset(0, 10)),
+        boxShadow: [
+          BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.1), blurRadius: 6, offset: const Offset(0, 4)),
+          BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 10)),
         ],
       ),
       child: Material(
@@ -318,7 +319,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onTap,
-          child: Center(child: _buildText(text, 16, FontWeight.w700)),
+          child: Center(child: _buildText(text, 16, FontWeight.w700, color: Theme.of(context).colorScheme.onPrimary)),
         ),
       ),
     );
@@ -328,16 +329,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).cardColor.withValues(alpha: 0.1) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(width: 1.5, color: const Color(0x33FFFEFE)),
+        border: Border.all(width: 1.5, color: Theme.of(context).dividerColor.withOpacity(0.2)),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onTap,
-          child: Center(child: _buildText(text, 16, FontWeight.w700)),
+          child: Center(child: _buildText(text, 16, FontWeight.w700, color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : const Color(0xFF1E1E1E))),
         ),
       ),
     );
@@ -346,14 +347,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget _buildSkipButton() {
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
-      child: Text(tr('skip'), style: const TextStyle(color: Color(0xFF1E1E1E), fontSize: 24, fontFamily: 'PT Sans')),
+      child: Text(tr('skip'), style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : const Color(0xFF1E1E1E), fontSize: 24, fontFamily: 'PT Sans')),
     );
   }
 
   Widget _buildTitle(String text, double width) {
     return SizedBox(
       width: width,
-      child: Text(text, style: const TextStyle(color: Color(0xFF1E1E1E), fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+      child: Text(text, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : const Color(0xFF1E1E1E), fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
     );
   }
 
@@ -375,9 +376,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         width: 308,
         height: 71,
         decoration: ShapeDecoration(
-          color: _selectedLanguage == language['name'] ? const Color(0xFFE8F5E9) : const Color(0xFFFBFBFB),
+          color: _selectedLanguage == language['name'] ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1.5, color: _selectedLanguage == language['name'] ? const Color(0xFF2C7C48) : const Color(0xFFAFA5A5)),
+            side: BorderSide(width: 1.5, color: _selectedLanguage == language['name'] ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(18),
           ),
         ),
@@ -390,7 +391,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(language['name']!, style: const TextStyle(color: Color(0xFF101727), fontSize: 16)),
+                Text(language['name']!, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyLarge?.color : const Color(0xFF1E1E1E), fontSize: 16)),
                 Text(language['code']!, style: const TextStyle(color: Color(0xFF697282), fontSize: 12)),
               ],
             ),

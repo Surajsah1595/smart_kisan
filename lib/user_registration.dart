@@ -27,7 +27,7 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -44,7 +44,7 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(title, style: const TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 24, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 const SizedBox(height: 20),
                 child,
               ],
@@ -65,7 +65,7 @@ class ForgotPasswordBaseScreen extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-          child: const Icon(Icons.arrow_back, color: Colors.black),
+          child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
         ),
       ),
     );
@@ -111,7 +111,7 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
           Text(
             tr('Enter the email address you used when you joined and we\'ll send you instructions to reset your password.'),
             textAlign: TextAlign.justify,
-            style: const TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
+            style: TextStyle(color: Theme.of(context).hintColor, fontSize: 18, fontFamily: 'PT Sans'),
           ),
           const SizedBox(height: 40),
           Form(
@@ -119,11 +119,11 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tr('Email ID'), style: const TextStyle(color: Color(0xFF333333), fontSize: 18, fontFamily: 'PT Sans')),
+                Text(tr('Email ID'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontFamily: 'PT Sans')),
                 const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                   child: TextFormField(
                     controller: _emailController,
                     validator: (v) {
@@ -139,7 +139,7 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: tr('Enter email id'),
-                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                     ),
                     style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                   ),
@@ -155,13 +155,13 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
                 width: 200,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2C7C48),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: Text(
                     tr('Send Link/Code'),
-                    style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                    style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -172,11 +172,11 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(tr('Having a Problem?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                Text(tr('Having a Problem?'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                 const SizedBox(width: 5),
                 GestureDetector(
                   onTap: _sendResetLink,
-                  child: Text(tr('Send Again'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  child: Text(tr('Send Again'), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
@@ -278,7 +278,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
           Text(
             'Enter 4-digits code sent to you at ${widget.email}',
             textAlign: TextAlign.justify,
-            style: const TextStyle(color: Color(0xFF9A9595), fontSize: 18, fontFamily: 'PT Sans'),
+            style: TextStyle(color: Theme.of(context).hintColor, fontSize: 18, fontFamily: 'PT Sans'),
           ),
           const SizedBox(height: 40),
           Center(
@@ -289,7 +289,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                 width: 60,
                 height: 70,
                 decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: const Color(0xFF34843C)),
+                  border: Border.all(width: 2, color: Theme.of(context).colorScheme.primary),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TextField(
@@ -298,7 +298,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   maxLength: 1,
-                  style: const TextStyle(color: Colors.black, fontSize: 26, fontFamily: 'PT Sans'),
+                  style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 26, fontFamily: 'PT Sans'),
                   decoration: const InputDecoration(counterText: '', border: InputBorder.none),
                   onChanged: (v) => _onCodeChanged(v, index),
                 ),
@@ -307,7 +307,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
           ),
           const SizedBox(height: 20),
           Center(
-            child: Text(_formatTime(), style: const TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'PT Sans')),
+            child: Text(_formatTime(), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 18, fontFamily: 'PT Sans')),
           ),
           const SizedBox(height: 40),
           Center(
@@ -317,13 +317,13 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                 width: 200,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2C7C48),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
                   child: Text(
                     tr('Verify Code'),
-                    style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                    style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -334,7 +334,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(tr('Having a Problem?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                Text(tr('Having a Problem?'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                 const SizedBox(width: 5),
                 GestureDetector(
                   onTap: () {
@@ -347,7 +347,7 @@ class _ForgotPasswordScreen2State extends State<ForgotPasswordScreen2> {
                       _focusNodes[0].requestFocus();
                     });
                   },
-                  child: Text(tr('Send Again'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  child: Text(tr('Send Again'), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                 ),
               ],
             ),
@@ -391,11 +391,11 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tr('Enter New Password'), style: const TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                Text(tr('Enter New Password'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 18, fontFamily: 'PT Sans')),
                 const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                   child: TextFormField(
                     controller: _newPasswordController,
                     obscureText: !_showNewPassword,
@@ -407,9 +407,9 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: tr('Enter new password'),
-                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                       suffixIcon: IconButton(
-                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
+                        icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off, color: Theme.of(context).hintColor),
                         onPressed: () => setState(() => _showNewPassword = !_showNewPassword),
                       ),
                     ),
@@ -422,11 +422,11 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tr('Confirm New Password'), style: const TextStyle(color: Color(0xFF8C8686), fontSize: 18, fontFamily: 'PT Sans')),
+                Text(tr('Confirm New Password'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 18, fontFamily: 'PT Sans')),
                 const SizedBox(height: 8),
                 Container(
                   height: 50,
-                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                   child: TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: !_showConfirmPassword,
@@ -438,9 +438,9 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: tr('Confirm new password'),
-                      hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                      hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                       suffixIcon: IconButton(
-                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
+                        icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Theme.of(context).hintColor),
                         onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
                       ),
                     ),
@@ -457,13 +457,13 @@ class _ForgotPasswordScreen3State extends State<ForgotPasswordScreen3> {
                   width: 250,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2C7C48),
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
                       tr('Create New Password'),
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                      style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -497,18 +497,18 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          Container(color: Colors.black.withValues(alpha: 0.37)),
+          Container(color: Theme.of(context).shadowColor.withOpacity(0.37)),
           Center(
             child: Container(
               width: 336,
               height: 490,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, spreadRadius: 2)],
+                boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(0.1), blurRadius: 10, spreadRadius: 2)],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -516,7 +516,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
                   Container(
                     width: 176,
                     height: 176,
-                    decoration: const BoxDecoration(color: Color(0xFF2C7C48), shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
                     child: Center(
                       child: SizedBox(
                         width: 150,
@@ -537,7 +537,7 @@ class _ForgotPasswordScreen4State extends State<ForgotPasswordScreen4> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Color(0xFF2C7C48))),
+                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.primary)),
                 ],
               ),
             ),
@@ -653,7 +653,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -674,9 +674,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey.shade100,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         ),
-                        child: const Icon(Icons.arrow_back, color: Colors.black),
+                        child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
                       ),
                     ),
                   ),
@@ -691,8 +691,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 40),
                   Text(
                     tr('log_in'),
-                    style: const TextStyle(
-                      color: Colors.black,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 32,
                       fontFamily: 'PT Sans',
                       fontWeight: FontWeight.w700,
@@ -701,8 +700,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
                   Text(
                     tr('please Log in to continue'),
-                    style: const TextStyle(
-                      color: Color(0xFFB0ABAB),
+                    style: TextStyle(color: Theme.of(context).dividerColor,
                       fontSize: 16,
                       fontFamily: 'PT Sans',
                     ),
@@ -715,8 +713,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         tr('Email'),
-                        style: const TextStyle(
-                          color: Color(0xFF9A9595),
+                        style: TextStyle(color: Theme.of(context).hintColor,
                           fontSize: 16,
                           fontFamily: 'PT Sans',
                         ),
@@ -724,11 +721,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
                               width: 1,
-                              color: Color(0xFFB0ABAB),
+                              color: Theme.of(context).dividerColor,
                             ),
                           ),
                         ),
@@ -743,8 +740,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('enter_email'),
-                            hintStyle: const TextStyle(
-                              color: Color(0xFF9A9595),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor,
                               fontSize: 16,
                             ),
                           ),
@@ -764,8 +760,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         tr('Password'),
-                        style: const TextStyle(
-                          color: Color(0xFF9A9595),
+                        style: TextStyle(color: Theme.of(context).hintColor,
                           fontSize: 16,
                           fontFamily: 'PT Sans',
                         ),
@@ -773,11 +768,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
                               width: 1,
-                              color: Color(0xFFB0ABAB),
+                              color: Theme.of(context).dividerColor,
                             ),
                           ),
                         ),
@@ -793,8 +788,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('enter_password'),
-                            hintStyle: const TextStyle(
-                              color: Color(0xFF9A9595),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor,
                               fontSize: 16,
                             ),
                             suffixIcon: IconButton(
@@ -802,7 +796,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _showPassword
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color: const Color(0xFF9A9595),
+                                color: Theme.of(context).hintColor,
                               ),
                               onPressed: () => setState(
                                 () => _showPassword = !_showPassword,
@@ -829,8 +823,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Text(
                       tr('Forgot Password?'),
-                      style: const TextStyle(
-                        color: Color(0xFF4BA26A),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
                         fontFamily: 'PT Sans',
                         fontWeight: FontWeight.w700,
@@ -843,7 +836,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2B7B48),
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
@@ -854,8 +847,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Center(
                           child: Text(
                             tr('Log in'),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).cardColor,
                               fontSize: 16,
                               fontFamily: 'PT Sans',
                               fontWeight: FontWeight.w700,
@@ -871,7 +864,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2B7B48),
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
@@ -888,15 +881,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.fingerprint,
-                                color: Colors.white, size: 20),
+                                color: Theme.of(context).cardColor, size: 20),
                             SizedBox(width: 10),
-                            Text(
-                              tr('Tap to login with Fingerprint'),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'PT Sans',
-                                fontWeight: FontWeight.w700,
+                            Flexible(
+                              child: Text(
+                                tr('Tap to login with Fingerprint'),
+                                style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                  fontSize: 16,
+                                  fontFamily: 'PT Sans',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -910,21 +906,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: Divider(color: Color(0xFFB0ABAB)),
+                        child: Divider(color: Theme.of(context).dividerColor),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Text(
                           tr('or sign in with'),
                           style: TextStyle(
-                            color: const Color(0xFF262626),
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontFamily: 'PT Sans',
                           ),
                         ),
                       ),
                       Expanded(
-                        child: Divider(color: Color(0xFFB0ABAB)),
+                        child: Divider(color: Theme.of(context).dividerColor),
                       ),
                     ],
                   ),
@@ -976,8 +972,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text((tr('Don\'t have an account?')),
-                        style: const TextStyle(
-                          color: Color(0xFF696666),
+                        style: TextStyle(color: Theme.of(context).hintColor,
                           fontSize: 16,
                           fontFamily: 'PT Sans',
                         ),
@@ -992,8 +987,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: Text(
                           tr('sign up'),
-                          style: const TextStyle(
-                            color: Color(0xFF4BA26A),
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary,
                             fontSize: 16,
                             fontFamily: 'PT Sans',
                             fontWeight: FontWeight.w700,
@@ -1149,7 +1143,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -1169,7 +1163,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade100),
-                        child: const Icon(Icons.arrow_back, color: Colors.black),
+                        child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
                       ),
                     ),
                   ),
@@ -1182,19 +1176,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(tr('Sign Up'), style: const TextStyle(color: Colors.black, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                  Text(tr('Sign Up'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 32, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                   const SizedBox(height: 10),
-                  Text(tr('create an account to continue'), style: const TextStyle(color: Color(0xFFB0ABAB), fontSize: 16, fontFamily: 'PT Sans')),
+                  Text(tr('create an account to continue'), style: TextStyle(color: Theme.of(context).dividerColor, fontSize: 16, fontFamily: 'PT Sans')),
                   const SizedBox(height: 30),
                   // First Name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('First Name'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('First Name'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _firstNameController,
                           validator: (value) {
@@ -1206,7 +1200,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Enter your first name'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                           ),
                           style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
@@ -1218,11 +1212,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('Last Name'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('Last Name'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _lastNameController,
                           validator: (value) {
@@ -1234,7 +1228,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Enter your last name'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                           ),
                           style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
@@ -1246,11 +1240,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('Mobile Number'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 15, fontFamily: 'Poppins')),
+                      Text(tr('Mobile Number'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 15, fontFamily: 'Poppins')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _mobileController,
                           keyboardType: TextInputType.phone,
@@ -1263,7 +1257,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Enter your mobile number'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                           ),
                           style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
@@ -1275,11 +1269,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('Email'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('Email'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -1292,7 +1286,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Enter your email'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                           ),
                           style: const TextStyle(fontSize: 16, fontFamily: 'PT Sans'),
                         ),
@@ -1304,11 +1298,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('Password'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('Password'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _passwordController,
                           obscureText: !_showPassword,
@@ -1321,9 +1315,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Enter your password'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
+                              icon: Icon(_showPassword ? Icons.visibility : Icons.visibility_off, color: Theme.of(context).hintColor),
                               onPressed: () => setState(() => _showPassword = !_showPassword),
                             ),
                           ),
@@ -1337,11 +1331,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(tr('Confirm Password'), style: const TextStyle(color: Color(0xFF9A9595), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('Confirm Password'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(height: 8),
                       Container(
                         height: 50,
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Color(0xFFB0ABAB)))),
+                        decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor))),
                         child: TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: !_showConfirmPassword,
@@ -1354,9 +1348,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: tr('Confirm your password'),
-                            hintStyle: const TextStyle(color: Color(0xFF9A9595), fontSize: 16),
+                            hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 16),
                             suffixIcon: IconButton(
-                              icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9A9595)),
+                              icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off, color: Theme.of(context).hintColor),
                               onPressed: () => setState(() => _showConfirmPassword = !_showConfirmPassword),
                             ),
                           ),
@@ -1370,7 +1364,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2C7C48),
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Material(
@@ -1381,7 +1375,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: Center(
                           child: Text(
                             tr('Sign Up'),
-                            style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
+                            style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
@@ -1391,12 +1385,12 @@ class _SignupScreenState extends State<SignupScreen> {
                   // Divider
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                      Expanded(child: Divider(color: Theme.of(context).dividerColor)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(tr('or sign up with'), style: TextStyle(color: const Color(0xFF262626), fontSize: 16, fontFamily: 'PT Sans')),
+                        child: Text(tr('or sign up with'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16, fontFamily: 'PT Sans')),
                       ),
-                      Expanded(child: Divider(color: Color(0xFFB0ABAB))),
+                      Expanded(child: Divider(color: Theme.of(context).dividerColor)),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -1444,11 +1438,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(tr('Already have an account?'), style: const TextStyle(color: Color(0xFF696666), fontSize: 16, fontFamily: 'PT Sans')),
+                      Text(tr('Already have an account?'), style: TextStyle(color: Theme.of(context).hintColor, fontSize: 16, fontFamily: 'PT Sans')),
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen())),
-                        child: Text(tr('Log in'), style: const TextStyle(color: Color(0xFF4BA26A), fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
+                        child: Text(tr('Log in'), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16, fontFamily: 'PT Sans', fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
@@ -1552,7 +1546,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2C7C48),
+      
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -1569,14 +1563,14 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle, 
-                      color: Colors.white.withValues(alpha: 0.2)
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2)
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.white),
+                    child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              Text(tr('Security Fingerprint'), style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Security Fingerprint'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 60),
               
               // Fingerprint Icon (Tap to Scan)
@@ -1587,15 +1581,15 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle, 
-                    border: Border.all(width: 2, color: Colors.white)
+                    border: Border.all(width: 2, color: Theme.of(context).colorScheme.onSurface)
                   ),
-                  child: const Icon(Icons.fingerprint, color: Colors.white, size: 80),
+                  child: Icon(Icons.fingerprint, color: Theme.of(context).colorScheme.onSurface, size: 80),
                 ),
               ),
               const SizedBox(height: 60),
-              Text(tr('Use fingerprint to access'), style: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Use fingerprint to access'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
-              Text(tr('Tap the icon above to scan.'), style: const TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'League Spartan')),
+              Text(tr('Tap the icon above to scan.'), style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14, fontFamily: 'League Spartan')),
               
               const Spacer(),
               
@@ -1607,11 +1601,11 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
                 child: Container(
                   width: double.infinity,
                   height: 50,
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(30)),
                   child: Center(
                     child: Text(
                       tr('Use Passcode'),
-                      style: const TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1688,7 +1682,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2C7C48),
+      
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -1709,9 +1703,9 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(tr('Passcode'), style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Passcode'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 30, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 80),
-              Text(tr('Enter PassCode'), style: const TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              Text(tr('Enter PassCode'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 20, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
               const SizedBox(height: 30),
               
               // Dots
@@ -1780,7 +1774,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 3, color: Colors.white)),
-                            child: const Icon(Icons.backspace, color: Colors.white, size: 24),
+                            child: Icon(Icons.backspace, color: Theme.of(context).cardColor, size: 24),
                           ),
                         ),
                       ],
@@ -1798,11 +1792,11 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   width: 150,
                   height: 45,
                   margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(30)),
                   child: Center(
                     child: Text(
                       tr('Submit'),
-                      style: const TextStyle(color: Color(0xFF2C7C48), fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1822,7 +1816,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
                   },
                     child: Text(
                     tr('Forgot Passcode? Login with Email'),
-                    style: const TextStyle(color: Colors.white, decoration: TextDecoration.underline),
+                    style: TextStyle(color: Theme.of(context).cardColor, decoration: TextDecoration.underline),
                   ),
                 ),
               ),
@@ -1843,7 +1837,7 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
         child: Center(
           child: Text(
             digit,
-            style: const TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
+            style: TextStyle(color: Theme.of(context).cardColor, fontSize: 24, fontFamily: 'Poppins', fontWeight: FontWeight.w600),
           ),
         ),
       ),

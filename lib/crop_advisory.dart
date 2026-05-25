@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'ai_service.dart';
-import 'enhanced_ai_service.dart';
 import 'notification_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'localization_service.dart';
+import 'app_config.dart';
 
 // --- MODELS ---
 
@@ -124,7 +127,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      
       body: SafeArea(
         child: Column(
           children: [
@@ -249,13 +252,13 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
               ),
               const SizedBox(width: 16),
-              Text(LocalizationService.translate('Crop Advisory'), style: const TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Arimo')),
+              Text(LocalizationService.translate('Crop Advisory'), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 24, fontFamily: 'Arimo')),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(Icons.eco, color: Colors.white, size: 20),
+              Icon(Icons.eco, color: Theme.of(context).cardColor, size: 20),
               const SizedBox(width: 8),
               Text(LocalizationService.translate('Manage fields & get recommendations'), style: const TextStyle(color: Color(0xE5FFFEFE), fontSize: 16, fontFamily: 'Arimo')),
             ],
@@ -272,15 +275,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(color: Color(0xFF101727), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+            Text(title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
             ElevatedButton(
               onPressed: onButtonPressed,
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A63E), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               child: Row(
                 children: [
-                  const Icon(Icons.add, color: Colors.white, size: 16),
+                  Icon(Icons.add, color: Theme.of(context).cardColor, size: 16),
                   const SizedBox(width: 8),
-                  Text(buttonText, style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo')),
+                  Text(buttonText, style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo')),
                 ],
               ),
             ),
@@ -306,10 +309,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: _cardShadow,
-          border: isSelected ? Border.all(color: const Color(0xFF00C850), width: 2) : null,
+          border: isSelected ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
         ),
         child: Row(
           children: [
@@ -323,23 +326,23 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(field.name, style: const TextStyle(color: Color(0xFF101727), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+                  Text(field.name, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.aspect_ratio, size: 14, color: Color(0xFF495565)),
+                      Icon(Icons.aspect_ratio, size: 14, color: Theme.of(context).textTheme.bodyMedium?.color),
                       const SizedBox(width: 4),
-                      Text(field.size, style: const TextStyle(color: Color(0xFF495565), fontSize: 14, fontFamily: 'Arimo')),
+                      Text(field.size, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14, fontFamily: 'Arimo')),
                       const SizedBox(width: 16),
-                      const Icon(Icons.layers, size: 14, color: Color(0xFF495565)),
+                      Icon(Icons.layers, size: 14, color: Theme.of(context).textTheme.bodyMedium?.color),
                       const SizedBox(width: 4),
-                      Text(field.soilType, style: const TextStyle(color: Color(0xFF495565), fontSize: 14, fontFamily: 'Arimo')),
+                      Text(field.soilType, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14, fontFamily: 'Arimo')),
                     ],
                   ),
                 ],
               ),
             ),
-            if (isSelected) const Padding(padding: EdgeInsets.only(right: 8.0), child: Icon(Icons.check_circle, color: Color(0xFF00C950), size: 24)),
+            if (isSelected) Padding(padding: EdgeInsets.only(right: 8.0), child: Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 24)),
             IconButton(
               onPressed: () => _deleteField(field.id),
               icon: const Icon(Icons.delete_outline, color: Colors.red),
@@ -354,22 +357,22 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       width: double.infinity,
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300)),
-      child: const Center(child: Text("No fields added yet. Add one to start tracking.", style: TextStyle(color: Colors.grey))),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300)),
+      child: Center(child: Text(LocalizationService.translate("No fields added yet. Add one to start tracking."), style: TextStyle(color: Colors.grey))),
     );
   }
 
   Widget _buildCropCard(Crop crop) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: _cardShadow),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10), boxShadow: _cardShadow),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(crop.name, style: const TextStyle(color: Color(0xFF101727), fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+              Text(crop.name, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
               IconButton(
                 onPressed: () => _deleteCrop(crop.id),
                 icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
@@ -381,21 +384,21 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 16, color: Color(0xFF495565)),
+              Icon(Icons.calendar_today, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
               const SizedBox(width: 4),
-              Text(crop.season, style: const TextStyle(color: Color(0xFF495565), fontSize: 14, fontFamily: 'Arimo')),
+              Text(crop.season, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14, fontFamily: 'Arimo')),
               const SizedBox(width: 16),
-              const Icon(Icons.schedule, size: 16, color: Color(0xFF495565)),
+              Icon(Icons.schedule, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
               const SizedBox(width: 4),
-              Text(crop.duration, style: const TextStyle(color: Color(0xFF495565), fontSize: 14)),
+              Text(crop.duration, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14)),
             ],
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.water_drop, size: 16, color: Color(0xFF495565)),
+              Icon(Icons.water_drop, size: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
               const SizedBox(width: 4),
-              Text('${LocalizationService.translate("Water Needed")}: ${crop.waterNeed}', style: const TextStyle(color: Color(0xFF495565), fontSize: 14)),
+              Text('${LocalizationService.translate("Water Needed")}: ${crop.waterNeed}', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14)),
             ],
           ),
         ],
@@ -406,12 +409,12 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   Widget _buildEmptyCropsState() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: _cardShadow),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10), boxShadow: _cardShadow),
       child: Column(
         children: [
           const Icon(Icons.grass, size: 48, color: Colors.grey),
           const SizedBox(height: 16),
-          Text(LocalizationService.translate("No crops added yet"), style: const TextStyle(color: Color(0xFF495565), fontSize: 16)),
+          Text(LocalizationService.translate("No crops added yet"), style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 16)),
         ],
       ),
     );
@@ -419,11 +422,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   Widget _buildAdvisoryButton() {
     return GestureDetector(
-      onTap: () => _getAiRecommendations(context),
+      onTap: () => _showRecommendationDialog(context),
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Color(0xFF00C850), Color(0xFF00A63D)]),
+          gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary]),
           borderRadius: BorderRadius.circular(10),
           boxShadow: _cardShadow,
         ),
@@ -433,7 +436,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             children: [
               const Icon(Icons.auto_awesome, color: Colors.white),
               const SizedBox(width: 8),
-              Text(LocalizationService.translate("Get Smart AI Recommendations"), style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
+              Text(LocalizationService.translate("Get Smart AI Recommendations"), style: TextStyle(color: Theme.of(context).cardColor, fontSize: 16, fontFamily: 'Arimo', fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -609,8 +612,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${LocalizationService.translate("Error:")} $e')));
                             }
                           },
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00A63E)),
-                          child: Text(LocalizationService.translate('Save'), style: const TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                          child: Text(LocalizationService.translate('Save'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
                         )),
                       ],
                     ),
@@ -788,47 +791,30 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         'timestamp': FieldValue.serverTimestamp(),
         'userAgent': 'smart_kisan_app_v1.0',
       });
-      print('✅ Logged action: $action');
+      print(' Logged action: $action');
     } catch (e) {
-      print('❌ Failed to log action: $e');
+      print(' Failed to log action: $e');
     }
   }
 
   // --- SMART RECOMMENDATION LOGIC ---
-
-  Future<void> _getAiRecommendations(BuildContext context) async {
+  Future<void> _getAiRecommendations(BuildContext context, String reqSoil, String reqSeason, double reqTemp, double reqPh, double reqRainfall) async {
     if (selectedFieldObject == null) return;
 
     showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
 
     try {
-      final cropSnapshot = await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').get();
-      final cropNames = cropSnapshot.docs.map((d) => d['name'] ?? '').where((s) => s.isNotEmpty).toList();
 
-      final month = DateTime.now().month;
-      String currentSeason;
-      if (month >= 11 || month <= 2) {
-        currentSeason = 'Winter';
-      } else if (month >= 3 && month <= 5) currentSeason = 'Spring';
-      else if (month >= 6 && month <= 9) currentSeason = 'Monsoon';
-      else currentSeason = 'Autumn';
-
-      final prompt = StringBuffer();
-      prompt.writeln('Field Name: ${selectedFieldObject!.name}');
-      prompt.writeln('Size: ${selectedFieldObject!.size}');
-      prompt.writeln('Soil Type: ${selectedFieldObject!.soilType}');
-      prompt.writeln('Current Season: $currentSeason');
-      prompt.writeln('Existing Crops: ${cropNames.isEmpty ? 'None' : cropNames.join(", ")}');
-      prompt.writeln();
-      prompt.writeln('Provide concise actionable recommendations for this field (planting choices, irrigation, fertilizer, pest watch, and quick care).');
-      prompt.writeln('Suggest 5-7 suitable crops for planting.');
-      prompt.writeln('At the end output ONLY a JSON array under the exact marker SUGGESTED_CROPS_JSON: []; example: SUGGESTED_CROPS_JSON: [{"name":"Wheat","reason":"Clay holds moisture well","season":"Winter"},{"name":"Lentils","reason":"Pulses thrive in clay soil","season":"Winter"}]');
-
-      final enhancedAi = EnhancedAiService();
-      final cropName = await enhancedAi.getCropRecommendation(
-        selectedFieldObject!.soilType,
-        currentSeason,
+      final mlService = MlCropService();
+      final cropName = await mlService.getRecommendation(
+        reqSoil,
+        reqSeason,
+        reqTemp,
+        reqPh,
+        reqRainfall,
       );
+
+      if (!context.mounted) return;
 
       Navigator.pop(context);
 
@@ -837,12 +823,12 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         return;
       }
 
-      final response = 'Based on your selected field parameters (Soil: ${selectedFieldObject!.soilType}, Season: $currentSeason), our enhanced AI model recommends planting **$cropName**.';
+      final response = 'Based on your selected field parameters (Soil: $reqSoil, Season: $reqSeason), our enhanced AI model recommends planting **$cropName**.';
       
       List<dynamic>? suggested = [{
         'name': cropName,
-        'reason': 'Recommended for ${selectedFieldObject!.soilType} soil in $currentSeason',
-        'season': currentSeason,
+        'reason': 'Recommended for $reqSoil soil in $reqSeason',
+        'season': reqSeason,
         'duration': 'Seasonal',
         'waterNeed': 'Medium'
       }];
@@ -877,7 +863,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                           ),
                         );
                       } catch (e) {
-                        return Text('Could not render AI summary');
+                        return Text(LocalizationService.translate('Could not render AI summary'));
                       }
                     }),
                   ),
@@ -894,7 +880,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                       final item = suggested![i] as Map<String, dynamic>;
                       final name = item['name'] ?? '';
                       final reason = item['reason'] ?? '';
-                      final season = item['season'] ?? currentSeason;
+                      final season = item['season'] ?? reqSeason;
                       final duration = item['duration'] ?? 'Seasonal';
                       final water = item['waterNeed'] ?? 'Variable';
                       return ListTile(
@@ -930,10 +916,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   void _deleteField(String fieldId) {
     showDialog(context: context, builder: (ctx) => AlertDialog(
-      title: const Text("Delete Field?"),
-      content: const Text("This will delete the field and all crops inside it."),
+      title: Text(LocalizationService.translate("Delete Field?")),
+      content: Text(LocalizationService.translate("This will delete the field and all crops inside it.")),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Cancel")),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(LocalizationService.translate("Cancel"))),
         TextButton(onPressed: () async {
           await _usersCollection.doc(uid).collection('fields').doc(fieldId).delete();
           
@@ -947,7 +933,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           
           setState(() { selectedFieldId = null; selectedFieldName = null; });
           Navigator.pop(ctx);
-        }, child: const Text("Delete", style: TextStyle(color: Colors.red))),
+        }, child: Text(LocalizationService.translate("Delete"), style: TextStyle(color: Colors.red))),
       ],
     ));
   }
@@ -964,7 +950,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller) {
+  Widget _buildTextField(String label, String hint, TextEditingController controller, [TextInputType? keyboardType]) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -972,6 +958,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         const SizedBox(height: 4),
         TextField(
           controller: controller,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -981,4 +968,241 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       ],
     );
   }
+  void _showRecommendationDialog(BuildContext parentContext) {
+    if (selectedFieldObject == null) return;
+
+    String selectedSoil = 'Loamy';
+    String selectedSeason = 'Monsoon';
+    final tempCtrl = TextEditingController();
+    final phCtrl = TextEditingController();
+    final rainCtrl = TextEditingController();
+
+    final List<String> soils = ['Loamy', 'Sandy', 'Clay', 'Silty', 'Black'];
+    final List<String> seasons = ['Summer', 'Monsoon', 'Winter', 'Spring', 'Autumn'];
+
+    showDialog(
+      context: parentContext,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (stateContext, setStateSB) {
+          return Dialog(
+            insetPadding: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(LocalizationService.translate('Get Crop Recommendation'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  
+                  Text(LocalizationService.translate('Soil Type'), style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(8)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedSoil,
+                        isExpanded: true,
+                        items: soils.map((String val) => DropdownMenuItem(value: val, child: Text(val))).toList(),
+                        onChanged: (val) => setStateSB(() => selectedSoil = val!),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Text(LocalizationService.translate('Season'), style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: BorderRadius.circular(8)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedSeason,
+                        isExpanded: true,
+                        items: seasons.map((String val) => DropdownMenuItem(value: val, child: Text(val))).toList(),
+                        onChanged: (val) => setStateSB(() => selectedSeason = val!),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  _buildTextField(LocalizationService.translate('Temperature (°C)'), 'e.g. 28', tempCtrl, TextInputType.number),
+                  const SizedBox(height: 12),
+
+                  _buildTextField(LocalizationService.translate('Soil pH'), 'e.g. 6.5', phCtrl, TextInputType.number),
+                  const SizedBox(height: 12),
+
+                  _buildTextField(LocalizationService.translate('Rainfall (mm)'), 'e.g. 150', rainCtrl, TextInputType.number),
+                  const SizedBox(height: 24),
+
+                  Row(
+                    children: [
+                      Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(dialogContext), style: ElevatedButton.styleFrom(backgroundColor: Colors.grey), child: Text(LocalizationService.translate('Cancel')))),
+                      const SizedBox(width: 12),
+                      Expanded(child: ElevatedButton(
+                        onPressed: () {
+                          final double? temp = double.tryParse(tempCtrl.text);
+                          final double? ph = double.tryParse(phCtrl.text);
+                          final double? rain = double.tryParse(rainCtrl.text);
+
+                          if (temp == null || ph == null || rain == null) {
+                            ScaffoldMessenger.of(stateContext).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Please enter valid numeric values'))));
+                            return;
+                          }
+                          
+                          // Error handling for wrong/unrealistic values
+                          if (temp < 0 || temp > 55) {
+                            ScaffoldMessenger.of(stateContext).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Please enter a realistic temperature (0 to 55 °C)'))));
+                            return;
+                          }
+                          if (ph < 3.0 || ph > 10.0) {
+                            ScaffoldMessenger.of(stateContext).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Please enter a realistic soil pH (3 to 10)'))));
+                            return;
+                          }
+                          if (rain < 10 || rain > 3500) {
+                            ScaffoldMessenger.of(stateContext).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Please enter a realistic rainfall (10 to 3500 mm)'))));
+                            return;
+                          }
+
+                          Navigator.pop(dialogContext);
+                          if (parentContext.mounted) {
+                            _getAiRecommendations(parentContext, selectedSoil, selectedSeason, temp, ph, rain);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
+                        child: Text(LocalizationService.translate('Get Recommendation'), style: TextStyle(color: Theme.of(context).colorScheme.onPrimary), textAlign: TextAlign.center,),
+                      )),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      ),
+    );
+  }
 }
+
+class MlCropService {
+  /// Returns a list of potential API URLs to try, covering emulator, simulator, and real devices.
+  /// Returns a list of potential API URLs to try.
+  List<String> get _mlApiUrls {
+    const String endpoint = '/predict';
+    return ['${AppConfig.baseUrl}$endpoint'];
+  }
+
+  /// Maps the current month to the appropriate crop season.
+  String getCurrentSeason() {
+    final int month = DateTime.now().month;
+    if (month >= 3 && month <= 5) return 'Summer';
+    if (month >= 6 && month <= 9) return 'Monsoon';
+    return 'Winter'; // Oct to Feb
+  }
+
+  /// Calls the FastAPI ML model prediction endpoint.
+  Future<String?> getMLPrediction(String soilType, String season, double temp, double ph, double rainfall) async {
+    final String requestBody = jsonEncode({
+      'soil_type': soilType,
+      'season': season,
+      'temp': temp,
+      'ph': ph,
+      'rainfall': rainfall
+    });
+
+    bool networkErrorEncountered = false;
+
+    for (String url in _mlApiUrls) {
+      int maxRetries = 3;
+      
+      for (int attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          final response = await http.post(
+            Uri.parse(url),
+            headers: AppConfig.apiHeaders,
+            body: requestBody,
+          ).timeout(const Duration(seconds: 20)); // Increased to 20 seconds
+
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            final String predictedCrop = data['recommended_crop'];
+            print(' ML successful via $url: $predictedCrop');
+            return predictedCrop;
+          } else {
+            print(' ML API Error: Status ${response.statusCode} from $url');
+            // If the server was reached but returned an error (e.g. 500), stop trying IPs.
+            return "SERVER_ERROR";
+          }
+        } on SocketException catch (_) {
+          networkErrorEncountered = true;
+          int delay = (attempt == 1) ? 1 : (attempt == 2) ? 2 : 4;
+          await Future.delayed(Duration(seconds: delay));
+        } catch (e) {
+          if (e is TimeoutException) {
+            networkErrorEncountered = true;
+            int delay = (attempt == 1) ? 1 : (attempt == 2) ? 2 : 4;
+            await Future.delayed(Duration(seconds: delay));
+          } else {
+            return "SERVER_ERROR";
+          }
+        }
+      }
+      print(' Connection to $url failed after 3 attempts.');
+    }
+    
+    if (networkErrorEncountered) {
+      return "NETWORK_ERROR";
+    }
+    return null;
+  }
+
+  /// Backup recommendation using Gemini via existing AiService.
+  Future<String?> getGeminiBackup(String soilType, String season) async {
+    try {
+      final aiService = AiService();
+      final String prompt = 'Based on soil $soilType and $season season, recommend one crop name for South Asia. Reply with just crop name.';
+      final String? response = await aiService.sendMessage(prompt);
+      
+      if (response != null && !response.startsWith('Error:')) {
+        final cropName = response.trim();
+        print(' Gemini Backup successful: $cropName');
+        return cropName;
+      }
+      return null;
+    } catch (e) {
+      print(' Gemini Backup failed: $e');
+      return null;
+    }
+  }
+
+  /// Tries ML prediction first, falls back to Gemini if ML fails.
+  Future<String> getRecommendation(String soilType, String season, double temp, double ph, double rainfall) async {
+    print(' Getting recommendation for Soil: $soilType, Season: $season, Temp: $temp, pH: $ph, Rainfall: $rainfall');
+    
+    // 1. Try ML Model
+    String? crop = await getMLPrediction(soilType, season, temp, ph, rainfall);
+    
+    if (crop != null && crop != "NETWORK_ERROR" && crop != "SERVER_ERROR") {
+      return crop;
+    }
+    
+    // 2. Fallback to Gemini
+    if (crop == "NETWORK_ERROR") {
+      print(' Falling back to Gemini Backup due to network unreachability');
+      String? geminiCrop = await getGeminiBackup(soilType, season);
+      
+      if (geminiCrop != null && geminiCrop.isNotEmpty) {
+        return geminiCrop;
+      }
+    } else {
+      print(' ML server responded with an error or invalid state. Skipping Gemini fallback.');
+    }
+    
+    // 3. Complete Failure
+    print(' Both ML and Gemini completely failed or were skipped.');
+    return 'Error: Could not determine crop';
+  }
+}
+

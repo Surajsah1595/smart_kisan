@@ -1,143 +1,1501 @@
-crop_name,soil_type,season,temp_min,temp_max,ph_min,ph_max,rainfall_min,rainfall_max,water_need,duration_days,humidity_min,humidity_max,altitude_min,altitude_max,fertilizer_n,fertilizer_p,fertilizer_k,yield_ton_per_ha,profit_usd_per_ha,difficulty_level
-Rice (Aus),Loamy,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
-Rice (Aus),Clay,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
-Rice (Aus),Silty,Summer,20,38,5.0,7.5,100,200,High,120,60,85,0,500,120,60,60,3.5,850,Easy
-Rice (Aman),Loamy,Monsoon,20,38,5.0,7.5,150,300,High,140,70,90,0,500,110,55,55,4.0,950,Easy
-Rice (Aman),Clay,Monsoon,20,38,5.0,7.5,150,300,High,140,70,90,0,500,110,55,55,4.0,950,Easy
-Rice (Boro),Loamy,Winter,15,30,5.0,7.5,50,100,High,160,50,75,0,500,130,65,65,4.5,1050,Medium
-Rice (Boro),Clay,Winter,15,30,5.0,7.5,50,100,High,160,50,75,0,500,130,65,65,4.5,1050,Medium
-Rice (Basmati),Loamy,Summer,20,40,6.0,7.5,80,150,Medium,120,55,80,300,800,100,50,50,3.0,1200,Medium
-Rice (Basmati),Sandy,Summer,20,40,6.0,7.5,80,150,Medium,120,55,80,300,800,100,50,50,3.0,1200,Medium
-Rice (Jhum),Sandy,Monsoon,20,35,5.5,7.0,120,200,Medium,120,65,85,500,1500,80,40,40,2.5,600,Hard
-Wheat (Spring),Loamy,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
-Wheat (Spring),Clay,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
-Wheat (Spring),Silty,Winter,10,25,6.0,7.5,50,100,Medium,110,50,75,200,600,120,60,60,3.5,700,Medium
-Wheat (Winter),Loamy,Winter,5,20,6.0,7.5,40,80,Medium,130,45,70,300,800,110,55,55,3.0,650,Medium
-Wheat (Winter),Clay,Winter,5,20,6.0,7.5,40,80,Medium,130,45,70,300,800,110,55,55,3.0,650,Medium
-Maize (Rainfed),Loamy,Summer,18,35,5.5,7.0,75,150,Medium,90,55,80,200,1000,100,50,50,2.5,550,Medium
-Maize (Rainfed),Sandy,Summer,18,35,5.5,7.0,75,150,Medium,90,55,80,200,1000,100,50,50,2.5,550,Medium
-Maize (Irrigated),Loamy,Summer,20,35,5.5,7.0,50,100,High,110,60,85,200,1000,120,60,60,4.0,800,Medium
-Maize (Irrigated),Clay,Summer,20,35,5.5,7.0,50,100,High,110,60,85,200,1000,120,60,60,4.0,800,Medium
-Barley,Loamy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,500,1500,80,40,40,2.5,500,Medium
-Barley,Sandy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,500,1500,80,40,40,2.5,500,Medium
-Millet (Pearl),Sandy,Summer,25,40,6.0,8.0,40,80,Low,80,30,60,200,800,60,30,30,1.5,350,Easy
-Millet (Pearl),Loamy,Summer,25,40,6.0,8.0,40,80,Low,80,30,60,200,800,60,30,30,1.5,350,Easy
-Millet (Finger),Loamy,Summer,20,35,5.5,7.5,50,100,Low,90,40,70,500,1500,70,35,35,1.8,400,Medium
-Millet (Finger),Sandy,Summer,20,35,5.5,7.5,50,100,Low,90,40,70,500,1500,70,35,35,1.8,400,Medium
-Sorghum (Jowar),Black,Summer,25,40,6.0,8.0,40,80,Low,120,35,65,300,1000,80,40,40,2.0,450,Medium
-Sorghum (Jowar),Loamy,Summer,25,40,6.0,8.0,40,80,Low,120,35,65,300,1000,80,40,40,2.0,450,Medium
-Oats,Loamy,Winter,10,25,6.0,7.0,60,120,Medium,100,55,80,500,1500,90,45,45,2.2,480,Medium
-Buckwheat,Sandy,Summer,15,25,5.5,7.0,70,140,Low,90,50,75,800,2500,60,30,30,1.2,300,Hard
-Quinoa,Sandy,Summer,15,30,6.0,8.0,50,100,Low,120,45,70,1000,3000,70,35,35,1.5,450,Hard
-Finger Millet,Loamy,Summer,18,30,5.5,7.5,60,120,Low,100,45,75,500,2000,70,35,35,1.6,380,Medium
-Foxtail Millet,Sandy,Summer,20,35,6.0,7.5,40,80,Low,80,40,65,300,1200,60,30,30,1.4,320,Easy
-Kodo Millet,Loamy,Summer,20,35,5.5,7.5,50,100,Low,90,45,70,400,1500,60,30,30,1.3,310,Medium
-Barnyard Millet,Loamy,Summer,20,35,5.5,7.5,60,120,Medium,80,50,75,300,1200,70,35,35,1.5,340,Easy
-Little Millet,Sandy,Summer,20,35,5.5,7.5,50,100,Low,85,40,70,400,1500,60,30,30,1.2,300,Medium
-Potato,Loamy,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
-Potato,Sandy,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
-Potato,Silty,Winter,15,25,5.0,6.5,50,100,Medium,80,60,85,500,2000,150,80,120,20.0,2500,Medium
-Sweet Potato,Sandy,Summer,20,30,5.5,7.0,40,80,Low,120,55,80,300,1500,80,40,80,15.0,1800,Easy
-Sweet Potato,Loamy,Summer,20,30,5.5,7.0,40,80,Low,120,55,80,300,1500,80,40,80,15.0,1800,Easy
-Tomato,Loamy,Summer,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
-Tomato,Loamy,Winter,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
-Tomato,Sandy,Summer,18,28,6.0,7.0,60,120,Medium,70,65,85,200,1000,120,60,100,25.0,3500,Medium
-Onion,Loamy,Winter,13,25,6.0,7.5,50,100,Medium,110,60,80,200,800,100,50,80,18.0,2200,Medium
-Onion,Sandy,Winter,13,25,6.0,7.5,50,100,Medium,110,60,80,200,800,100,50,80,18.0,2200,Medium
-Garlic,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,120,55,75,300,1200,120,60,80,12.0,2800,Hard
-Garlic,Sandy,Winter,10,25,6.0,7.5,40,80,Medium,120,55,75,300,1200,120,60,80,12.0,2800,Hard
-Cauliflower,Loamy,Winter,15,25,6.0,7.0,50,100,High,70,65,85,200,800,150,80,120,15.0,2000,Medium
-Cauliflower,Sandy,Winter,15,25,6.0,7.0,50,100,High,70,65,85,200,800,150,80,120,15.0,2000,Medium
-Cabbage,Loamy,Winter,15,25,6.0,7.0,50,100,High,80,65,85,200,800,140,70,110,20.0,2200,Medium
-Cabbage,Sandy,Winter,15,25,6.0,7.0,50,100,High,80,65,85,200,800,140,70,110,20.0,2200,Medium
-Broccoli,Loamy,Winter,15,25,6.0,7.0,60,120,High,75,65,85,300,1200,130,65,100,12.0,2400,Hard
-Carrot,Sandy,Winter,10,25,6.0,7.5,40,80,Medium,90,60,80,200,1000,100,50,100,25.0,2000,Easy
-Carrot,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,90,60,80,200,1000,100,50,100,25.0,2000,Easy
-Radish,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,60,55,75,200,800,80,40,60,15.0,1200,Easy
-Beetroot,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,80,55,75,200,1000,100,50,80,18.0,1500,Medium
-Spinach,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,50,60,80,200,800,80,40,60,12.0,1400,Easy
-Mustard Greens,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,60,55,75,200,800,80,40,60,10.0,1100,Easy
-Fenugreek,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,40,50,70,200,800,60,30,40,8.0,900,Easy
-Coriander,Loamy,Winter,15,25,6.0,7.5,40,80,Medium,50,55,75,200,800,60,30,40,6.0,800,Easy
-Brinjal,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,100,60,85,200,800,120,60,100,25.0,2800,Medium
-Brinjal,Clay,Summer,20,35,6.0,7.5,60,120,Medium,100,60,85,200,800,120,60,100,25.0,2800,Medium
-Chili,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,90,60,85,200,1000,100,50,80,10.0,2000,Medium
-Chili,Sandy,Summer,20,35,6.0,7.5,60,120,Medium,90,60,85,200,1000,100,50,80,10.0,2000,Medium
-Capsicum,Loamy,Summer,18,30,6.0,7.0,60,120,Medium,80,65,85,200,1000,110,55,90,15.0,2200,Medium
-Okra,Loamy,Summer,25,35,6.0,7.5,50,100,Medium,60,55,80,200,800,80,40,60,12.0,1500,Easy
-Pumpkin,Sandy,Summer,20,35,6.0,7.5,40,80,Medium,100,50,75,200,800,80,40,80,30.0,2000,Easy
-Pumpkin,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,100,50,75,200,800,80,40,80,30.0,2000,Easy
-Bottle Gourd,Loamy,Summer,20,35,6.0,7.5,50,100,High,90,60,85,200,800,90,45,70,25.0,1800,Easy
-Bitter Gourd,Loamy,Summer,25,35,6.0,7.5,60,120,Medium,80,60,85,200,800,100,50,80,15.0,1700,Medium
-Ridge Gourd,Loamy,Summer,25,35,6.0,7.5,50,100,Medium,70,60,85,200,800,80,40,60,18.0,1600,Easy
-Cucumber,Loamy,Summer,20,35,6.0,7.5,60,120,High,60,65,85,200,800,80,40,60,30.0,2200,Easy
-Peas,Loamy,Winter,10,25,6.0,7.5,40,80,Medium,70,60,80,300,1200,60,30,40,8.0,1200,Medium
-Green Beans,Loamy,Summer,18,30,6.0,7.5,50,100,Medium,80,60,85,200,1000,70,35,50,10.0,1300,Medium
-Cowpea,Sandy,Summer,25,35,6.0,7.5,40,80,Low,90,50,75,200,800,60,30,40,6.0,800,Easy
-Drumstick,Loamy,Summer,25,40,6.0,7.5,50,100,Low,200,50,80,200,800,80,40,60,50.0,3000,Easy
-Mango,Loamy,Summer,24,35,5.5,7.5,80,150,Low,120,50,75,200,800,100,50,100,10.0,2500,Medium
-Mango,Sandy,Summer,24,35,5.5,7.5,80,150,Low,120,50,75,200,800,100,50,100,10.0,2500,Medium
-Banana,Loamy,Monsoon,20,35,5.5,7.0,100,200,High,330,65,85,200,800,200,100,300,35.0,4000,Medium
-Banana,Sandy,Monsoon,20,35,5.5,7.0,100,200,High,330,65,85,200,800,200,100,300,35.0,4000,Medium
-Apple,Loamy,Winter,15,25,6.0,7.0,80,150,Medium,150,55,75,1500,3000,120,60,120,15.0,3500,Hard
-Apple,Sandy,Winter,15,25,6.0,7.0,80,150,Medium,150,55,75,1500,3000,120,60,120,15.0,3500,Hard
-Orange,Loamy,Winter,15,35,5.5,7.5,100,200,Medium,180,60,80,500,1500,120,60,100,12.0,2800,Medium
-Orange,Sandy,Winter,15,35,5.5,7.5,100,200,Medium,180,60,80,500,1500,120,60,100,12.0,2800,Medium
-Lemon,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,120,55,80,200,1000,100,50,80,15.0,2000,Easy
-Papaya,Sandy,Summer,22,35,6.0,7.5,80,150,Medium,270,60,85,200,800,150,80,150,40.0,3500,Easy
-Papaya,Loamy,Summer,22,35,6.0,7.5,80,150,Medium,270,60,85,200,800,150,80,150,40.0,3500,Easy
-Guava,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,180,55,80,200,1000,100,50,100,20.0,2500,Easy
-Pomegranate,Loamy,Summer,15,35,5.5,7.5,60,120,Low,180,45,70,500,1500,120,60,100,12.0,3200,Medium
-Grapes,Sandy,Summer,15,35,6.0,7.5,50,100,Medium,150,50,75,300,1000,150,80,120,20.0,4000,Hard
-Watermelon,Sandy,Summer,25,35,6.0,7.5,40,80,Medium,90,50,75,200,800,100,50,100,30.0,2500,Easy
-Muskmelon,Sandy,Summer,25,35,6.0,7.5,40,80,Medium,80,50,75,200,800,90,45,90,25.0,2200,Easy
-Litchi,Loamy,Summer,20,35,5.5,7.0,100,200,High,120,65,85,200,800,150,80,120,8.0,3000,Medium
-Jackfruit,Loamy,Summer,25,35,5.5,7.5,100,200,Medium,180,60,85,200,800,100,50,100,20.0,2500,Easy
-Pineapple,Sandy,Summer,20,30,4.5,6.5,80,150,Medium,180,65,85,200,800,120,60,120,25.0,3000,Medium
-Strawberry,Loamy,Winter,15,25,5.5,7.0,60,120,Medium,90,65,85,500,1500,100,50,100,15.0,5000,Hard
-Pear,Loamy,Winter,10,25,6.0,7.0,80,150,Medium,120,55,75,1000,2500,100,50,100,12.0,2800,Hard
-Plum,Loamy,Winter,10,25,6.0,7.0,80,150,Medium,120,55,75,1000,2500,90,45,90,10.0,2500,Hard
-Peach,Loamy,Summer,15,30,6.0,7.0,80,150,Medium,120,55,75,500,2000,100,50,100,12.0,2600,Hard
-Apricot,Loamy,Summer,10,30,6.0,7.5,60,120,Medium,120,50,70,1000,2500,90,45,90,8.0,2400,Hard
-Walnut,Loamy,Winter,5,25,6.0,7.5,80,150,Medium,180,50,70,1500,3000,100,50,100,5.0,3500,Hard
-Almond,Sandy,Winter,5,30,6.0,8.0,40,80,Low,180,40,65,500,2000,80,40,80,3.0,4000,Hard
-Cashew,Sandy,Summer,25,35,5.5,7.5,60,120,Low,240,55,80,200,800,80,40,60,1.5,2000,Medium
-Coconut,Sandy,Summer,25,35,5.5,8.0,100,200,Medium,365,60,85,200,500,120,60,120,2.5,1800,Medium
-Areca Nut,Loamy,Monsoon,20,35,5.5,7.5,150,250,High,365,70,90,200,800,150,80,150,2.0,3000,Medium
-Tea,Loamy,Monsoon,15,30,4.5,6.0,150,300,High,365,70,90,500,2000,150,80,100,2.0,2500,Medium
-Coffee,Loamy,Summer,15,25,5.5,6.5,120,200,Medium,365,65,85,800,2000,120,60,100,1.5,3000,Hard
-Rubber,Loamy,Monsoon,25,35,5.5,7.0,150,300,High,365,75,95,200,800,100,50,100,1.8,2200,Medium
-Sugarcane,Loamy,Summer,20,35,6.0,7.5,100,200,High,365,60,85,200,800,150,80,150,70.0,2500,Medium
-Sugarcane,Clay,Summer,20,35,6.0,7.5,100,200,High,365,60,85,200,800,150,80,150,70.0,2500,Medium
-Cotton,Black,Summer,20,35,6.5,8.0,40,80,Low,180,40,65,200,600,100,50,100,2.5,1200,Medium
-Cotton,Loamy,Summer,20,35,6.5,8.0,40,80,Low,180,40,65,200,600,100,50,100,2.5,1200,Medium
-Jute,Loamy,Summer,24,35,6.0,7.5,100,200,High,120,70,90,200,600,80,40,80,2.5,800,Medium
-Tobacco,Sandy,Winter,15,30,5.5,7.5,40,80,Medium,120,50,70,300,1000,120,60,120,2.0,2500,Hard
-Chickpea,Loamy,Winter,15,25,6.0,7.5,30,60,Low,100,40,65,300,1000,60,30,40,1.5,700,Medium
-Chickpea,Sandy,Winter,15,25,6.0,7.5,30,60,Low,100,40,65,300,1000,60,30,40,1.5,700,Medium
-Lentil,Loamy,Winter,15,25,6.0,7.5,30,60,Low,90,40,65,300,1000,50,25,30,1.2,600,Medium
-Lentil,Sandy,Winter,15,25,6.0,7.5,30,60,Low,90,40,65,300,1000,50,25,30,1.2,600,Medium
-Pigeon Pea,Loamy,Summer,20,35,6.0,7.5,40,80,Low,180,45,70,300,1000,60,30,40,1.2,650,Medium
-Black Gram,Loamy,Summer,25,35,6.0,7.5,40,80,Medium,90,50,75,200,800,50,25,30,1.0,550,Easy
-Green Gram,Sandy,Summer,25,35,6.0,7.5,30,60,Low,80,45,70,200,800,40,20,25,0.8,450,Easy
-Soybean,Loamy,Summer,20,35,6.0,7.5,50,100,Medium,110,55,80,300,1000,80,40,60,1.8,700,Medium
-Red Kidney Bean,Loamy,Summer,15,25,6.0,7.0,60,120,Medium,120,60,85,500,1500,70,35,50,1.2,800,Hard
-Horse Gram,Loamy,Summer,20,35,5.5,7.5,30,60,Low,120,40,65,300,1000,40,20,25,0.8,400,Easy
-Mustard,Loamy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,300,1000,80,40,40,1.2,600,Medium
-Mustard,Sandy,Winter,10,25,6.0,7.5,30,60,Low,100,40,65,300,1000,80,40,40,1.2,600,Medium
-Sunflower,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,110,45,70,300,1000,80,40,80,1.5,700,Medium
-Sesame,Sandy,Summer,25,35,6.0,7.5,30,60,Low,90,40,65,200,800,60,30,30,0.8,500,Easy
-Groundnut,Sandy,Summer,20,35,6.0,7.5,40,80,Medium,120,45,70,200,800,60,30,60,1.5,800,Medium
-Groundnut,Loamy,Summer,20,35,6.0,7.5,40,80,Medium,120,45,70,200,800,60,30,60,1.5,800,Medium
-Linseed,Loamy,Winter,10,25,6.0,7.0,30,60,Low,120,40,65,300,1000,60,30,30,1.0,550,Medium
-Safflower,Loamy,Winter,15,30,6.0,7.5,30,60,Low,130,40,65,300,1000,60,30,30,1.2,580,Medium
-Castor,Sandy,Summer,20,40,6.0,8.0,30,60,Low,180,35,60,200,800,80,40,40,1.5,600,Medium
-Cumin,Sandy,Winter,15,30,6.0,8.0,20,40,Low,120,35,55,300,1000,60,30,30,0.6,1200,Hard
-Coriander Seed,Loamy,Winter,15,25,6.0,7.5,30,60,Medium,90,45,70,300,1000,60,30,40,0.8,900,Medium
-Turmeric,Loamy,Summer,20,35,5.5,7.5,80,150,Medium,240,65,85,200,800,120,60,120,6.0,2500,Medium
-Ginger,Loamy,Summer,20,35,5.5,7.0,100,200,High,240,70,90,300,1200,150,80,150,8.0,3500,Hard
-Fenugreek Seed,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,90,45,70,300,1000,60,30,30,0.8,700,Medium
-Fennel,Loamy,Winter,10,30,6.0,7.5,30,60,Medium,150,45,70,300,1000,80,40,60,1.0,1100,Medium
-Black Pepper,Loamy,Monsoon,25,35,5.5,7.0,150,250,High,365,70,90,200,800,120,60,120,1.0,3500,Hard
-Cardamom,Loamy,Monsoon,15,30,5.0,6.5,150,300,High,365,75,95,800,2000,100,50,100,0.5,5000,Hard
-Red Chili,Loamy,Summer,20,35,6.0,7.5,60,120,Medium,120,55,80,300,1000,100,50,80,1.5,1800,Medium
+crop_name,soil_type,season,temp_min,temp_max,ph_min,ph_max,rainfall_min,rainfall_max,water_need,duration_days,humidity_min,humidity_max,altitude_min,altitude_max,fertilizer_n,fertilizer_p,fertilizer_k,yield_ton_per_ha,profit_usd_per_ha,difficulty_level,country,location_field
+Rice (Aus),Clay,Summer,21,37,5.0,7.3,85,187,High,120,55,88,0,500,120,60,60,3.1,840,Easy,India,Punjab
+Rice (Aus),Clay,Summer,21,38,5.2,7.7,98,184,High,130,56,82,0,500,120,60,60,3.29,789,Easy,Nepal,Ilam
+Barley,Peaty,Spring,8,24,6.2,7.6,34,54,Low,92,41,61,500,1500,80,40,40,2.97,578,Medium,Nepal,Gulmi
+Tea,Silty,Autumn,9,30,4.5,5.5,185,405,High,365,84,96,500,2000,120,60,60,1.89,1773,Medium,India,Himachal Pradesh
+Apple (Mustang),Silty,Autumn,7,26,5.6,6.9,67,105,Medium,219,61,83,2000,3500,50,30,70,8.81,3669,Hard,Nepal,Sunsari
+Green Gram,Black,Autumn,24,34,5.8,7.5,24,61,Low,82,47,71,200,800,40,20,25,0.88,361,Easy,India,Haryana
+Pomegranate,Loamy,Winter,16,36,5.3,7.6,47,138,Low,186,44,67,500,1500,120,60,100,12.56,2988,Medium,Asia,Bangladesh
+Buckwheat (Phapar),Clay,Autumn,8,25,5.3,7.3,51,94,Low,69,46,67,2000,4000,20,20,20,1.17,420,Easy,Nepal,Kailali
+Barley,Alluvial,Spring,12,26,5.9,7.5,48,43,Low,107,39,64,500,1500,80,40,40,2.61,543,Medium,Nepal,Kailali
+Almond,Sandy,Summer,4,32,5.9,7.8,28,70,Low,180,41,69,500,2000,80,40,80,3.52,3458,Hard,Asia,Indonesia
+Onion,Peaty,Spring,12,27,5.8,7.5,50,106,Medium,103,60,85,200,800,100,50,80,17.89,1904,Medium,Nepal,Dhankuta
+Almond,Laterite,Autumn,5,31,6.1,8.2,47,64,Low,179,45,65,500,2000,80,40,80,3.25,3486,Hard,Nepal,Bara
+Peach,Clay,Autumn,17,32,6.2,6.8,73,157,Medium,124,52,75,500,2000,100,50,100,13.01,2788,Hard,Asia,Bangladesh
+Rice (Jhum),Alluvial,Monsoon,20,33,5.8,7.1,132,211,Medium,120,68,87,500,1500,80,40,40,2.93,706,Hard,Nepal,Kaski
+Plum,Black,Summer,9,27,6.0,7.1,76,157,Medium,110,58,72,1000,2500,90,45,90,8.94,2936,Hard,India,Maharashtra
+Green Beans,Silty,Autumn,16,31,6.0,7.7,62,100,Medium,80,58,88,200,1000,70,35,50,10.45,1477,Medium,Nepal,Gulmi
+Mustard Greens,Silty,Spring,12,25,6.0,7.6,39,70,Medium,67,59,71,200,800,80,40,60,8.65,905,Easy,Nepal,Ilam
+Green Beans,Sandy,Spring,17,28,5.7,7.8,30,89,Medium,71,56,83,200,1000,70,35,50,10.38,1520,Medium,Nepal,Sindhupalchok
+Maize (Irrigated),Loamy,Winter,18,33,5.3,7.3,65,103,High,107,59,84,200,1000,120,60,60,4.6,897,Medium,Nepal,Bara
+Mustard,Laterite,Autumn,8,23,6.0,7.7,44,118,Low,114,48,69,0,2000,60,40,40,1.02,625,Easy,Nepal,Jhapa
+Lentil (Musuro),Silty,Monsoon,16,26,5.9,7.7,25,114,Low,120,54,71,0,2000,20,40,20,1.66,807,Easy,India,Punjab
+Strawberry,Black,Monsoon,14,27,5.7,7.0,64,138,Medium,95,60,88,500,1500,100,50,100,12.54,5687,Hard,Nepal,Sunsari
+Rice (Aus),Alluvial,Monsoon,21,36,5.2,7.3,120,212,High,122,62,90,0,500,120,60,60,3.63,732,Easy,Nepal,Dhankuta
+Peas,Red,Summer,8,25,6.2,7.8,53,82,Medium,75,57,77,300,1200,60,30,40,6.92,1251,Medium,Nepal,Gulmi
+Drumstick,Clay,Spring,25,38,5.8,7.4,45,115,Low,192,45,82,200,800,80,40,60,51.26,3202,Easy,India,Haryana
+Barley,Loamy,Monsoon,10,26,6.3,7.3,49,79,Low,104,38,64,500,1500,80,40,40,2.16,453,Medium,India,Maharashtra
+Coffee,Loamy,Spring,15,24,5.6,6.7,119,183,Medium,370,69,80,800,2000,120,60,100,1.35,2942,Hard,Nepal,Sindhupalchok
+Maize (Irrigated),Peaty,Spring,22,36,5.7,6.7,33,93,High,114,65,80,200,1000,120,60,60,4.65,650,Medium,India,West Bengal
+Cardamom,Black,Summer,14,31,4.9,6.4,155,280,High,374,75,96,800,2000,100,50,100,0.41,4653,Hard,Asia,Bangladesh
+Rice (Aus),Clay,Summer,19,36,5.3,7.3,107,180,High,123,55,88,0,500,120,60,60,3.25,711,Easy,India,Maharashtra
+Watermelon,Sandy,Spring,24,35,6.1,7.3,26,85,Medium,88,46,77,200,800,100,50,100,29.47,2897,Easy,India,Andhra Pradesh
+Fennel,Sandy,Monsoon,11,28,6.3,7.8,15,60,Medium,141,42,69,300,1000,80,40,60,0.94,1171,Medium,Nepal,Dhankuta
+Wheat (Winter),Alluvial,Winter,3,19,6.0,7.6,45,72,Medium,133,43,75,300,800,110,55,55,2.6,708,Medium,Nepal,Mustang
+Beetroot,Alluvial,Spring,10,25,6.0,7.8,32,64,Medium,75,54,73,200,1000,100,50,80,21.0,1369,Medium,Nepal,Sindhupalchok
+Carrot,Silty,Winter,11,24,6.3,7.4,22,77,Medium,87,56,82,200,1000,100,50,100,23.85,2035,Easy,India,Himachal Pradesh
+Green Gram,Peaty,Winter,26,33,5.8,7.3,17,55,Low,71,45,75,200,800,40,20,25,0.87,495,Easy,Asia,Vietnam
+Cashew,Sandy,Monsoon,27,36,5.7,7.7,51,139,Low,247,56,77,200,800,80,40,60,1.54,2159,Medium,Nepal,Dhankuta
+Jackfruit,Alluvial,Monsoon,25,37,5.3,7.6,111,181,Medium,189,55,85,200,800,100,50,100,17.44,2425,Easy,India,Assam
+Sunflower,Silty,Monsoon,22,34,6.3,7.4,34,88,Medium,106,45,65,300,1000,80,40,80,1.54,671,Medium,Nepal,Dhankuta
+Little Millet,Clay,Autumn,22,34,5.5,7.2,33,81,Low,94,35,72,400,1500,60,30,30,1.12,241,Medium,Nepal,Kailali
+Ginger,Loamy,Spring,22,33,5.3,6.5,138,311,High,270,74,95,300,1500,80,50,50,21.76,2252,Medium,Nepal,Bara
+Potato,Laterite,Winter,16,23,4.9,6.6,62,117,Medium,72,64,81,500,2000,150,80,120,17.07,2405,Medium,Nepal,Morang
+Rice (Boro),Silty,Monsoon,13,29,5.0,7.5,35,96,High,166,46,72,0,500,130,65,65,4.18,940,Medium,Asia,Indonesia
+Sorghum (Jowar),Black,Autumn,24,41,6.2,7.8,40,62,Low,111,30,61,300,1000,80,40,40,1.76,373,Medium,Nepal,Sunsari
+Buckwheat,Alluvial,Summer,15,25,5.8,7.3,65,139,Low,93,47,75,800,2500,60,30,30,1.17,303,Hard,India,Punjab
+Sesame,Black,Summer,27,34,6.3,7.7,28,42,Low,85,37,65,200,800,60,30,30,0.79,518,Easy,Nepal,Mustang
+Beetroot,Laterite,Summer,8,24,5.9,7.2,58,69,Medium,81,52,73,200,1000,100,50,80,15.9,1773,Medium,Nepal,Kaski
+Barley,Silty,Spring,12,26,6.2,7.8,30,42,Low,93,41,62,500,1500,80,40,40,2.3,505,Medium,Nepal,Mustang
+Rice (Basmati),Sandy,Monsoon,22,42,5.9,7.5,66,131,Medium,120,51,77,300,800,100,50,50,2.92,1300,Medium,Nepal,Jhapa
+Ginger,Silty,Autumn,20,34,5.8,6.6,152,320,High,246,75,89,300,1500,80,50,50,19.1,1685,Medium,Nepal,Gulmi
+Papaya,Red,Monsoon,21,37,6.3,7.3,78,144,Medium,279,63,89,200,800,150,80,150,32.95,3017,Easy,Nepal,Bara
+Pear,Clay,Spring,9,23,6.0,7.0,98,156,Medium,111,55,74,1000,2500,100,50,100,11.71,2949,Hard,Asia,Sri Lanka
+Broccoli,Black,Summer,14,24,6.0,7.0,78,138,High,74,61,83,300,1200,130,65,100,13.68,2344,Hard,Asia,Vietnam
+Mustard,Sandy,Autumn,12,24,6.1,7.7,39,80,Low,110,51,68,0,2000,60,40,40,1.34,950,Easy,India,Tamil Nadu
+Linseed,Silty,Winter,11,27,6.1,6.8,30,42,Low,128,42,68,300,1000,60,30,30,0.83,499,Medium,Nepal,Jhapa
+Jute,Black,Spring,24,33,5.8,7.3,92,211,High,117,72,92,200,600,80,40,80,2.1,694,Medium,India,Punjab
+Orange,Black,Monsoon,16,37,5.8,7.6,84,218,Medium,189,63,81,500,1500,120,60,100,13.56,3272,Medium,India,Himachal Pradesh
+Sweet Potato,Alluvial,Spring,19,31,5.6,7.2,26,98,Low,125,58,79,300,1500,80,40,80,12.59,1507,Easy,India,Punjab
+Buckwheat,Laterite,Spring,13,24,5.6,6.9,77,156,Low,89,49,80,800,2500,60,30,30,1.4,293,Hard,Nepal,Mustang
+Ridge Gourd,Loamy,Winter,24,33,6.1,7.4,45,117,Medium,72,59,88,200,800,80,40,60,15.72,1283,Easy,India,Himachal Pradesh
+Almond,Silty,Autumn,6,32,5.9,8.2,38,68,Low,177,36,69,500,2000,80,40,80,2.52,3445,Hard,Nepal,Ilam
+Wheat (Spring),Clay,Winter,9,25,5.8,7.5,56,106,Medium,113,52,77,200,600,120,60,60,3.21,569,Medium,Nepal,Jhapa
+Walnut,Red,Autumn,4,26,6.2,7.3,89,166,Medium,175,51,71,1500,3000,100,50,100,4.3,3429,Hard,Nepal,Sindhupalchok
+Little Millet,Laterite,Spring,19,37,5.7,7.2,54,82,Low,81,37,73,400,1500,60,30,30,1.03,307,Medium,Asia,Bangladesh
+Pear,Clay,Summer,12,27,6.3,7.3,80,166,Medium,114,57,70,1000,2500,100,50,100,13.09,2409,Hard,Nepal,Morang
+Barnyard Millet,Loamy,Monsoon,21,36,5.8,7.3,43,113,Medium,71,55,80,300,1200,70,35,35,1.25,405,Easy,Nepal,Kaski
+Fennel,Red,Summer,11,31,5.9,7.5,31,76,Medium,147,44,67,300,1000,80,40,60,0.98,930,Medium,Asia,Indonesia
+Pineapple,Alluvial,Spring,19,30,4.3,6.2,84,136,Medium,183,66,81,200,800,120,60,120,23.62,3203,Medium,Nepal,Dhankuta
+Areca Nut,Silty,Monsoon,21,34,5.4,7.6,147,255,High,367,71,90,200,800,150,80,150,2.21,2524,Medium,Nepal,Mustang
+Maize (Rainfed),Alluvial,Spring,16,34,5.7,6.9,86,167,Medium,80,58,79,200,1000,100,50,50,2.02,543,Medium,Nepal,Sindhupalchok
+Maize (Rainfed),Peaty,Autumn,20,37,5.6,6.8,91,149,Medium,100,51,80,200,1000,100,50,50,2.4,591,Medium,Nepal,Sunsari
+Walnut,Black,Winter,6,23,6.1,7.3,63,136,Medium,170,55,69,1500,3000,100,50,100,5.05,3155,Hard,India,Andhra Pradesh
+Pumpkin,Silty,Winter,18,33,6.1,7.8,36,84,Medium,103,46,80,200,800,80,40,80,28.52,2373,Easy,Nepal,Gulmi
+Oats,Clay,Spring,10,27,5.7,6.8,69,117,Medium,109,56,81,500,1500,90,45,45,2.28,482,Medium,India,Tamil Nadu
+Red Kidney Bean,Laterite,Autumn,15,27,5.8,7.2,73,112,Medium,119,65,84,500,1500,70,35,50,1.31,782,Hard,Nepal,Gulmi
+Watermelon,Black,Summer,24,37,6.1,7.3,28,60,Medium,94,54,78,200,800,100,50,100,29.56,2691,Easy,Asia,Vietnam
+Onion,Clay,Monsoon,12,27,6.0,7.6,53,100,Medium,118,64,79,200,800,100,50,80,21.38,2195,Medium,India,Assam
+Chili,Silty,Winter,21,35,6.3,7.6,59,117,Medium,93,56,83,200,1000,100,50,80,9.13,2038,Medium,India,Himachal Pradesh
+Watermelon,Silty,Autumn,26,33,5.8,7.7,36,66,Medium,100,45,79,200,800,100,50,100,34.45,2935,Easy,India,Himachal Pradesh
+Fennel,Laterite,Autumn,8,31,6.2,7.8,20,70,Medium,148,41,68,300,1000,80,40,60,0.86,1064,Medium,Nepal,Mustang
+Rice (Aman),Peaty,Monsoon,20,37,4.8,7.4,162,306,High,146,66,94,0,500,110,55,55,4.27,854,Easy,Nepal,Kaski
+Finger Millet,Alluvial,Winter,16,29,5.6,7.6,80,102,Low,109,40,73,500,2000,70,35,35,1.36,413,Medium,Nepal,Kaski
+Red Chili,Alluvial,Monsoon,22,34,6.3,7.5,76,103,Medium,121,50,78,300,1000,100,50,80,1.69,1876,Medium,Nepal,Kailali
+Castor,Silty,Autumn,19,42,6.0,8.3,12,63,Low,187,33,62,200,800,80,40,40,1.47,660,Medium,Asia,Indonesia
+Finger Millet,Red,Autumn,18,28,5.7,7.6,55,137,Low,109,42,80,500,2000,70,35,35,1.6,370,Medium,Asia,Indonesia
+Chickpea,Black,Winter,17,26,5.8,7.7,15,60,Low,103,41,67,300,1000,60,30,40,1.68,640,Medium,Nepal,Jhapa
+Barley,Loamy,Spring,8,24,6.1,7.3,46,61,Low,103,45,63,500,1500,80,40,40,2.41,503,Medium,India,Uttar Pradesh
+Carrot,Red,Monsoon,11,25,5.9,7.8,42,93,Medium,90,63,78,200,1000,100,50,100,29.34,2101,Easy,Nepal,Dhankuta
+Turmeric,Clay,Monsoon,22,28,4.7,7.4,139,265,High,214,75,87,0,1500,60,60,120,22.17,1241,Easy,Nepal,Bara
+Groundnut,Red,Spring,21,37,5.7,7.5,46,78,Medium,110,50,70,200,800,60,30,60,1.35,712,Medium,India,Tamil Nadu
+Buckwheat,Alluvial,Spring,17,23,5.5,7.0,64,131,Low,93,53,75,800,2500,60,30,30,1.4,334,Hard,Nepal,Dhankuta
+Wheat (Winter),Red,Winter,4,19,6.2,7.7,43,85,Medium,138,41,75,300,800,110,55,55,2.61,756,Medium,Asia,Bangladesh
+Bitter Gourd,Sandy,Autumn,24,37,6.2,7.4,44,112,Medium,89,63,82,200,800,100,50,80,14.31,1390,Medium,Nepal,Sunsari
+Foxtail Millet,Laterite,Autumn,18,34,5.9,7.4,58,67,Low,72,38,63,300,1200,60,30,30,1.64,313,Easy,India,Haryana
+Large Cardamom,Alluvial,Spring,8,25,4.3,6.7,131,336,High,313,83,100,1000,2000,40,40,60,0.71,2393,Hard,India,Maharashtra
+Jackfruit,Peaty,Autumn,23,33,5.8,7.7,120,210,Medium,172,59,80,200,800,100,50,100,21.49,2967,Easy,India,Punjab
+Rice (Aus),Clay,Summer,22,36,5.3,7.4,103,207,High,127,65,81,0,500,120,60,60,3.17,966,Easy,Nepal,Chitwan
+Quinoa,Red,Winter,16,31,5.8,7.9,58,80,Low,122,47,70,1000,3000,70,35,35,1.43,367,Hard,Nepal,Morang
+Barnyard Millet,Alluvial,Autumn,22,37,5.8,7.4,74,102,Medium,73,47,80,300,1200,70,35,35,1.23,392,Easy,India,Tamil Nadu
+Kodo Millet,Black,Winter,22,36,5.2,7.3,53,101,Low,83,49,67,400,1500,60,30,30,1.51,303,Medium,India,Maharashtra
+Fenugreek,Peaty,Summer,10,29,6.0,7.5,43,79,Medium,44,51,68,200,800,60,30,40,6.42,912,Easy,India,Assam
+Pear,Black,Winter,9,27,6.0,6.7,83,155,Medium,127,55,70,1000,2500,100,50,100,10.17,2689,Hard,Asia,Indonesia
+Rice (Marshi),Alluvial,Summer,15,31,5.8,7.2,139,269,High,155,65,99,1500,2500,100,50,50,3.62,928,Medium,India,Maharashtra
+Tobacco,Black,Autumn,15,29,5.7,7.4,51,83,Medium,112,49,75,300,1000,120,60,120,1.71,2012,Hard,India,Andhra Pradesh
+Rice (Jhum),Peaty,Summer,18,34,5.6,7.1,105,196,Medium,126,66,84,500,1500,80,40,40,2.35,573,Hard,Nepal,Sindhupalchok
+Cotton,Alluvial,Winter,19,37,6.4,8.3,52,81,Low,183,35,62,200,600,100,50,100,2.82,1176,Medium,Nepal,Kaski
+Papaya,Silty,Winter,24,36,6.1,7.5,76,148,Medium,274,61,88,200,800,150,80,150,45.93,3096,Easy,Nepal,Morang
+Banana,Loamy,Winter,22,36,5.8,6.9,94,206,High,321,67,83,200,800,200,100,300,28.57,3680,Medium,Nepal,Chitwan
+Safflower,Red,Monsoon,14,32,5.9,7.6,42,64,Low,128,42,62,300,1000,60,30,30,1.36,558,Medium,India,Himachal Pradesh
+Maize (Irrigated),Loamy,Winter,18,35,5.3,7.1,44,97,High,105,55,88,200,1000,120,60,60,4.35,900,Medium,Asia,Vietnam
+Coffee,Red,Summer,14,25,5.6,6.6,126,195,Medium,361,60,88,800,2000,120,60,100,1.42,2920,Hard,India,Assam
+Red Chili,Laterite,Monsoon,21,34,5.8,7.7,47,136,Medium,130,54,78,300,1000,100,50,80,1.45,1566,Medium,Nepal,Ilam
+Strawberry,Laterite,Monsoon,17,23,5.8,6.7,73,108,Medium,86,61,82,500,1500,100,50,100,13.91,4323,Hard,Asia,Bangladesh
+Black Pepper,Peaty,Summer,26,33,5.4,6.8,162,255,High,368,73,90,200,800,120,60,120,0.93,3802,Hard,Nepal,Dhankuta
+Chickpea,Sandy,Monsoon,13,26,6.2,7.6,25,68,Low,103,44,70,300,1000,60,30,40,1.27,580,Medium,Asia,Indonesia
+Bottle Gourd,Alluvial,Autumn,20,36,6.3,7.3,47,94,High,86,59,90,200,800,90,45,70,23.2,1754,Easy,Nepal,Ilam
+Fennel,Red,Winter,8,32,6.1,7.8,17,44,Medium,148,45,68,300,1000,80,40,60,1.1,942,Medium,Nepal,Bara
+Cowpea,Laterite,Winter,24,35,6.2,7.4,53,60,Low,98,52,74,200,800,60,30,40,5.75,649,Easy,Asia,Vietnam
+Drumstick,Laterite,Spring,25,39,5.7,7.3,57,102,Low,193,51,76,200,800,80,40,60,57.38,2659,Easy,Nepal,Sindhupalchok
+Black Pepper,Peaty,Winter,24,33,5.6,6.9,146,259,High,370,73,95,200,800,120,60,120,1.06,4183,Hard,Asia,Sri Lanka
+Spinach,Sandy,Spring,8,25,5.8,7.4,23,70,Medium,44,57,84,200,800,80,40,60,12.56,1368,Easy,India,Himachal Pradesh
+Coriander,Loamy,Autumn,14,27,6.0,7.2,52,82,Medium,46,56,78,200,800,60,30,40,6.82,827,Easy,Nepal,Mustang
+Castor,Black,Monsoon,22,39,6.0,8.0,34,69,Low,186,36,60,200,800,80,40,40,1.71,481,Medium,Nepal,Sindhupalchok
+Mustard,Laterite,Autumn,9,23,6.3,7.5,56,117,Low,108,45,70,0,2000,60,40,40,1.34,1096,Easy,India,Haryana
+Fenugreek,Silty,Autumn,11,31,5.7,7.4,29,50,Medium,48,45,75,200,800,60,30,40,8.47,939,Easy,Nepal,Bara
+Banana,Peaty,Monsoon,22,37,5.7,6.8,101,197,High,323,61,83,200,800,200,100,300,32.83,4064,Medium,Asia,Thailand
+Litchi,Sandy,Autumn,18,34,5.3,6.8,93,195,High,111,61,90,200,800,150,80,120,8.09,3360,Medium,Nepal,Ilam
+Cotton,Laterite,Monsoon,19,37,6.6,7.8,24,86,Low,180,42,67,200,600,100,50,100,2.47,1425,Medium,Nepal,Kailali
+Ginger,Black,Summer,20,35,5.2,6.8,165,298,High,240,69,91,300,1500,80,50,50,20.14,2106,Medium,India,Assam
+Ridge Gourd,Loamy,Monsoon,24,33,5.8,7.6,39,89,Medium,61,56,85,200,800,80,40,60,15.15,1622,Easy,Nepal,Bara
+Orange,Loamy,Summer,13,34,5.2,7.6,118,220,Medium,179,56,80,500,1500,120,60,100,11.3,2883,Medium,Nepal,Mustang
+Orange,Clay,Summer,15,34,5.8,7.4,108,203,Medium,179,59,83,500,1500,120,60,100,13.87,2934,Medium,India,Maharashtra
+Fenugreek,Red,Summer,8,30,6.2,7.8,13,74,Medium,44,47,75,200,800,60,30,40,9.13,921,Easy,Nepal,Dhankuta
+Kodo Millet,Peaty,Spring,19,34,5.2,7.2,55,108,Low,80,49,70,400,1500,60,30,30,1.13,275,Medium,India,West Bengal
+Tomato,Laterite,Winter,17,29,5.7,7.2,61,116,Medium,78,67,83,200,1000,120,60,100,25.51,2887,Medium,Asia,Sri Lanka
+Plum,Peaty,Autumn,11,23,6.0,6.9,94,156,Medium,118,59,70,1000,2500,90,45,90,11.4,2403,Hard,Nepal,Sindhupalchok
+Sesame,Loamy,Winter,25,35,6.1,7.6,31,69,Low,90,37,69,200,800,60,30,30,0.75,478,Easy,India,Maharashtra
+Large Cardamom,Sandy,Autumn,12,25,4.3,6.2,165,338,High,304,75,98,1000,2000,40,40,60,0.77,3653,Hard,India,Andhra Pradesh
+Peas,Sandy,Spring,12,27,6.3,7.7,47,74,Medium,78,55,79,300,1200,60,30,40,7.79,1266,Medium,Nepal,Mustang
+Large Cardamom,Loamy,Spring,9,25,4.7,6.4,130,354,High,335,78,95,1000,2000,40,40,60,0.59,3720,Hard,India,Maharashtra
+Plum,Sandy,Monsoon,10,23,5.8,6.8,70,134,Medium,116,58,80,1000,2500,90,45,90,11.74,2986,Hard,Nepal,Kaski
+Brinjal,Red,Spring,18,35,6.1,7.5,78,129,Medium,98,63,90,200,800,120,60,100,24.33,3311,Medium,India,Assam
+Strawberry,Silty,Winter,14,24,5.4,7.1,65,132,Medium,83,69,80,500,1500,100,50,100,17.65,5006,Hard,Nepal,Ilam
+Maize (Rainfed),Peaty,Winter,19,35,5.6,7.3,82,156,Medium,99,52,75,200,1000,100,50,50,2.08,558,Medium,Nepal,Sindhupalchok
+Quinoa,Sandy,Monsoon,15,29,6.2,7.7,39,86,Low,122,41,66,1000,3000,70,35,35,1.2,376,Hard,India,Maharashtra
+Red Chili,Silty,Spring,22,34,5.9,7.6,51,100,Medium,123,52,79,300,1000,100,50,80,1.45,2120,Medium,Asia,Vietnam
+Millet (Pearl),Laterite,Summer,27,39,6.2,7.9,30,64,Low,74,26,62,200,800,60,30,30,1.24,387,Easy,Nepal,Ilam
+Cotton,Clay,Winter,18,35,6.6,8.0,30,86,Low,176,35,70,200,600,100,50,100,2.11,1041,Medium,Nepal,Sindhupalchok
+Red Kidney Bean,Sandy,Summer,15,27,5.8,7.3,69,136,Medium,115,60,90,500,1500,70,35,50,1.07,713,Hard,India,Uttar Pradesh
+Mustard Greens,Loamy,Summer,9,27,6.0,7.7,48,70,Medium,68,57,71,200,800,80,40,60,10.25,1298,Easy,Nepal,Jhapa
+Mustard Greens,Silty,Summer,8,23,6.3,7.6,47,81,Medium,62,57,79,200,800,80,40,60,8.6,965,Easy,Asia,Indonesia
+Lentil (Musuro),Laterite,Winter,14,25,5.8,7.3,55,103,Low,127,50,70,0,2000,20,40,20,1.18,1229,Easy,India,Uttar Pradesh
+Quinoa,Laterite,Monsoon,15,32,6.2,7.7,53,101,Low,128,41,75,1000,3000,70,35,35,1.24,377,Hard,Nepal,Morang
+Little Millet,Peaty,Autumn,21,37,5.3,7.3,47,102,Low,77,37,65,400,1500,60,30,30,1.37,274,Medium,Nepal,Ilam
+Coriander,Peaty,Summer,17,24,5.9,7.3,24,85,Medium,59,58,77,200,800,60,30,40,6.89,738,Easy,Nepal,Dhankuta
+Cabbage,Red,Autumn,17,24,6.1,7.1,44,86,High,71,64,85,200,800,140,70,110,23.14,2317,Medium,Nepal,Bara
+Fenugreek Seed,Red,Spring,12,28,5.9,7.3,24,45,Medium,93,47,72,300,1000,60,30,30,0.94,599,Medium,Nepal,Jhapa
+Pineapple,Peaty,Autumn,19,29,4.2,6.8,66,169,Medium,186,68,80,200,800,120,60,120,21.6,2763,Medium,India,Uttar Pradesh
+Finger Millet,Black,Autumn,16,29,5.2,7.6,67,121,Low,107,50,70,500,2000,70,35,35,1.4,390,Medium,Nepal,Bara
+Linseed,Black,Summer,12,24,6.1,7.1,40,73,Low,125,40,60,300,1000,60,30,30,0.88,626,Medium,Nepal,Kaski
+Horse Gram,Red,Autumn,18,37,5.7,7.7,36,65,Low,119,42,70,300,1000,40,20,25,0.84,430,Easy,India,Tamil Nadu
+Fennel,Clay,Spring,9,30,6.3,7.2,45,57,Medium,144,48,71,300,1000,80,40,60,0.91,953,Medium,Nepal,Kaski
+Castor,Sandy,Autumn,20,42,6.1,8.0,39,62,Low,188,40,65,200,800,80,40,40,1.28,559,Medium,Nepal,Dhankuta
+Black Pepper,Red,Spring,25,37,5.4,7.1,135,270,High,375,71,85,200,800,120,60,120,0.99,3330,Hard,Nepal,Ilam
+Green Beans,Laterite,Monsoon,19,29,5.9,7.7,40,98,Medium,81,58,83,200,1000,70,35,50,8.97,1382,Medium,Nepal,Sindhupalchok
+Kodo Millet,Black,Winter,20,37,5.7,7.5,48,93,Low,95,50,72,400,1500,60,30,30,1.29,299,Medium,Asia,Sri Lanka
+Mustard Greens,Laterite,Autumn,9,27,6.2,7.6,41,81,Medium,60,56,71,200,800,80,40,60,9.76,927,Easy,Asia,Sri Lanka
+Tea,Sandy,Monsoon,12,30,4.4,5.2,211,385,High,365,80,100,500,2000,120,60,60,2.49,1814,Medium,Nepal,Ilam
+Kodo Millet,Red,Autumn,18,36,5.5,7.5,31,102,Low,94,47,73,400,1500,60,30,30,1.4,315,Medium,Asia,Indonesia
+Chickpea,Alluvial,Spring,15,27,6.1,7.6,42,73,Low,107,41,63,300,1000,60,30,40,1.29,818,Medium,Nepal,Kailali
+Jackfruit,Clay,Autumn,26,34,5.5,7.3,116,217,Medium,174,61,88,200,800,100,50,100,17.53,2885,Easy,Asia,Bangladesh
+Pigeon Pea,Clay,Monsoon,22,35,6.1,7.6,59,67,Low,182,40,75,300,1000,60,30,40,1.33,727,Medium,Nepal,Mustang
+Lemon,Loamy,Winter,19,34,5.7,7.4,67,156,Medium,113,53,78,200,1000,100,50,80,14.94,1602,Easy,Nepal,Jhapa
+Tobacco,Laterite,Monsoon,13,28,5.5,7.6,47,60,Medium,126,49,74,300,1000,120,60,120,1.88,2926,Hard,India,West Bengal
+Broccoli,Black,Autumn,13,25,6.0,6.9,52,120,High,79,62,84,300,1200,130,65,100,10.82,2795,Hard,India,Uttar Pradesh
+Lentil (Musuro),Sandy,Spring,15,25,6.2,7.2,21,117,Low,123,53,69,0,2000,20,40,20,1.24,928,Easy,India,Himachal Pradesh
+Rice (Jhum),Peaty,Summer,21,37,5.4,7.2,113,196,Medium,125,67,81,500,1500,80,40,40,2.67,529,Hard,Asia,Vietnam
+Red Chili,Red,Monsoon,22,37,6.3,7.6,41,128,Medium,129,60,79,300,1000,100,50,80,1.51,1481,Medium,Nepal,Kailali
+Bottle Gourd,Red,Spring,21,33,5.7,7.7,47,84,High,99,60,84,200,800,90,45,70,29.77,2117,Easy,Nepal,Chitwan
+Bottle Gourd,Red,Spring,21,33,6.2,7.2,63,88,High,83,57,89,200,800,90,45,70,22.59,2085,Easy,India,Uttar Pradesh
+Apple (Mustang),Peaty,Autumn,6,27,5.4,7.1,86,101,Medium,235,63,79,2000,3500,50,30,70,10.24,4754,Hard,Nepal,Ilam
+Black Gram,Red,Monsoon,25,37,6.1,7.6,34,92,Medium,87,54,70,200,800,50,25,30,1.0,489,Easy,Nepal,Gulmi
+Watermelon,Red,Autumn,24,36,5.8,7.7,52,83,Medium,99,51,72,200,800,100,50,100,33.23,2496,Easy,India,Gujarat
+Walnut,Sandy,Spring,3,27,6.2,7.4,95,144,Medium,178,49,71,1500,3000,100,50,100,5.04,3550,Hard,Asia,Vietnam
+Horse Gram,Alluvial,Winter,19,36,5.2,7.4,26,71,Low,110,35,70,300,1000,40,20,25,0.82,426,Easy,Asia,Bangladesh
+Peas,Alluvial,Winter,11,26,6.2,7.2,21,68,Medium,69,55,77,300,1200,60,30,40,9.15,1381,Medium,Asia,Thailand
+Buckwheat (Phapar),Peaty,Monsoon,9,27,4.8,6.7,60,103,Low,72,53,70,2000,4000,20,20,20,1.97,683,Easy,Asia,Bangladesh
+Chickpea,Alluvial,Spring,17,25,6.3,7.4,12,80,Low,91,35,62,300,1000,60,30,40,1.35,562,Medium,Asia,Bangladesh
+Papaya,Laterite,Autumn,21,34,6.2,7.2,87,151,Medium,269,56,89,200,800,150,80,150,42.9,3248,Easy,Asia,Indonesia
+Buckwheat,Silty,Spring,14,24,5.4,7.2,72,130,Low,83,47,70,800,2500,60,30,30,1.05,341,Hard,Nepal,Jhapa
+Large Cardamom,Laterite,Autumn,11,23,4.7,6.2,161,354,High,313,81,97,1000,2000,40,40,60,0.65,4293,Hard,Nepal,Ilam
+Plum,Loamy,Summer,11,24,6.0,6.7,93,134,Medium,125,51,71,1000,2500,90,45,90,11.63,2712,Hard,Nepal,Ilam
+Peas,Loamy,Spring,10,26,5.9,7.2,44,67,Medium,70,55,82,300,1200,60,30,40,8.18,1151,Medium,Nepal,Kaski
+Wheat (Spring),Clay,Winter,8,24,5.9,7.3,58,120,Medium,106,47,76,200,600,120,60,60,3.25,678,Medium,Asia,Bangladesh
+Onion,Sandy,Summer,14,25,5.8,7.2,49,104,Medium,113,64,75,200,800,100,50,80,16.47,2276,Medium,India,Himachal Pradesh
+Rice (Basmati),Laterite,Monsoon,19,40,6.3,7.8,89,169,Medium,118,53,78,300,800,100,50,50,2.79,1202,Medium,Nepal,Dhankuta
+Buckwheat (Phapar),Silty,Winter,11,24,5.1,6.7,61,89,Low,71,54,69,2000,4000,20,20,20,1.62,583,Easy,Asia,Indonesia
+Orange,Silty,Summer,16,36,5.2,7.5,105,209,Medium,184,57,83,500,1500,120,60,100,14.38,2833,Medium,Asia,Thailand
+Tobacco,Loamy,Spring,13,32,5.7,7.2,21,85,Medium,115,46,69,300,1000,120,60,120,2.39,2881,Hard,Asia,Bangladesh
+Cabbage,Alluvial,Summer,14,24,6.3,7.1,35,93,High,85,67,90,200,800,140,70,110,23.4,2007,Medium,Asia,Bangladesh
+Fenugreek,Sandy,Winter,9,30,5.7,7.6,15,43,Medium,38,47,70,200,800,60,30,40,6.82,989,Easy,India,Himachal Pradesh
+Chickpea,Silty,Monsoon,13,23,6.0,7.2,23,69,Low,91,41,61,300,1000,60,30,40,1.22,577,Medium,India,Haryana
+Sunflower,Sandy,Summer,18,36,5.7,7.7,49,95,Medium,104,50,71,300,1000,80,40,80,1.26,672,Medium,Nepal,Jhapa
+Rice (Boro),Clay,Monsoon,16,32,5.1,7.7,63,105,High,151,55,80,0,500,130,65,65,4.92,919,Medium,Nepal,Sunsari
+Mustard,Alluvial,Autumn,11,25,5.8,7.3,36,120,Low,103,52,72,0,2000,60,40,40,1.38,921,Easy,India,Himachal Pradesh
+Pigeon Pea,Red,Autumn,20,33,5.7,7.7,38,64,Low,181,45,66,300,1000,60,30,40,1.22,703,Medium,India,Gujarat
+Pear,Red,Spring,8,25,6.0,6.9,98,133,Medium,123,50,74,1000,2500,100,50,100,10.46,2685,Hard,India,Punjab
+Kodo Millet,Red,Autumn,18,36,5.6,7.3,69,112,Low,82,45,75,400,1500,60,30,30,1.09,304,Medium,Nepal,Jhapa
+Maize (Irrigated),Laterite,Monsoon,21,33,5.4,7.1,69,92,High,108,59,90,200,1000,120,60,60,4.55,656,Medium,Asia,Indonesia
+Lentil (Musuro),Red,Monsoon,16,23,6.2,7.7,56,96,Low,122,45,74,0,2000,20,40,20,1.86,957,Easy,Asia,Vietnam
+Horse Gram,Silty,Summer,21,37,5.6,7.2,28,63,Low,114,38,69,300,1000,40,20,25,0.66,406,Easy,Nepal,Jhapa
+Castor,Peaty,Winter,18,41,5.9,7.9,49,47,Low,179,31,58,200,800,80,40,40,1.75,626,Medium,India,Assam
+Lentil (Musuro),Loamy,Winter,13,25,6.0,7.4,41,85,Low,115,46,73,0,2000,20,40,20,1.37,704,Easy,Nepal,Mustang
+Capsicum,Sandy,Winter,18,28,6.3,6.8,76,113,Medium,81,68,83,200,1000,110,55,90,13.25,2401,Medium,India,Andhra Pradesh
+Oats,Silty,Winter,8,27,6.1,7.0,41,126,Medium,98,57,84,500,1500,90,45,45,2.46,399,Medium,Nepal,Kailali
+Radish,Clay,Monsoon,12,24,6.2,7.7,57,67,Medium,61,54,77,200,800,80,40,60,14.64,1394,Easy,Asia,Vietnam
+Sunflower,Loamy,Monsoon,19,33,5.9,7.4,41,99,Medium,115,48,66,300,1000,80,40,80,1.53,770,Medium,India,Punjab
+Sunflower,Laterite,Autumn,20,34,5.9,7.2,38,81,Medium,101,45,74,300,1000,80,40,80,1.72,680,Medium,Asia,Sri Lanka
+Areca Nut,Laterite,Summer,21,33,5.4,7.3,150,252,High,372,66,88,200,800,150,80,150,1.75,3281,Medium,Nepal,Sindhupalchok
+Cucumber,Peaty,Autumn,19,33,6.2,7.7,59,124,High,54,60,86,200,800,80,40,60,28.55,2311,Easy,India,Andhra Pradesh
+Little Millet,Red,Winter,21,33,5.6,7.2,30,95,Low,77,35,68,400,1500,60,30,30,1.01,286,Medium,India,Assam
+Green Beans,Silty,Spring,18,29,6.3,7.6,66,107,Medium,76,65,83,200,1000,70,35,50,10.78,1434,Medium,Nepal,Morang
+Coriander Seed,Alluvial,Monsoon,17,23,6.1,7.6,13,50,Medium,92,50,69,300,1000,60,30,40,0.7,868,Medium,Nepal,Kaski
+Lentil,Clay,Monsoon,16,26,5.8,7.5,29,40,Low,80,41,63,300,1000,50,25,30,1.16,564,Medium,Nepal,Sunsari
+Cauliflower,Black,Spring,14,25,6.0,7.0,70,101,High,80,66,90,200,800,150,80,120,13.99,1727,Medium,India,Andhra Pradesh
+Cotton,Laterite,Monsoon,19,37,6.4,7.7,57,73,Low,177,44,66,200,600,100,50,100,2.28,1167,Medium,Nepal,Kaski
+Apricot,Peaty,Summer,12,30,6.1,7.5,41,111,Medium,130,53,74,1000,2500,90,45,90,8.82,2338,Hard,India,Haryana
+Fenugreek Seed,Peaty,Winter,12,28,6.3,7.8,20,60,Medium,98,42,72,300,1000,60,30,30,0.82,624,Medium,Asia,Bangladesh
+Pineapple,Sandy,Winter,19,31,4.5,6.7,88,156,Medium,181,60,80,200,800,120,60,120,29.69,3085,Medium,Asia,Vietnam
+Castor,Silty,Spring,18,39,6.2,8.2,11,80,Low,179,30,64,200,800,80,40,40,1.37,572,Medium,Nepal,Gulmi
+Cabbage,Laterite,Monsoon,13,24,6.0,6.8,48,120,High,75,64,81,200,800,140,70,110,22.85,2485,Medium,India,Andhra Pradesh
+Chickpea,Peaty,Autumn,13,27,6.2,7.6,15,47,Low,95,38,64,300,1000,60,30,40,1.79,760,Medium,India,Punjab
+Coconut,Peaty,Autumn,25,35,5.8,8.2,94,188,Medium,375,57,88,200,500,120,60,120,2.83,1456,Medium,Nepal,Kailali
+Groundnut,Laterite,Autumn,20,35,5.8,7.5,55,73,Medium,115,42,68,200,800,60,30,60,1.52,767,Medium,Nepal,Dhankuta
+Grapes,Loamy,Spring,14,37,6.2,7.5,42,106,Medium,153,49,78,300,1000,150,80,120,16.5,3810,Hard,India,Punjab
+Sweet Potato,Red,Monsoon,18,30,5.7,6.8,51,89,Low,127,60,77,300,1500,80,40,80,12.13,1477,Easy,India,Tamil Nadu
+Cauliflower,Silty,Summer,14,23,6.1,6.7,50,101,High,60,63,87,200,800,150,80,120,12.34,2391,Medium,Asia,Indonesia
+Papaya,Alluvial,Autumn,23,35,6.2,7.8,76,133,Medium,280,61,88,200,800,150,80,150,35.65,3135,Easy,Asia,Indonesia
+Sorghum (Jowar),Alluvial,Spring,24,39,5.8,8.2,45,75,Low,129,34,63,300,1000,80,40,40,2.16,476,Medium,Asia,Thailand
+Carrot,Silty,Spring,12,26,5.8,7.2,55,81,Medium,86,64,82,200,1000,100,50,100,29.79,2138,Easy,Asia,Indonesia
+Pigeon Pea,Sandy,Spring,19,33,6.0,7.5,44,80,Low,181,40,75,300,1000,60,30,40,1.27,555,Medium,India,Haryana
+Cowpea,Loamy,Monsoon,24,35,6.2,7.5,37,68,Low,82,47,74,200,800,60,30,40,7.17,826,Easy,Asia,Bangladesh
+Pumpkin,Alluvial,Monsoon,21,34,6.0,7.3,44,64,Medium,104,50,79,200,800,80,40,80,27.78,2363,Easy,India,Maharashtra
+Green Gram,Red,Winter,25,36,6.1,7.2,13,80,Low,82,44,71,200,800,40,20,25,0.7,457,Easy,Asia,Thailand
+Carrot,Silty,Monsoon,10,24,6.0,7.3,48,79,Medium,85,58,75,200,1000,100,50,100,27.21,2400,Easy,Nepal,Gulmi
+Lentil (Musuro),Sandy,Summer,17,23,5.7,7.3,20,82,Low,111,55,70,0,2000,20,40,20,1.17,772,Easy,Nepal,Ilam
+Sugarcane,Sandy,Winter,19,36,6.2,7.6,101,187,High,356,65,89,200,800,150,80,150,81.57,2072,Medium,Asia,Bangladesh
+Carrot,Laterite,Autumn,8,27,6.3,7.6,27,96,Medium,91,58,75,200,1000,100,50,100,23.07,1880,Easy,Nepal,Kaski
+Ginger,Silty,Winter,20,37,5.6,6.4,166,318,High,253,65,93,300,1500,80,50,50,19.32,2974,Medium,Nepal,Kaski
+Chili,Red,Winter,22,36,6.2,7.6,41,130,Medium,100,64,88,200,1000,100,50,80,9.14,1774,Medium,Nepal,Ilam
+Rice (Marshi),Clay,Summer,16,29,5.7,7.2,130,250,High,169,66,99,1500,2500,100,50,50,3.13,1148,Medium,Asia,Indonesia
+Mango,Peaty,Monsoon,23,37,5.6,7.2,89,170,Low,125,45,73,200,800,100,50,100,8.89,2651,Medium,Nepal,Kailali
+Rubber,Peaty,Winter,23,35,5.5,7.0,159,289,High,374,76,91,200,800,100,50,100,2.13,2222,Medium,Nepal,Dhankuta
+Green Gram,Black,Spring,23,37,6.1,7.6,18,50,Low,78,49,65,200,800,40,20,25,0.75,441,Easy,India,Gujarat
+Horse Gram,Laterite,Spring,19,35,5.5,7.6,25,79,Low,121,45,69,300,1000,40,20,25,0.69,380,Easy,India,Punjab
+Linseed,Loamy,Winter,11,23,6.3,7.2,25,76,Low,113,44,70,300,1000,60,30,30,1.18,553,Medium,India,Himachal Pradesh
+Red Kidney Bean,Red,Summer,14,25,5.9,6.9,69,106,Medium,128,55,86,500,1500,70,35,50,1.03,792,Hard,India,Tamil Nadu
+Orange,Laterite,Spring,15,34,5.6,7.5,119,199,Medium,176,65,76,500,1500,120,60,100,11.72,3127,Medium,Nepal,Dhankuta
+Horse Gram,Black,Spring,22,36,5.2,7.3,40,57,Low,127,35,70,300,1000,40,20,25,0.91,417,Easy,India,West Bengal
+Quinoa,Black,Winter,16,31,5.8,7.9,46,113,Low,124,41,75,1000,3000,70,35,35,1.26,462,Hard,India,Punjab
+Wheat (Winter),Red,Winter,3,21,6.0,7.4,35,85,Medium,126,44,71,300,800,110,55,55,2.99,739,Medium,Asia,Bangladesh
+Sesame,Loamy,Spring,26,34,6.1,7.4,25,48,Low,84,39,68,200,800,60,30,30,0.77,443,Easy,Nepal,Bara
+Bitter Gourd,Peaty,Summer,23,33,6.0,7.8,64,106,Medium,90,55,89,200,800,100,50,80,16.89,1586,Medium,Nepal,Morang
+Castor,Silty,Winter,20,41,6.1,8.1,25,66,Low,186,37,58,200,800,80,40,40,1.51,620,Medium,Nepal,Ilam
+Mustard,Peaty,Summer,9,27,6.3,7.8,22,101,Low,108,51,73,0,2000,60,40,40,1.14,733,Easy,India,Assam
+Apple (Mustang),Silty,Autumn,4,27,5.5,7.3,65,125,Medium,186,58,76,2000,3500,50,30,70,13.45,2744,Hard,Nepal,Jhapa
+Cashew,Silty,Monsoon,27,33,5.7,7.2,45,131,Low,232,55,83,200,800,80,40,60,1.36,2149,Medium,India,Gujarat
+Jackfruit,Black,Autumn,26,35,5.4,7.7,95,195,Medium,189,60,80,200,800,100,50,100,22.29,2374,Easy,India,Punjab
+Sugarcane,Loamy,Autumn,18,37,6.0,7.7,84,183,High,367,58,90,200,800,150,80,150,67.9,2071,Medium,India,Himachal Pradesh
+Oats,Clay,Monsoon,8,27,6.1,6.9,56,132,Medium,102,56,80,500,1500,90,45,45,2.23,394,Medium,Nepal,Ilam
+Rubber,Black,Monsoon,23,34,5.6,6.9,168,301,High,357,73,92,200,800,100,50,100,2.12,2432,Medium,India,Himachal Pradesh
+Finger Millet,Silty,Monsoon,20,32,5.8,7.5,77,122,Low,106,46,77,500,2000,70,35,35,1.38,306,Medium,India,Gujarat
+Okra,Alluvial,Winter,23,35,6.0,7.7,70,119,Medium,53,50,81,200,800,80,40,60,11.75,1532,Easy,India,Haryana
+Barnyard Millet,Clay,Winter,18,33,5.6,7.6,67,111,Medium,89,55,74,300,1200,70,35,35,1.49,326,Easy,Asia,Indonesia
+Rice (Jhum),Loamy,Summer,18,36,5.8,7.2,132,183,Medium,125,68,89,500,1500,80,40,40,2.14,610,Hard,Asia,Sri Lanka
+Brinjal,Black,Spring,22,33,6.1,7.4,70,128,Medium,96,56,87,200,800,120,60,100,26.72,3261,Medium,Nepal,Sunsari
+Millet (Pearl),Red,Spring,26,39,6.2,7.8,26,86,Low,73,34,61,200,800,60,30,30,1.4,283,Easy,India,Uttar Pradesh
+Rice (Aus),Laterite,Monsoon,19,38,4.8,7.3,98,208,High,121,61,80,0,500,120,60,60,3.91,828,Easy,Asia,Sri Lanka
+Barnyard Millet,Sandy,Winter,22,34,5.4,7.4,65,133,Medium,77,45,73,300,1200,70,35,35,1.49,319,Easy,Nepal,Morang
+Chickpea,Black,Spring,13,25,6.1,7.4,47,50,Low,108,43,70,300,1000,60,30,40,1.34,765,Medium,Nepal,Jhapa
+Ridge Gourd,Loamy,Monsoon,26,36,6.3,7.6,61,117,Medium,73,64,81,200,800,80,40,60,17.75,1899,Easy,Asia,Bangladesh
+Cucumber,Sandy,Winter,18,36,6.1,7.4,68,135,High,55,64,86,200,800,80,40,60,28.65,2065,Easy,Nepal,Mustang
+Banana,Sandy,Summer,22,35,5.3,6.8,86,218,High,332,63,81,200,800,200,100,300,35.55,3324,Medium,India,Assam
+Rice (Boro),Red,Summer,17,32,5.1,7.8,31,95,High,153,45,78,0,500,130,65,65,3.81,1197,Medium,Nepal,Bara
+Cotton,Black,Winter,22,35,6.3,7.9,60,60,Low,175,40,64,200,600,100,50,100,2.4,1122,Medium,Nepal,Sindhupalchok
+Rubber,Silty,Summer,26,35,5.6,6.9,147,288,High,373,75,93,200,800,100,50,100,1.84,2026,Medium,Nepal,Sunsari
+Cardamom,Sandy,Monsoon,16,28,4.7,6.4,170,305,High,369,73,91,800,2000,100,50,100,0.58,5205,Hard,Asia,Thailand
+Lentil,Alluvial,Spring,14,26,6.1,7.6,41,45,Low,93,37,60,300,1000,50,25,30,1.21,554,Medium,Nepal,Ilam
+Rice (Jhum),Loamy,Summer,18,35,5.5,7.3,101,195,Medium,128,66,82,500,1500,80,40,40,2.66,560,Hard,Asia,Vietnam
+Potato,Loamy,Autumn,15,24,5.0,6.7,41,97,Medium,76,57,87,500,2000,150,80,120,17.99,2576,Medium,Nepal,Kaski
+Peach,Silty,Monsoon,14,28,5.8,7.3,84,131,Medium,119,60,73,500,2000,100,50,100,12.2,2996,Hard,Nepal,Kailali
+Bitter Gourd,Red,Winter,24,37,6.1,7.5,48,117,Medium,90,60,88,200,800,100,50,80,14.6,1560,Medium,India,Andhra Pradesh
+Spinach,Laterite,Autumn,8,25,6.2,7.5,54,82,Medium,52,57,79,200,800,80,40,60,12.48,1560,Easy,India,Punjab
+Cashew,Laterite,Winter,23,37,5.7,7.5,56,124,Low,242,60,78,200,800,80,40,60,1.21,1737,Medium,Nepal,Kaski
+Black Gram,Laterite,Winter,26,37,6.1,7.5,42,64,Medium,92,50,70,200,800,50,25,30,1.1,461,Easy,Nepal,Sindhupalchok
+Rice (Aus),Peaty,Monsoon,21,39,5.2,7.3,89,188,High,123,55,87,0,500,120,60,60,4.05,760,Easy,Nepal,Kaski
+Rice (Basmati),Silty,Monsoon,18,41,6.2,7.2,73,158,Medium,125,60,82,300,800,100,50,50,2.93,1435,Medium,India,Uttar Pradesh
+Sugarcane,Black,Summer,19,35,6.1,7.2,92,183,High,355,64,85,200,800,150,80,150,71.0,2181,Medium,Nepal,Kailali
+Oats,Peaty,Winter,11,27,5.7,7.2,76,137,Medium,105,53,84,500,1500,90,45,45,2.4,448,Medium,Nepal,Kaski
+Spinach,Laterite,Autumn,10,26,6.1,7.8,49,64,Medium,50,55,83,200,800,80,40,60,14.18,1670,Easy,Nepal,Mustang
+Lentil,Black,Spring,14,24,6.1,7.3,30,75,Low,96,39,63,300,1000,50,25,30,1.36,622,Medium,India,Tamil Nadu
+Green Gram,Loamy,Spring,24,37,6.2,7.7,12,48,Low,75,47,72,200,800,40,20,25,0.67,404,Easy,Nepal,Kailali
+Okra,Black,Autumn,25,37,6.1,7.4,41,109,Medium,70,57,75,200,800,80,40,60,11.2,1630,Easy,Asia,Thailand
+Rice (Aman),Red,Summer,18,39,5.2,7.4,156,307,High,131,66,87,0,500,110,55,55,3.7,815,Easy,Nepal,Sunsari
+Buckwheat (Phapar),Red,Summer,9,26,4.8,7.0,59,90,Low,60,46,72,2000,4000,20,20,20,1.2,488,Easy,Nepal,Mustang
+Pear,Clay,Spring,12,23,5.8,7.2,95,158,Medium,130,50,72,1000,2500,100,50,100,10.33,2354,Hard,India,Punjab
+Coffee (Arabica),Sandy,Autumn,14,23,6.0,6.6,144,260,Medium,291,73,86,800,1600,60,40,80,1.32,2059,Hard,Nepal,Gulmi
+Okra,Silty,Summer,25,33,5.9,7.3,50,84,Medium,53,54,76,200,800,80,40,60,12.85,1415,Easy,Asia,Indonesia
+Cashew,Red,Autumn,24,36,5.4,7.6,58,108,Low,248,54,77,200,800,80,40,60,1.76,2244,Medium,India,Uttar Pradesh
+Ridge Gourd,Black,Summer,24,36,5.9,7.6,30,113,Medium,80,57,85,200,800,80,40,60,19.26,1572,Easy,Nepal,Dhankuta
+Okra,Black,Spring,25,36,5.9,7.5,64,107,Medium,67,51,80,200,800,80,40,60,12.32,1795,Easy,Nepal,Chitwan
+Drumstick,Red,Summer,25,38,6.2,7.3,59,116,Low,199,52,77,200,800,80,40,60,48.77,3459,Easy,India,Uttar Pradesh
+Pumpkin,Clay,Monsoon,22,34,6.2,7.6,57,75,Medium,91,49,76,200,800,80,40,80,27.93,2164,Easy,Nepal,Gulmi
+Kodo Millet,Black,Winter,20,37,5.8,7.4,32,106,Low,84,43,72,400,1500,60,30,30,1.25,273,Medium,India,Haryana
+Brinjal,Loamy,Spring,18,36,6.0,7.4,61,130,Medium,109,55,80,200,800,120,60,100,26.07,2861,Medium,India,West Bengal
+Brinjal,Alluvial,Summer,19,37,6.3,7.8,56,133,Medium,109,55,90,200,800,120,60,100,26.03,3254,Medium,Nepal,Mustang
+Wheat (Winter),Sandy,Winter,7,22,6.1,7.2,44,71,Medium,129,45,74,300,800,110,55,55,3.19,738,Medium,Asia,Thailand
+Cumin,Black,Summer,17,30,5.9,8.0,16,26,Low,113,36,52,300,1000,60,30,30,0.6,973,Hard,India,Tamil Nadu
+Walnut,Loamy,Summer,5,24,6.0,7.4,98,138,Medium,176,51,74,1500,3000,100,50,100,4.94,3235,Hard,India,Himachal Pradesh
+Coffee (Arabica),Silty,Summer,13,26,6.1,6.8,167,234,Medium,253,69,83,800,1600,60,40,80,1.79,1738,Hard,Nepal,Jhapa
+Tea,Red,Spring,11,32,4.8,5.7,210,407,High,365,79,98,500,2000,120,60,60,2.45,3521,Medium,India,Punjab
+Drumstick,Laterite,Monsoon,23,39,6.0,7.7,32,88,Low,193,47,82,200,800,80,40,60,52.73,3146,Easy,India,Maharashtra
+Green Gram,Sandy,Spring,23,34,6.1,7.8,45,71,Low,72,46,69,200,800,40,20,25,0.89,416,Easy,Nepal,Kaski
+Cowpea,Sandy,Summer,24,34,6.1,7.6,53,95,Low,87,52,73,200,800,60,30,40,5.86,829,Easy,Nepal,Mustang
+Rubber,Red,Winter,24,36,5.7,7.2,150,313,High,364,74,97,200,800,100,50,100,1.74,1790,Medium,Nepal,Sindhupalchok
+Oats,Alluvial,Monsoon,9,27,6.1,6.7,49,123,Medium,110,54,80,500,1500,90,45,45,2.07,437,Medium,Asia,Thailand
+Maize (Rainfed),Loamy,Autumn,18,37,5.3,7.3,73,150,Medium,91,58,85,200,1000,100,50,50,2.19,595,Medium,Nepal,Chitwan
+Horse Gram,Loamy,Summer,21,37,5.4,7.6,10,72,Low,113,39,66,300,1000,40,20,25,0.71,343,Easy,Nepal,Gulmi
+Mustard,Loamy,Spring,9,24,5.9,7.4,21,103,Low,103,53,70,0,2000,60,40,40,1.43,702,Easy,Nepal,Dhankuta
+Wheat (Spring),Laterite,Winter,12,23,5.7,7.5,31,103,Medium,104,50,73,200,600,120,60,60,2.98,734,Medium,Nepal,Kailali
+Peas,Sandy,Summer,11,24,6.2,7.3,23,81,Medium,77,63,77,300,1200,60,30,40,8.75,1296,Medium,India,Haryana
+Linseed,Red,Winter,12,23,5.8,7.2,33,57,Low,130,38,60,300,1000,60,30,30,1.19,512,Medium,India,Andhra Pradesh
+Oats,Peaty,Spring,8,27,5.8,6.9,41,129,Medium,108,53,78,500,1500,90,45,45,1.93,556,Medium,Nepal,Jhapa
+Tobacco,Laterite,Winter,15,31,5.7,7.4,36,85,Medium,116,51,75,300,1000,120,60,120,2.0,2201,Hard,Nepal,Chitwan
+Coffee,Laterite,Autumn,14,23,5.7,6.6,112,200,Medium,361,63,85,800,2000,120,60,100,1.28,3562,Hard,Asia,Vietnam
+Drumstick,Red,Monsoon,23,39,5.8,7.6,35,112,Low,202,55,84,200,800,80,40,60,51.21,2439,Easy,India,Uttar Pradesh
+Groundnut,Loamy,Monsoon,22,36,6.2,7.8,20,63,Medium,118,44,67,200,800,60,30,60,1.74,721,Medium,Nepal,Ilam
+Coconut,Alluvial,Winter,27,33,5.3,7.9,84,186,Medium,375,62,88,200,500,120,60,120,2.03,1788,Medium,Asia,Sri Lanka
+Black Pepper,Alluvial,Summer,27,37,5.7,7.1,156,253,High,358,73,90,200,800,120,60,120,0.95,3034,Hard,India,Haryana
+Little Millet,Peaty,Summer,21,33,5.5,7.7,62,104,Low,78,41,66,400,1500,60,30,30,1.37,262,Medium,India,Maharashtra
+Lentil (Musuro),Clay,Autumn,13,24,5.9,7.3,50,99,Low,114,48,67,0,2000,20,40,20,1.43,885,Easy,India,Maharashtra
+Cauliflower,Peaty,Monsoon,14,23,6.3,6.7,64,102,High,80,61,87,200,800,150,80,120,12.73,1851,Medium,India,Himachal Pradesh
+Quinoa,Black,Monsoon,16,32,6.0,8.1,43,106,Low,110,47,65,1000,3000,70,35,35,1.34,475,Hard,India,Punjab
+Pumpkin,Black,Winter,21,35,5.9,7.7,32,67,Medium,94,51,73,200,800,80,40,80,29.05,2129,Easy,India,Maharashtra
+Red Chili,Peaty,Autumn,21,33,5.9,7.6,45,109,Medium,120,54,84,300,1000,100,50,80,1.57,1579,Medium,Nepal,Bara
+Strawberry,Black,Monsoon,13,23,5.3,7.3,70,123,Medium,86,65,81,500,1500,100,50,100,17.28,4105,Hard,India,Maharashtra
+Almond,Sandy,Summer,5,28,5.9,7.9,41,87,Low,181,45,65,500,2000,80,40,80,2.75,3855,Hard,India,Tamil Nadu
+Millet (Pearl),Silty,Monsoon,23,41,5.9,8.3,21,86,Low,75,27,65,200,800,60,30,30,1.5,420,Easy,India,Assam
+Grapes,Peaty,Winter,16,35,6.1,7.6,47,94,Medium,160,50,76,300,1000,150,80,120,18.92,3237,Hard,Nepal,Gulmi
+Rice (Aman),Clay,Summer,21,40,4.7,7.6,166,290,High,147,66,91,0,500,110,55,55,4.13,915,Easy,India,West Bengal
+Cotton,Loamy,Spring,21,37,6.4,8.1,49,65,Low,189,45,68,200,600,100,50,100,2.81,1389,Medium,Asia,Bangladesh
+Guava,Red,Spring,21,34,5.4,7.5,69,142,Medium,180,55,81,200,1000,100,50,100,22.49,2112,Easy,Nepal,Sindhupalchok
+Rice (Jhum),Silty,Summer,18,37,5.4,6.8,128,210,Medium,113,60,80,500,1500,80,40,40,2.24,639,Hard,India,Assam
+Apricot,Alluvial,Summer,11,28,6.2,7.3,46,109,Medium,120,55,72,1000,2500,90,45,90,7.92,2356,Hard,Nepal,Kailali
+Plum,Loamy,Summer,9,25,5.7,7.2,85,143,Medium,128,53,75,1000,2500,90,45,90,9.79,2785,Hard,Nepal,Sunsari
+Walnut,Silty,Monsoon,5,26,5.7,7.4,63,151,Medium,187,48,73,1500,3000,100,50,100,4.37,3878,Hard,Nepal,Gulmi
+Tea,Sandy,Monsoon,12,32,4.6,5.4,201,415,High,365,80,96,500,2000,120,60,60,2.38,1548,Medium,Nepal,Kailali
+Pomegranate,Silty,Monsoon,16,34,5.3,7.6,56,112,Low,180,43,67,500,1500,120,60,100,10.7,2864,Medium,India,Haryana
+Watermelon,Black,Spring,26,36,5.9,7.8,43,68,Medium,88,45,70,200,800,100,50,100,27.55,2284,Easy,India,Haryana
+Maize (Rainfed),Clay,Monsoon,19,36,5.7,6.8,92,133,Medium,93,57,80,200,1000,100,50,50,2.99,460,Medium,Nepal,Kaski
+Green Beans,Red,Autumn,18,31,6.0,7.6,48,91,Medium,86,61,89,200,1000,70,35,50,8.46,1450,Medium,Nepal,Gulmi
+Rice (Marshi),Clay,Summer,17,32,5.7,7.2,118,240,High,150,68,90,1500,2500,100,50,50,2.78,932,Medium,India,Andhra Pradesh
+Pigeon Pea,Sandy,Autumn,20,37,6.1,7.2,54,74,Low,185,46,70,300,1000,60,30,40,1.04,536,Medium,Nepal,Jhapa
+Little Millet,Clay,Monsoon,19,34,5.4,7.5,58,81,Low,75,35,71,400,1500,60,30,30,1.16,327,Medium,Asia,Sri Lanka
+Cumin,Peaty,Spring,15,28,5.8,8.3,0,33,Low,110,37,50,300,1000,60,30,30,0.53,1233,Hard,Asia,Vietnam
+Grapes,Laterite,Winter,17,35,5.7,7.8,65,88,Medium,144,46,73,300,1000,150,80,120,16.57,3835,Hard,Asia,Vietnam
+Fennel,Clay,Monsoon,8,29,5.9,7.6,26,49,Medium,158,46,70,300,1000,80,40,60,1.19,1039,Medium,India,Uttar Pradesh
+Rice (Aman),Alluvial,Monsoon,21,40,5.3,7.3,132,306,High,139,69,92,0,500,110,55,55,4.42,952,Easy,India,Assam
+Buckwheat (Phapar),Loamy,Autumn,10,24,4.9,7.1,68,113,Low,73,50,74,2000,4000,20,20,20,1.1,463,Easy,Nepal,Kailali
+Cowpea,Sandy,Spring,24,37,5.8,7.7,53,65,Low,94,55,79,200,800,60,30,40,5.16,658,Easy,Asia,Thailand
+Coriander,Clay,Monsoon,16,23,6.2,7.6,38,72,Medium,59,54,71,200,800,60,30,40,6.54,754,Easy,Asia,Bangladesh
+Coriander,Alluvial,Autumn,17,27,6.1,7.8,41,69,Medium,55,59,78,200,800,60,30,40,6.68,688,Easy,Nepal,Morang
+Castor,Alluvial,Monsoon,21,42,6.2,8.0,36,69,Low,189,35,63,200,800,80,40,40,1.43,554,Medium,Asia,Indonesia
+Tomato,Alluvial,Spring,18,29,6.1,7.0,50,101,Medium,61,69,80,200,1000,120,60,100,26.7,4165,Medium,Nepal,Jhapa
+Cashew,Laterite,Winter,26,37,5.5,7.5,58,121,Low,242,50,79,200,800,80,40,60,1.56,1740,Medium,India,Andhra Pradesh
+Muskmelon,Red,Winter,24,37,6.3,7.4,22,85,Medium,82,55,72,200,800,90,45,90,29.62,1940,Easy,Nepal,Dhankuta
+Rice (Marshi),Laterite,Monsoon,17,32,5.3,6.9,119,247,High,165,69,100,1500,2500,100,50,50,3.89,1064,Medium,Nepal,Sunsari
+Apple,Loamy,Autumn,17,24,5.8,6.9,66,139,Medium,155,57,77,1500,3000,120,60,120,14.25,2898,Hard,Asia,Indonesia
+Cotton,Peaty,Spring,19,35,6.5,8.0,20,63,Low,174,43,67,200,600,100,50,100,2.48,1164,Medium,India,Tamil Nadu
+Tea,Alluvial,Spring,9,28,4.4,5.7,199,402,High,365,85,100,500,2000,120,60,60,1.59,1076,Medium,Nepal,Kailali
+Sweet Potato,Peaty,Summer,18,30,5.7,7.0,54,61,Low,127,56,77,300,1500,80,40,80,16.47,1872,Easy,Nepal,Morang
+Cauliflower,Black,Spring,15,27,5.7,7.3,47,115,High,71,67,86,200,800,150,80,120,15.13,2332,Medium,India,Haryana
+Apricot,Silty,Spring,12,28,5.7,7.6,54,139,Medium,121,45,72,1000,2500,90,45,90,8.78,2709,Hard,Nepal,Morang
+Cotton,Black,Winter,18,36,6.3,8.2,32,99,Low,190,44,63,200,600,100,50,100,2.91,962,Medium,Asia,Vietnam
+Sunflower,Peaty,Summer,20,35,5.9,7.3,25,81,Medium,112,44,72,300,1000,80,40,80,1.67,565,Medium,Asia,Bangladesh
+Jute,Black,Winter,25,36,5.9,7.6,94,206,High,111,74,85,200,600,80,40,80,2.45,673,Medium,Asia,Indonesia
+Sugarcane,Silty,Summer,21,34,5.9,7.4,114,180,High,362,60,82,200,800,150,80,150,79.74,2730,Medium,Asia,Bangladesh
+Bitter Gourd,Black,Summer,24,33,6.0,7.6,74,133,Medium,85,63,86,200,800,100,50,80,13.37,1675,Medium,Nepal,Jhapa
+Onion,Clay,Autumn,15,24,5.8,7.2,63,119,Medium,100,61,80,200,800,100,50,80,18.63,2332,Medium,Nepal,Gulmi
+Sweet Potato,Clay,Winter,20,32,5.6,6.9,57,89,Low,130,56,78,300,1500,80,40,80,16.99,1703,Easy,Nepal,Jhapa
+Maize (Rainfed),Black,Winter,20,36,5.7,7.0,67,136,Medium,95,54,75,200,1000,100,50,50,2.53,506,Medium,Nepal,Jhapa
+Capsicum,Loamy,Autumn,19,29,6.0,6.7,45,120,Medium,82,62,81,200,1000,110,55,90,13.9,2209,Medium,Asia,Sri Lanka
+Carrot,Clay,Summer,8,26,5.8,7.3,42,92,Medium,94,58,77,200,1000,100,50,100,21.89,1926,Easy,Nepal,Mustang
+Brinjal,Loamy,Autumn,21,37,5.8,7.2,50,125,Medium,102,62,90,200,800,120,60,100,20.29,2356,Medium,Nepal,Gulmi
+Horse Gram,Peaty,Spring,18,36,5.7,7.6,33,76,Low,112,39,63,300,1000,40,20,25,0.69,478,Easy,India,West Bengal
+Pomegranate,Clay,Spring,16,37,5.2,7.6,65,123,Low,181,44,69,500,1500,120,60,100,10.42,2977,Medium,India,Maharashtra
+Litchi,Black,Summer,20,34,5.4,7.0,102,211,High,127,60,82,200,800,150,80,120,6.64,3562,Medium,India,Punjab
+Barnyard Millet,Loamy,Autumn,22,37,5.4,7.7,70,140,Medium,77,54,80,300,1200,70,35,35,1.33,289,Easy,Asia,Vietnam
+Potato,Alluvial,Autumn,17,27,5.2,6.3,67,105,Medium,81,59,87,500,2000,150,80,120,19.79,2321,Medium,Nepal,Sunsari
+Horse Gram,Red,Summer,21,33,5.5,7.4,37,77,Low,116,38,70,300,1000,40,20,25,0.79,417,Easy,India,Maharashtra
+Chickpea,Peaty,Summer,13,26,6.3,7.5,29,68,Low,97,41,70,300,1000,60,30,40,1.37,722,Medium,Asia,Sri Lanka
+Radish,Clay,Spring,11,25,5.9,7.7,36,92,Medium,56,53,76,200,800,80,40,60,17.88,1376,Easy,Nepal,Morang
+Grapes,Laterite,Monsoon,17,33,5.7,7.6,50,112,Medium,142,55,79,300,1000,150,80,120,19.36,3775,Hard,Nepal,Bara
+Watermelon,Loamy,Winter,23,34,5.9,7.6,21,74,Medium,97,50,73,200,800,100,50,100,35.22,2934,Easy,Asia,Indonesia
+Coffee (Arabica),Clay,Autumn,15,26,6.0,6.3,155,247,Medium,297,66,86,800,1600,60,40,80,1.84,2715,Hard,Asia,Sri Lanka
+Lentil,Laterite,Monsoon,15,26,5.7,7.4,12,42,Low,84,35,65,300,1000,50,25,30,1.43,580,Medium,Nepal,Mustang
+Maize (Rainfed),Clay,Spring,20,34,5.7,7.2,56,162,Medium,98,50,84,200,1000,100,50,50,2.3,551,Medium,Nepal,Chitwan
+Soybean,Red,Spring,18,37,6.2,7.3,58,106,Medium,115,60,80,300,1000,80,40,60,1.91,579,Medium,India,Andhra Pradesh
+Millet (Pearl),Alluvial,Autumn,25,40,6.0,8.1,22,75,Low,87,33,64,200,800,60,30,30,1.24,412,Easy,India,Himachal Pradesh
+Guava,Alluvial,Spring,22,36,5.5,7.8,92,167,Medium,186,55,82,200,1000,100,50,100,19.35,2950,Easy,India,Maharashtra
+Orange,Silty,Monsoon,13,37,5.6,7.2,96,220,Medium,173,55,82,500,1500,120,60,100,12.87,3327,Medium,India,Himachal Pradesh
+Papaya,Peaty,Monsoon,21,34,5.9,7.5,66,164,Medium,266,55,80,200,800,150,80,150,43.73,2958,Easy,Nepal,Kailali
+Millet (Pearl),Clay,Monsoon,26,42,5.7,8.1,48,61,Low,73,31,64,200,800,60,30,30,1.69,395,Easy,Nepal,Sindhupalchok
+Red Chili,Laterite,Monsoon,22,35,5.7,7.6,48,134,Medium,125,51,80,300,1000,100,50,80,1.26,2098,Medium,Nepal,Mustang
+Strawberry,Red,Summer,15,25,5.4,6.7,54,114,Medium,96,61,84,500,1500,100,50,100,15.81,4998,Hard,Nepal,Dhankuta
+Garlic,Clay,Spring,11,23,6.0,7.7,41,96,Medium,111,51,75,300,1200,120,60,80,9.66,2848,Hard,Nepal,Chitwan
+Drumstick,Red,Autumn,26,41,5.9,7.4,51,92,Low,194,54,83,200,800,80,40,60,40.56,2632,Easy,Asia,Vietnam
+Chickpea,Silty,Monsoon,14,27,5.8,7.5,26,65,Low,99,38,70,300,1000,60,30,40,1.56,804,Medium,Nepal,Kaski
+Black Gram,Laterite,Summer,24,35,6.1,7.6,32,68,Medium,90,49,79,200,800,50,25,30,1.09,551,Easy,Nepal,Mustang
+Green Gram,Peaty,Winter,23,33,6.2,7.7,33,48,Low,71,48,72,200,800,40,20,25,0.71,459,Easy,India,Assam
+Rice (Aus),Black,Summer,20,39,5.1,7.4,117,185,High,110,60,84,0,500,120,60,60,3.72,683,Easy,Nepal,Kailali
+Cauliflower,Peaty,Winter,17,24,6.1,7.3,42,107,High,79,63,90,200,800,150,80,120,13.2,2223,Medium,India,Himachal Pradesh
+Cowpea,Peaty,Spring,26,37,5.9,7.5,34,68,Low,99,55,75,200,800,60,30,40,5.91,870,Easy,Asia,Vietnam
+Grapes,Red,Winter,17,34,5.7,7.3,49,110,Medium,149,47,76,300,1000,150,80,120,18.19,3544,Hard,India,Gujarat
+Red Kidney Bean,Peaty,Summer,13,24,5.8,6.8,62,129,Medium,114,60,90,500,1500,70,35,50,1.06,644,Hard,Nepal,Sindhupalchok
+Ridge Gourd,Sandy,Winter,24,33,6.3,7.3,58,116,Medium,69,57,85,200,800,80,40,60,19.56,1857,Easy,India,West Bengal
+Sesame,Black,Summer,23,35,6.3,7.8,34,67,Low,96,38,64,200,800,60,30,30,0.64,431,Easy,Nepal,Sunsari
+Banana,Black,Spring,19,37,5.4,7.2,111,201,High,333,68,80,200,800,200,100,300,41.78,3646,Medium,Nepal,Mustang
+Cabbage,Silty,Spring,15,23,6.2,7.3,41,101,High,79,67,85,200,800,140,70,110,23.61,2269,Medium,Nepal,Mustang
+Cauliflower,Laterite,Summer,14,26,5.8,7.0,46,101,High,76,68,90,200,800,150,80,120,15.38,1714,Medium,Asia,Bangladesh
+Lemon,Loamy,Summer,22,36,5.4,7.6,100,146,Medium,130,56,85,200,1000,100,50,80,17.89,1620,Easy,Nepal,Ilam
+Cashew,Alluvial,Winter,26,34,5.3,7.7,48,111,Low,239,51,79,200,800,80,40,60,1.74,1902,Medium,India,Punjab
+Quinoa,Peaty,Winter,16,31,6.1,8.1,59,84,Low,128,47,75,1000,3000,70,35,35,1.6,428,Hard,India,Tamil Nadu
+Sugarcane,Clay,Autumn,18,35,5.7,7.3,115,182,High,367,55,85,200,800,150,80,150,72.2,2466,Medium,Asia,Indonesia
+Wheat (Spring),Sandy,Winter,11,23,6.1,7.2,34,108,Medium,102,51,75,200,600,120,60,60,3.95,726,Medium,India,Andhra Pradesh
+Pomegranate,Peaty,Autumn,13,35,5.8,7.5,72,108,Low,188,47,75,500,1500,120,60,100,10.72,3069,Medium,Asia,Sri Lanka
+Fennel,Peaty,Winter,9,32,5.9,7.5,41,57,Medium,142,40,67,300,1000,80,40,60,0.87,1104,Medium,Nepal,Sindhupalchok
+Finger Millet,Loamy,Monsoon,17,32,5.5,7.6,40,122,Low,102,44,78,500,2000,70,35,35,1.48,401,Medium,India,Uttar Pradesh
+Groundnut,Clay,Autumn,20,33,6.1,7.4,59,76,Medium,112,50,75,200,800,60,30,60,1.75,763,Medium,Nepal,Mustang
+Apple (Mustang),Laterite,Autumn,5,23,5.5,6.8,71,103,Medium,202,58,84,2000,3500,50,30,70,14.65,2053,Hard,Asia,Vietnam
+Lentil,Sandy,Autumn,14,24,5.9,7.3,18,69,Low,99,37,64,300,1000,50,25,30,1.35,618,Medium,Nepal,Sindhupalchok
+Sugarcane,Silty,Winter,21,35,6.0,7.3,100,194,High,363,65,85,200,800,150,80,150,59.37,2407,Medium,India,Uttar Pradesh
+Quinoa,Red,Summer,14,28,5.8,7.8,50,102,Low,121,41,72,1000,3000,70,35,35,1.71,538,Hard,India,Uttar Pradesh
+Spinach,Laterite,Summer,8,27,6.2,7.8,38,86,Medium,48,62,85,200,800,80,40,60,11.03,1557,Easy,India,West Bengal
+Cardamom,Loamy,Monsoon,14,30,4.7,6.5,166,313,High,364,73,97,800,2000,100,50,100,0.45,5620,Hard,Asia,Indonesia
+Cucumber,Laterite,Autumn,21,33,5.8,7.6,43,137,High,51,69,90,200,800,80,40,60,25.72,2508,Easy,Nepal,Dhankuta
+Ginger,Alluvial,Spring,18,34,5.3,6.8,130,293,High,249,73,93,300,1500,80,50,50,18.4,1746,Medium,Nepal,Jhapa
+Pumpkin,Laterite,Winter,20,37,6.2,7.6,34,98,Medium,102,47,72,200,800,80,40,80,34.23,1698,Easy,Nepal,Kailali
+Red Kidney Bean,Black,Spring,16,24,6.0,6.9,78,108,Medium,117,59,89,500,1500,70,35,50,1.01,842,Hard,Asia,Sri Lanka
+Quinoa,Clay,Spring,15,31,5.9,8.3,37,99,Low,121,43,65,1000,3000,70,35,35,1.37,524,Hard,Nepal,Gulmi
+Coffee,Alluvial,Autumn,15,25,5.3,6.4,102,200,Medium,360,66,90,800,2000,120,60,100,1.73,2836,Hard,Nepal,Jhapa
+Buckwheat,Black,Monsoon,13,24,5.6,7.3,67,124,Low,99,50,70,800,2500,60,30,30,1.4,277,Hard,India,West Bengal
+Sugarcane,Black,Summer,21,37,5.8,7.5,82,212,High,363,60,88,200,800,150,80,150,74.36,2066,Medium,Nepal,Dhankuta
+Rice (Marshi),Sandy,Summer,14,28,5.5,7.1,101,260,High,151,66,91,1500,2500,100,50,50,3.05,1059,Medium,Nepal,Ilam
+Grapes,Alluvial,Summer,14,33,6.1,7.7,32,91,Medium,158,45,74,300,1000,150,80,120,17.6,4696,Hard,Asia,Thailand
+Wheat (Winter),Sandy,Winter,3,20,6.1,7.4,21,88,Medium,122,41,75,300,800,110,55,55,3.24,743,Medium,India,Assam
+Plum,Peaty,Summer,12,26,6.3,6.9,87,145,Medium,127,60,70,1000,2500,90,45,90,9.24,2325,Hard,Nepal,Morang
+Orange,Peaty,Autumn,15,34,5.7,7.5,96,193,Medium,185,56,79,500,1500,120,60,100,13.89,2392,Medium,Nepal,Sindhupalchok
+Coriander Seed,Loamy,Summer,13,24,6.3,7.5,39,64,Medium,94,41,71,300,1000,60,30,40,0.77,781,Medium,Nepal,Sunsari
+Strawberry,Black,Summer,15,24,5.8,7.2,67,128,Medium,80,69,87,500,1500,100,50,100,14.31,4216,Hard,Nepal,Bara
+Broccoli,Laterite,Summer,16,25,5.9,7.2,72,126,High,79,61,86,300,1200,130,65,100,10.62,2135,Hard,Nepal,Gulmi
+Oats,Loamy,Summer,8,26,6.0,6.9,59,116,Medium,100,53,78,500,1500,90,45,45,2.44,470,Medium,Nepal,Bara
+Cotton,Red,Autumn,19,36,6.7,7.7,26,60,Low,177,36,60,200,600,100,50,100,2.89,1214,Medium,Nepal,Gulmi
+Plum,Loamy,Monsoon,11,26,6.1,7.0,84,158,Medium,123,55,79,1000,2500,90,45,90,9.8,2213,Hard,Nepal,Kailali
+Carrot,Silty,Monsoon,11,24,6.1,7.3,48,91,Medium,91,57,78,200,1000,100,50,100,27.03,2337,Easy,Asia,Vietnam
+Garlic,Clay,Autumn,8,27,6.3,7.4,53,94,Medium,122,53,77,300,1200,120,60,80,12.79,2727,Hard,Nepal,Jhapa
+Barley,Black,Monsoon,11,25,6.1,7.6,19,53,Low,102,37,69,500,1500,80,40,40,2.08,504,Medium,Nepal,Bara
+Lentil,Clay,Winter,13,24,5.8,7.3,49,75,Low,81,40,66,300,1000,50,25,30,1.4,606,Medium,Asia,Indonesia
+Coffee,Loamy,Monsoon,17,26,5.3,6.5,112,210,Medium,359,65,82,800,2000,120,60,100,1.27,2697,Hard,India,West Bengal
+Safflower,Red,Winter,15,31,6.3,7.2,32,79,Low,122,43,61,300,1000,60,30,30,1.19,629,Medium,Nepal,Chitwan
+Grapes,Silty,Monsoon,17,35,6.2,7.4,49,95,Medium,149,48,76,300,1000,150,80,120,17.18,4416,Hard,India,Tamil Nadu
+Safflower,Silty,Spring,15,28,6.3,7.5,14,72,Low,122,35,65,300,1000,60,30,30,1.22,521,Medium,India,Uttar Pradesh
+Kodo Millet,Alluvial,Summer,18,35,5.3,7.6,59,116,Low,81,43,68,400,1500,60,30,30,1.24,333,Medium,Asia,Indonesia
+Areca Nut,Clay,Spring,22,33,5.8,7.5,159,239,High,358,72,92,200,800,150,80,150,1.8,2635,Medium,Nepal,Kailali
+Litchi,Peaty,Summer,22,33,5.7,7.1,103,189,High,117,69,85,200,800,150,80,120,7.77,2492,Medium,Nepal,Kailali
+Tomato,Black,Monsoon,16,26,6.1,6.8,53,124,Medium,60,63,83,200,1000,120,60,100,26.41,3967,Medium,India,Gujarat
+Linseed,Laterite,Autumn,8,27,6.1,6.7,45,45,Low,125,43,68,300,1000,60,30,30,0.91,552,Medium,Nepal,Mustang
+Coffee (Arabica),Sandy,Winter,14,22,6.1,6.3,132,235,Medium,256,72,83,800,1600,60,40,80,1.84,2531,Hard,Nepal,Ilam
+Barley,Laterite,Autumn,9,26,6.1,7.5,26,68,Low,110,39,68,500,1500,80,40,40,2.39,425,Medium,Nepal,Bara
+Chickpea,Silty,Spring,16,24,6.1,7.3,44,42,Low,93,38,67,300,1000,60,30,40,1.51,785,Medium,Nepal,Kailali
+Wheat (Winter),Black,Winter,5,19,6.1,7.5,42,85,Medium,121,46,74,300,800,110,55,55,3.07,758,Medium,Nepal,Bara
+Cauliflower,Black,Spring,17,27,5.8,7.0,60,93,High,79,64,80,200,800,150,80,120,17.37,2263,Medium,Asia,Thailand
+Barley,Sandy,Winter,9,24,6.2,7.5,22,68,Low,108,44,68,500,1500,80,40,40,2.32,412,Medium,Nepal,Morang
+Rubber,Laterite,Winter,26,34,5.3,7.0,151,286,High,364,74,92,200,800,100,50,100,1.73,1889,Medium,Nepal,Mustang
+Barley,Alluvial,Summer,12,23,5.7,7.5,30,64,Low,91,37,69,500,1500,80,40,40,2.14,468,Medium,Nepal,Dhankuta
+Cowpea,Loamy,Autumn,26,34,6.2,7.5,55,83,Low,95,53,72,200,800,60,30,40,5.64,661,Easy,India,Tamil Nadu
+Fennel,Silty,Winter,10,31,5.7,7.7,32,76,Medium,154,44,70,300,1000,80,40,60,0.99,1193,Medium,Nepal,Kailali
+Safflower,Sandy,Monsoon,17,30,6.3,7.6,29,49,Low,136,44,61,300,1000,60,30,30,1.12,570,Medium,Asia,Vietnam
+Fenugreek Seed,Black,Spring,11,30,6.0,7.5,31,62,Medium,100,40,75,300,1000,60,30,30,0.68,563,Medium,Nepal,Sindhupalchok
+Beetroot,Alluvial,Spring,8,23,6.1,7.7,56,68,Medium,79,58,75,200,1000,100,50,80,18.74,1382,Medium,India,Punjab
+Jute,Laterite,Autumn,26,36,5.8,7.7,105,195,High,120,74,89,200,600,80,40,80,2.34,741,Medium,Nepal,Kailali
+Rice (Boro),Black,Summer,17,30,5.1,7.4,39,119,High,164,53,73,0,500,130,65,65,4.56,992,Medium,India,Haryana
+Orange,Laterite,Monsoon,17,34,5.7,7.6,100,184,Medium,190,56,82,500,1500,120,60,100,10.43,2363,Medium,Nepal,Kailali
+Areca Nut,Black,Summer,21,37,5.7,7.5,148,241,High,360,74,89,200,800,150,80,150,1.94,3076,Medium,Nepal,Sunsari
+Kodo Millet,Red,Autumn,20,36,5.5,7.4,38,98,Low,90,46,70,400,1500,60,30,30,1.42,302,Medium,Nepal,Gulmi
+Maize (Irrigated),Peaty,Autumn,19,34,5.4,7.3,31,93,High,101,62,81,200,1000,120,60,60,4.38,645,Medium,Nepal,Dhankuta
+Rice (Aman),Clay,Monsoon,22,38,5.1,7.7,131,311,High,150,67,88,0,500,110,55,55,4.18,1102,Easy,India,Maharashtra
+Brinjal,Laterite,Monsoon,18,34,6.1,7.3,76,136,Medium,106,55,82,200,800,120,60,100,25.92,2425,Medium,Nepal,Morang
+Chickpea,Laterite,Spring,16,24,6.3,7.6,34,80,Low,106,35,68,300,1000,60,30,40,1.37,700,Medium,Nepal,Ilam
+Fenugreek,Peaty,Summer,11,32,5.8,7.7,10,69,Medium,49,54,72,200,800,60,30,40,7.92,1054,Easy,Nepal,Jhapa
+Litchi,Peaty,Monsoon,18,35,5.7,7.0,81,202,High,129,64,86,200,800,150,80,120,7.64,2688,Medium,India,West Bengal
+Jackfruit,Silty,Winter,25,37,5.7,7.8,101,211,Medium,170,62,82,200,800,100,50,100,19.78,2521,Easy,Asia,Thailand
+Chickpea,Laterite,Summer,16,24,6.1,7.4,38,71,Low,104,40,64,300,1000,60,30,40,1.41,805,Medium,Nepal,Bara
+Large Cardamom,Peaty,Winter,8,25,4.7,6.6,143,347,High,329,77,100,1000,2000,40,40,60,0.6,3775,Hard,Nepal,Morang
+Fennel,Peaty,Monsoon,12,30,6.0,7.2,29,62,Medium,155,45,69,300,1000,80,40,60,0.96,1300,Medium,India,Gujarat
+Cauliflower,Red,Spring,14,24,5.7,7.1,54,99,High,63,63,81,200,800,150,80,120,14.6,2277,Medium,Nepal,Sunsari
+Quinoa,Sandy,Summer,17,29,6.1,8.0,39,113,Low,124,45,65,1000,3000,70,35,35,1.29,510,Hard,Nepal,Mustang
+Maize (Irrigated),Laterite,Monsoon,20,36,5.6,7.0,48,108,High,102,61,80,200,1000,120,60,60,3.43,765,Medium,Asia,Vietnam
+Barley,Silty,Autumn,9,27,5.8,7.7,11,70,Low,107,44,70,500,1500,80,40,40,2.24,533,Medium,Nepal,Bara
+Green Beans,Silty,Summer,18,31,5.9,7.4,61,100,Medium,84,55,89,200,1000,70,35,50,9.51,1425,Medium,India,Punjab
+Rice (Boro),Silty,Summer,13,28,4.7,7.4,59,84,High,155,55,77,0,500,130,65,65,4.15,1130,Medium,Asia,Indonesia
+Pineapple,Sandy,Autumn,22,29,4.6,6.8,70,168,Medium,189,70,81,200,800,120,60,120,25.88,3072,Medium,Nepal,Jhapa
+Coriander,Silty,Monsoon,13,25,6.0,7.2,24,76,Medium,40,60,71,200,800,60,30,40,6.87,708,Easy,Asia,Vietnam
+Barley,Sandy,Summer,12,23,5.8,7.3,49,70,Low,104,45,67,500,1500,80,40,40,2.93,548,Medium,Nepal,Jhapa
+Ginger,Laterite,Autumn,20,37,5.2,6.5,141,318,High,244,67,87,300,1500,80,50,50,20.29,1730,Medium,India,Tamil Nadu
+Coriander,Clay,Spring,15,25,6.2,7.5,43,98,Medium,49,56,79,200,800,60,30,40,6.32,946,Easy,Nepal,Bara
+Potato,Laterite,Summer,14,27,5.1,6.6,44,106,Medium,79,63,86,500,2000,150,80,120,20.49,2420,Medium,Nepal,Morang
+Capsicum,Silty,Autumn,19,32,6.0,6.9,58,140,Medium,71,67,80,200,1000,110,55,90,12.37,2509,Medium,Nepal,Jhapa
+Black Pepper,Sandy,Monsoon,23,33,5.8,7.1,150,236,High,363,75,91,200,800,120,60,120,0.94,3314,Hard,India,Himachal Pradesh
+Spinach,Black,Autumn,10,25,6.3,7.8,56,77,Medium,52,62,84,200,800,80,40,60,13.45,1542,Easy,Nepal,Bara
+Carrot,Sandy,Autumn,11,24,5.9,7.4,44,87,Medium,95,55,82,200,1000,100,50,100,24.25,2340,Easy,India,Gujarat
+Millet (Finger),Alluvial,Winter,22,37,5.7,7.4,52,110,Low,85,40,72,500,1500,70,35,35,1.73,433,Medium,Nepal,Dhankuta
+Banana,Silty,Spring,21,36,5.6,7.1,80,215,High,331,69,90,200,800,200,100,300,33.35,4130,Medium,India,Andhra Pradesh
+Wheat (Spring),Silty,Winter,10,26,6.0,7.2,36,91,Medium,100,54,73,200,600,120,60,60,2.91,742,Medium,Nepal,Chitwan
+Coconut,Alluvial,Winter,24,36,5.7,8.0,83,214,Medium,368,62,85,200,500,120,60,120,2.38,1557,Medium,India,Himachal Pradesh
+Sesame,Clay,Winter,23,37,6.3,7.5,35,58,Low,87,39,61,200,800,60,30,30,0.87,508,Easy,Nepal,Jhapa
+Chili,Red,Spring,21,34,6.3,7.7,47,134,Medium,98,55,86,200,1000,100,50,80,8.44,1997,Medium,Nepal,Mustang
+Sorghum (Jowar),Peaty,Spring,27,41,6.1,8.1,22,95,Low,113,36,69,300,1000,80,40,40,2.18,485,Medium,Nepal,Sunsari
+Wheat (Winter),Silty,Winter,7,18,6.1,7.2,56,63,Medium,131,40,68,300,800,110,55,55,2.9,743,Medium,Nepal,Morang
+Jute,Silty,Summer,25,35,6.1,7.2,88,206,High,110,70,86,200,600,80,40,80,2.79,847,Medium,Nepal,Sunsari
+Pomegranate,Clay,Summer,13,35,5.8,7.5,43,123,Low,178,45,74,500,1500,120,60,100,9.99,3219,Medium,India,Tamil Nadu
+Cauliflower,Silty,Spring,14,24,5.9,7.2,42,108,High,77,62,85,200,800,150,80,120,17.11,1677,Medium,Asia,Sri Lanka
+Peach,Silty,Autumn,17,31,6.0,7.1,67,148,Medium,124,60,74,500,2000,100,50,100,12.67,3009,Hard,Nepal,Kaski
+Wheat (Spring),Silty,Winter,10,26,5.9,7.6,31,115,Medium,114,49,77,200,600,120,60,60,3.87,577,Medium,Nepal,Gulmi
+Orange,Loamy,Spring,15,36,5.5,7.7,113,197,Medium,180,56,76,500,1500,120,60,100,11.29,3218,Medium,Nepal,Kaski
+Coffee (Arabica),Clay,Winter,14,25,6.2,6.4,165,258,Medium,300,70,80,800,1600,60,40,80,1.59,2304,Hard,India,Uttar Pradesh
+Rice (Aus),Alluvial,Summer,21,37,5.1,7.3,86,183,High,112,62,84,0,500,120,60,60,3.87,809,Easy,Asia,Indonesia
+Muskmelon,Clay,Summer,27,34,6.2,7.4,44,69,Medium,72,50,80,200,800,90,45,90,26.02,2385,Easy,India,Punjab
+Carrot,Alluvial,Spring,12,26,5.9,7.7,39,81,Medium,95,60,81,200,1000,100,50,100,21.52,2241,Easy,India,Assam
+Maize (Irrigated),Sandy,Winter,19,34,5.6,7.1,38,109,High,107,58,87,200,1000,120,60,60,3.46,933,Medium,Nepal,Sindhupalchok
+Peach,Alluvial,Autumn,13,32,5.9,7.1,75,145,Medium,120,56,80,500,2000,100,50,100,9.63,2227,Hard,India,Punjab
+Apple,Red,Autumn,13,24,6.0,6.8,71,146,Medium,151,55,73,1500,3000,120,60,120,13.97,3096,Hard,Asia,Vietnam
+Garlic,Silty,Spring,8,25,6.0,7.3,50,64,Medium,113,53,71,300,1200,120,60,80,13.3,3293,Hard,India,Uttar Pradesh
+Radish,Black,Spring,11,23,6.2,7.7,23,94,Medium,50,58,72,200,800,80,40,60,16.53,1282,Easy,Nepal,Sindhupalchok
+Muskmelon,Alluvial,Autumn,26,35,5.7,7.3,52,96,Medium,77,51,74,200,800,90,45,90,26.43,2096,Easy,Nepal,Dhankuta
+Sesame,Peaty,Spring,26,37,5.8,7.2,22,40,Low,87,42,69,200,800,60,30,30,0.86,411,Easy,Nepal,Bara
+Lentil,Clay,Summer,14,27,6.2,7.3,24,44,Low,84,38,63,300,1000,50,25,30,1.29,558,Medium,Nepal,Chitwan
+Spinach,Laterite,Winter,10,23,6.0,7.7,20,88,Medium,41,62,84,200,800,80,40,60,13.19,1317,Easy,India,Punjab
+Coriander Seed,Black,Spring,17,24,6.2,7.7,13,45,Medium,99,40,72,300,1000,60,30,40,0.85,869,Medium,Nepal,Mustang
+Tea,Sandy,Autumn,9,31,4.4,5.6,217,385,High,365,76,95,500,2000,120,60,60,1.8,2260,Medium,Nepal,Dhankuta
+Sesame,Laterite,Spring,27,35,6.0,7.4,50,44,Low,88,40,66,200,800,60,30,30,0.71,484,Easy,Nepal,Ilam
+Green Gram,Silty,Spring,27,33,6.0,7.7,18,42,Low,84,50,74,200,800,40,20,25,0.71,426,Easy,India,Uttar Pradesh
+Coriander Seed,Silty,Monsoon,17,24,5.9,7.8,27,71,Medium,90,46,73,300,1000,60,30,40,0.94,865,Medium,Nepal,Sindhupalchok
+Red Chili,Peaty,Spring,22,37,5.8,7.2,49,136,Medium,114,59,80,300,1000,100,50,80,1.34,1735,Medium,Nepal,Ilam
+Pumpkin,Laterite,Spring,18,33,5.8,7.7,24,75,Medium,105,52,78,200,800,80,40,80,30.16,2308,Easy,India,Tamil Nadu
+Sugarcane,Sandy,Winter,22,33,6.2,7.4,89,205,High,369,57,87,200,800,150,80,150,75.07,2526,Medium,India,Gujarat
+Plum,Alluvial,Summer,12,25,6.2,7.1,73,157,Medium,122,55,75,1000,2500,90,45,90,11.36,2758,Hard,Nepal,Morang
+Wheat (Spring),Loamy,Winter,8,26,6.2,7.7,46,113,Medium,106,55,80,200,600,120,60,60,3.7,639,Medium,Nepal,Jhapa
+Banana,Silty,Winter,18,33,5.8,7.1,84,217,High,334,61,87,200,800,200,100,300,31.71,4555,Medium,Nepal,Jhapa
+Bottle Gourd,Clay,Winter,22,36,6.1,7.5,61,97,High,95,63,85,200,800,90,45,70,21.61,2092,Easy,Nepal,Kaski
+Rice (Basmati),Laterite,Summer,21,40,5.9,7.3,68,144,Medium,119,50,75,300,800,100,50,50,3.45,1269,Medium,Nepal,Sunsari
+Rice (Basmati),Loamy,Monsoon,22,38,5.9,7.7,94,164,Medium,116,57,77,300,800,100,50,50,2.96,991,Medium,Asia,Sri Lanka
+Sorghum (Jowar),Red,Monsoon,24,40,6.2,8.2,51,91,Low,110,35,62,300,1000,80,40,40,1.93,479,Medium,India,Gujarat
+Coffee,Silty,Winter,17,24,5.3,6.7,117,220,Medium,367,61,84,800,2000,120,60,100,1.49,2992,Hard,Nepal,Sindhupalchok
+Guava,Red,Spring,20,34,5.6,7.6,70,142,Medium,173,50,81,200,1000,100,50,100,23.69,2941,Easy,Nepal,Mustang
+Pear,Red,Monsoon,9,27,5.8,6.7,70,138,Medium,128,59,70,1000,2500,100,50,100,11.07,3208,Hard,India,Haryana
+Linseed,Black,Spring,9,26,5.7,7.2,41,77,Low,125,35,63,300,1000,60,30,30,0.83,565,Medium,India,Punjab
+Cashew,Loamy,Spring,26,35,5.4,7.6,42,100,Low,244,51,84,200,800,80,40,60,1.62,1813,Medium,Nepal,Dhankuta
+Sweet Potato,Clay,Monsoon,19,30,5.8,6.9,28,98,Low,114,57,84,300,1500,80,40,80,13.03,2105,Easy,Nepal,Mustang
+Turmeric,Sandy,Monsoon,22,31,4.6,7.2,154,233,High,252,75,89,0,1500,60,60,120,23.56,1333,Easy,India,Andhra Pradesh
+Spinach,Black,Winter,11,27,6.2,7.4,24,77,Medium,49,64,85,200,800,80,40,60,11.07,1452,Easy,Asia,Sri Lanka
+Capsicum,Loamy,Monsoon,17,29,6.2,7.0,80,131,Medium,72,61,85,200,1000,110,55,90,15.52,2351,Medium,Nepal,Sindhupalchok
+Onion,Clay,Monsoon,13,25,5.9,7.3,57,82,Medium,109,57,75,200,800,100,50,80,19.43,2123,Medium,India,Andhra Pradesh
+Cucumber,Alluvial,Spring,22,35,6.1,7.4,73,114,High,60,64,82,200,800,80,40,60,26.33,2241,Easy,Nepal,Kailali
+Barnyard Millet,Peaty,Spring,18,36,5.4,7.7,70,104,Medium,78,48,77,300,1200,70,35,35,1.66,326,Easy,Nepal,Mustang
+Barnyard Millet,Black,Summer,22,34,5.4,7.4,58,123,Medium,84,50,79,300,1200,70,35,35,1.5,384,Easy,Nepal,Morang
+Rubber,Black,Spring,24,33,5.5,7.0,154,300,High,371,75,95,200,800,100,50,100,1.75,2401,Medium,Nepal,Ilam
+Peach,Peaty,Summer,13,31,5.8,7.0,73,144,Medium,115,58,71,500,2000,100,50,100,11.13,2795,Hard,India,West Bengal
+Cauliflower,Red,Spring,16,24,6.1,7.2,47,114,High,79,68,83,200,800,150,80,120,12.42,2241,Medium,Nepal,Kailali
+Orange,Red,Spring,14,34,5.6,7.7,109,182,Medium,173,62,84,500,1500,120,60,100,11.19,2817,Medium,Nepal,Morang
+Sunflower,Alluvial,Monsoon,21,34,5.9,7.6,44,78,Medium,109,42,66,300,1000,80,40,80,1.42,617,Medium,Asia,Thailand
+Rice (Aus),Alluvial,Monsoon,20,37,5.1,7.4,92,201,High,118,62,83,0,500,120,60,60,3.37,813,Easy,Asia,Vietnam
+Cabbage,Laterite,Summer,17,27,6.2,7.2,61,94,High,89,70,85,200,800,140,70,110,22.52,1780,Medium,Nepal,Sunsari
+Cabbage,Clay,Winter,17,25,6.1,6.8,47,94,High,88,63,88,200,800,140,70,110,19.35,2266,Medium,Nepal,Kaski
+Areca Nut,Laterite,Autumn,22,34,5.6,7.6,152,245,High,370,70,93,200,800,150,80,150,2.08,3124,Medium,Asia,Bangladesh
+Chickpea,Clay,Summer,13,26,5.8,7.6,12,66,Low,94,41,63,300,1000,60,30,40,1.34,805,Medium,Nepal,Bara
+Radish,Clay,Monsoon,10,27,5.7,7.4,28,76,Medium,52,53,70,200,800,80,40,60,16.59,1211,Easy,Asia,Indonesia
+Drumstick,Silty,Monsoon,27,38,6.1,7.2,48,80,Low,190,51,81,200,800,80,40,60,45.27,3353,Easy,India,Andhra Pradesh
+Lentil,Alluvial,Autumn,14,23,6.0,7.7,38,78,Low,96,43,61,300,1000,50,25,30,1.3,699,Medium,Nepal,Sunsari
+Little Millet,Alluvial,Summer,21,35,5.4,7.6,70,81,Low,90,38,65,400,1500,60,30,30,1.17,341,Medium,India,Uttar Pradesh
+Cowpea,Red,Spring,23,37,6.0,7.7,29,67,Low,98,49,79,200,800,60,30,40,5.1,941,Easy,India,Uttar Pradesh
+Banana,Loamy,Monsoon,19,35,5.3,7.0,82,184,High,335,67,84,200,800,200,100,300,32.64,4214,Medium,Asia,Sri Lanka
+Linseed,Loamy,Monsoon,11,24,6.0,6.7,48,70,Low,111,43,62,300,1000,60,30,30,0.83,516,Medium,Asia,Vietnam
+Pomegranate,Laterite,Spring,17,34,5.6,7.5,58,132,Low,174,50,75,500,1500,120,60,100,13.57,2753,Medium,Asia,Thailand
+Cumin,Peaty,Autumn,13,28,6.2,8.0,0,33,Low,110,40,50,300,1000,60,30,30,0.51,1261,Hard,Asia,Bangladesh
+Sunflower,Peaty,Monsoon,19,33,6.2,7.7,38,70,Medium,117,48,65,300,1000,80,40,80,1.53,613,Medium,Nepal,Ilam
+Ginger,Clay,Autumn,20,36,5.7,6.4,130,312,High,242,74,91,300,1500,80,50,50,19.07,2156,Medium,Nepal,Morang
+Safflower,Red,Monsoon,14,30,5.9,7.7,15,72,Low,134,42,64,300,1000,60,30,30,1.36,544,Medium,Asia,Indonesia
+Barley,Sandy,Winter,12,25,6.2,7.7,13,40,Low,91,42,69,500,1500,80,40,40,2.9,415,Medium,Nepal,Sunsari
+Mustard,Black,Monsoon,8,24,5.8,7.2,44,100,Low,109,49,74,0,2000,60,40,40,1.03,711,Easy,India,Gujarat
+Sunflower,Loamy,Spring,20,36,5.8,7.2,57,98,Medium,103,44,70,300,1000,80,40,80,1.48,573,Medium,India,Tamil Nadu
+Peach,Clay,Summer,14,30,5.8,7.2,92,138,Medium,112,59,76,500,2000,100,50,100,12.8,2154,Hard,India,Assam
+Lentil,Loamy,Autumn,13,27,5.8,7.6,15,73,Low,84,44,60,300,1000,50,25,30,1.05,510,Medium,Asia,Indonesia
+Watermelon,Red,Summer,27,35,5.8,7.6,31,64,Medium,99,48,72,200,800,100,50,100,32.59,2387,Easy,Asia,Vietnam
+Cabbage,Peaty,Winter,14,26,6.2,6.7,61,114,High,70,61,80,200,800,140,70,110,21.59,1808,Medium,Asia,Sri Lanka
+Green Gram,Peaty,Winter,25,33,5.7,7.5,13,59,Low,88,44,75,200,800,40,20,25,0.94,489,Easy,Nepal,Gulmi
+Linseed,Black,Monsoon,9,27,5.9,7.2,33,69,Low,129,36,61,300,1000,60,30,30,1.07,449,Medium,Nepal,Morang
+Spinach,Clay,Monsoon,9,27,6.1,7.5,29,77,Medium,60,65,82,200,800,80,40,60,14.21,1412,Easy,Asia,Vietnam
+Green Beans,Red,Winter,17,31,5.8,7.7,65,87,Medium,71,61,89,200,1000,70,35,50,9.59,1450,Medium,Nepal,Kailali
+Fennel,Peaty,Autumn,12,28,6.1,7.3,27,43,Medium,141,45,70,300,1000,80,40,60,0.99,1269,Medium,India,West Bengal
+Sorghum (Jowar),Alluvial,Winter,26,41,6.1,8.0,48,89,Low,120,33,65,300,1000,80,40,40,2.4,532,Medium,Nepal,Kaski
+Strawberry,Red,Autumn,15,24,5.5,7.3,59,140,Medium,85,67,80,500,1500,100,50,100,12.35,4550,Hard,Asia,Thailand
+Pigeon Pea,Clay,Monsoon,19,36,5.8,7.6,36,88,Low,179,50,68,300,1000,60,30,40,1.29,586,Medium,Nepal,Dhankuta
+Little Millet,Red,Autumn,20,37,5.4,7.5,57,84,Low,83,39,69,400,1500,60,30,30,1.04,331,Medium,Nepal,Kailali
+Peas,Alluvial,Summer,9,25,5.7,7.7,41,97,Medium,64,65,75,300,1200,60,30,40,6.44,1222,Medium,India,Uttar Pradesh
+Beetroot,Loamy,Monsoon,9,23,5.7,7.3,58,99,Medium,89,58,77,200,1000,100,50,80,18.38,1725,Medium,Asia,Sri Lanka
+Potato,Red,Summer,13,23,5.1,6.6,30,90,Medium,71,62,80,500,2000,150,80,120,21.43,2885,Medium,Nepal,Ilam
+Cashew,Alluvial,Autumn,27,36,5.6,7.7,40,117,Low,243,53,77,200,800,80,40,60,1.3,1925,Medium,Nepal,Ilam
+Rice (Aus),Black,Monsoon,20,36,4.8,7.7,96,194,High,122,60,84,0,500,120,60,60,4.15,728,Easy,Asia,Vietnam
+Cardamom,Black,Summer,14,30,4.7,6.3,136,317,High,356,74,92,800,2000,100,50,100,0.47,5664,Hard,Nepal,Gulmi
+Muskmelon,Peaty,Autumn,23,34,6.3,7.4,58,82,Medium,87,50,71,200,800,90,45,90,27.97,2267,Easy,Asia,Sri Lanka
+Cowpea,Loamy,Summer,24,34,6.2,7.2,51,65,Low,90,49,71,200,800,60,30,40,6.25,903,Easy,India,Gujarat
+Areca Nut,Clay,Winter,20,37,5.7,7.7,138,269,High,357,69,95,200,800,150,80,150,1.81,2565,Medium,Nepal,Jhapa
+Ridge Gourd,Silty,Winter,26,34,5.9,7.3,30,90,Medium,77,60,80,200,800,80,40,60,16.25,1606,Easy,Asia,Thailand
+Ginger,Silty,Monsoon,22,37,5.5,6.8,134,289,High,267,70,87,300,1500,80,50,50,20.15,2742,Medium,India,Maharashtra
+Barley,Silty,Summer,11,24,6.0,7.4,47,75,Low,109,42,65,500,1500,80,40,40,2.41,587,Medium,Nepal,Kailali
+Sesame,Black,Autumn,23,35,6.3,7.7,33,69,Low,91,41,67,200,800,60,30,30,0.84,435,Easy,India,Andhra Pradesh
+Orange,Alluvial,Spring,17,34,5.4,7.8,88,187,Medium,177,61,75,500,1500,120,60,100,13.49,2747,Medium,Nepal,Sindhupalchok
+Black Pepper,Clay,Spring,25,33,5.7,6.8,154,234,High,367,72,85,200,800,120,60,120,1.18,2835,Hard,India,West Bengal
+Onion,Black,Summer,15,24,6.0,7.7,48,89,Medium,108,65,85,200,800,100,50,80,21.11,2009,Medium,Asia,Vietnam
+Wheat (Winter),Silty,Winter,7,22,6.3,7.8,32,61,Medium,133,42,65,300,800,110,55,55,3.25,644,Medium,Nepal,Bara
+Pear,Alluvial,Summer,8,25,6.3,6.8,62,160,Medium,130,54,73,1000,2500,100,50,100,14.09,2446,Hard,Nepal,Sindhupalchok
+Oats,Sandy,Spring,11,25,6.1,7.3,42,126,Medium,105,59,82,500,1500,90,45,45,2.49,497,Medium,India,Punjab
+Red Chili,Loamy,Summer,22,34,6.3,7.4,60,129,Medium,130,57,80,300,1000,100,50,80,1.6,2042,Medium,India,Assam
+Cabbage,Laterite,Winter,14,27,6.2,7.0,42,94,High,79,65,88,200,800,140,70,110,22.43,2036,Medium,Nepal,Kaski
+Chili,Black,Spring,18,34,6.1,7.4,54,139,Medium,80,57,87,200,1000,100,50,80,9.8,1771,Medium,Asia,Vietnam
+Sweet Potato,Sandy,Autumn,19,32,5.7,7.2,39,84,Low,125,60,77,300,1500,80,40,80,17.56,1736,Easy,India,Tamil Nadu
+Coriander,Laterite,Monsoon,13,23,6.2,7.7,35,98,Medium,52,51,70,200,800,60,30,40,4.96,713,Easy,Nepal,Mustang
+Cardamom,Black,Winter,14,32,5.2,6.7,167,304,High,367,79,95,800,2000,100,50,100,0.53,5923,Hard,India,Punjab
+Finger Millet,Laterite,Monsoon,17,28,5.7,7.4,67,114,Low,93,48,78,500,2000,70,35,35,1.86,383,Medium,Nepal,Sunsari
+Peas,Silty,Summer,12,24,5.7,7.4,56,81,Medium,80,55,82,300,1200,60,30,40,8.07,1217,Medium,India,Uttar Pradesh
+Plum,Red,Autumn,10,27,5.8,7.2,91,142,Medium,118,59,72,1000,2500,90,45,90,10.05,2341,Hard,India,Assam
+Okra,Alluvial,Spring,26,34,6.2,7.5,42,109,Medium,54,50,75,200,800,80,40,60,13.27,1348,Easy,Nepal,Morang
+Kodo Millet,Black,Monsoon,22,35,5.2,7.2,59,96,Low,83,43,69,400,1500,60,30,30,1.23,291,Medium,India,Andhra Pradesh
+Almond,Black,Autumn,6,29,6.0,7.9,43,67,Low,190,37,62,500,2000,80,40,80,3.44,4648,Hard,Nepal,Jhapa
+Barnyard Millet,Black,Autumn,20,33,5.7,7.4,47,111,Medium,81,55,70,300,1200,70,35,35,1.55,333,Easy,Asia,Thailand
+Cotton,Black,Autumn,21,36,6.6,7.8,37,86,Low,177,41,65,200,600,100,50,100,2.54,1046,Medium,Nepal,Ilam
+Ginger,Silty,Monsoon,18,37,5.7,6.6,162,304,High,261,71,85,300,1500,80,50,50,17.75,2718,Medium,Nepal,Sunsari
+Coriander,Clay,Monsoon,14,26,5.9,7.3,54,67,Medium,45,60,70,200,800,60,30,40,6.0,859,Easy,Nepal,Ilam
+Orange,Red,Monsoon,16,33,5.3,7.6,84,214,Medium,177,55,83,500,1500,120,60,100,11.61,2796,Medium,Nepal,Gulmi
+Pomegranate,Red,Spring,14,37,5.8,7.5,63,124,Low,175,47,68,500,1500,120,60,100,11.77,3787,Medium,Nepal,Gulmi
+Pumpkin,Clay,Spring,20,37,6.0,7.6,26,86,Medium,94,48,79,200,800,80,40,80,24.65,1910,Easy,India,Assam
+Pomegranate,Sandy,Autumn,13,34,5.5,7.4,77,100,Low,183,46,69,500,1500,120,60,100,9.66,3154,Medium,Nepal,Bara
+Maize (Irrigated),Red,Winter,19,34,5.2,7.3,31,114,High,106,56,80,200,1000,120,60,60,4.6,876,Medium,Nepal,Kaski
+Grapes,Silty,Winter,15,33,6.1,7.8,61,120,Medium,146,47,73,300,1000,150,80,120,20.71,3811,Hard,India,West Bengal
+Onion,Black,Summer,12,25,6.1,7.4,62,118,Medium,112,55,81,200,800,100,50,80,19.2,2477,Medium,Asia,Vietnam
+Coffee,Laterite,Spring,14,25,5.4,6.6,111,220,Medium,371,69,84,800,2000,120,60,100,1.4,2641,Hard,India,Himachal Pradesh
+Chickpea,Red,Spring,13,25,5.8,7.5,33,78,Low,102,42,68,300,1000,60,30,40,1.43,670,Medium,India,West Bengal
+Bottle Gourd,Black,Summer,18,37,6.1,7.7,45,92,High,82,57,83,200,800,90,45,70,22.68,1454,Easy,Nepal,Sunsari
+Fenugreek Seed,Laterite,Winter,8,31,5.9,7.3,23,60,Medium,88,40,68,300,1000,60,30,30,0.85,681,Medium,India,Uttar Pradesh
+Green Gram,Peaty,Monsoon,25,33,6.3,7.2,49,72,Low,73,40,70,200,800,40,20,25,0.71,506,Easy,Nepal,Kaski
+Black Pepper,Red,Winter,23,35,5.2,7.2,160,241,High,372,73,88,200,800,120,60,120,1.02,3324,Hard,Asia,Thailand
+Kodo Millet,Clay,Autumn,18,37,5.3,7.6,39,106,Low,89,40,68,400,1500,60,30,30,1.18,336,Medium,Nepal,Kaski
+Ginger,Laterite,Autumn,19,35,5.5,6.5,145,289,High,255,69,88,300,1500,80,50,50,18.82,1851,Medium,Nepal,Morang
+Drumstick,Clay,Summer,23,41,5.8,7.6,42,88,Low,206,55,82,200,800,80,40,60,54.51,2639,Easy,Nepal,Dhankuta
+Coriander Seed,Clay,Monsoon,14,27,6.1,7.3,48,64,Medium,99,44,70,300,1000,60,30,40,0.9,881,Medium,India,Assam
+Pumpkin,Sandy,Winter,19,36,5.7,7.3,41,66,Medium,110,50,70,200,800,80,40,80,32.73,1772,Easy,India,Assam
+Oats,Clay,Autumn,9,24,6.1,6.9,66,136,Medium,103,60,81,500,1500,90,45,45,1.81,400,Medium,Nepal,Sindhupalchok
+Barley,Laterite,Winter,9,25,6.2,7.7,19,61,Low,108,41,70,500,1500,80,40,40,2.37,443,Medium,Nepal,Mustang
+Foxtail Millet,Red,Winter,20,37,6.0,7.7,47,79,Low,80,43,63,300,1200,60,30,30,1.66,322,Easy,Asia,Sri Lanka
+Rice (Jhum),Laterite,Monsoon,20,33,5.3,6.7,126,183,Medium,130,66,85,500,1500,80,40,40,2.14,652,Hard,Nepal,Chitwan
+Sugarcane,Alluvial,Winter,19,34,6.1,7.2,84,201,High,360,58,90,200,800,150,80,150,68.8,2953,Medium,Asia,Thailand
+Cotton,Clay,Monsoon,20,35,6.3,7.9,42,61,Low,189,38,61,200,600,100,50,100,2.8,1320,Medium,Nepal,Sunsari
+Guava,Clay,Spring,21,36,5.5,7.6,88,152,Medium,187,57,83,200,1000,100,50,100,20.38,2382,Easy,Nepal,Kaski
+Castor,Sandy,Spring,22,39,5.7,7.9,36,40,Low,186,37,62,200,800,80,40,40,1.35,708,Medium,India,Haryana
+Rice (Jhum),Laterite,Summer,19,36,5.2,7.1,102,185,Medium,117,64,89,500,1500,80,40,40,2.04,523,Hard,India,Maharashtra
+Apple (Mustang),Red,Autumn,3,24,5.4,7.1,93,127,Medium,189,65,76,2000,3500,50,30,70,9.38,5997,Hard,Nepal,Sindhupalchok
+Rice (Aman),Silty,Monsoon,19,37,4.9,7.8,159,309,High,133,70,93,0,500,110,55,55,4.49,846,Easy,Asia,Vietnam
+Black Gram,Alluvial,Summer,27,37,5.8,7.4,46,93,Medium,99,46,70,200,800,50,25,30,0.8,461,Easy,Asia,Vietnam
+Sugarcane,Alluvial,Winter,19,36,6.2,7.8,106,201,High,359,62,83,200,800,150,80,150,57.26,2629,Medium,Nepal,Morang
+Ridge Gourd,Black,Winter,25,37,6.2,7.3,52,85,Medium,68,59,83,200,800,80,40,60,16.08,1634,Easy,Asia,Bangladesh
+Peach,Sandy,Winter,15,30,5.9,7.2,83,141,Medium,119,54,80,500,2000,100,50,100,13.03,2611,Hard,Nepal,Kailali
+Tobacco,Black,Monsoon,17,29,5.6,7.5,58,71,Medium,124,45,65,300,1000,120,60,120,1.91,2918,Hard,Asia,Sri Lanka
+Papaya,Red,Spring,22,33,5.9,7.2,99,163,Medium,262,60,82,200,800,150,80,150,32.15,3346,Easy,Asia,Vietnam
+Tomato,Black,Monsoon,18,30,5.8,7.2,59,133,Medium,71,63,87,200,1000,120,60,100,25.88,3267,Medium,Nepal,Sunsari
+Coriander Seed,Black,Spring,13,26,6.0,7.3,43,68,Medium,87,41,70,300,1000,60,30,40,0.7,843,Medium,Nepal,Bara
+Lentil,Alluvial,Monsoon,14,27,6.1,7.8,22,54,Low,89,36,66,300,1000,50,25,30,1.35,673,Medium,Nepal,Sunsari
+Apple,Laterite,Autumn,15,26,6.1,6.8,60,167,Medium,151,50,79,1500,3000,120,60,120,12.88,3783,Hard,Asia,Bangladesh
+Castor,Red,Summer,19,42,6.2,8.2,36,50,Low,175,36,55,200,800,80,40,40,1.72,619,Medium,Nepal,Sindhupalchok
+Coffee (Arabica),Loamy,Spring,17,22,5.8,6.7,144,267,Medium,248,72,90,800,1600,60,40,80,1.95,2700,Hard,Nepal,Jhapa
+Sugarcane,Alluvial,Monsoon,22,35,5.7,7.2,117,180,High,357,58,90,200,800,150,80,150,57.32,2842,Medium,India,Assam
+Lentil (Musuro),Red,Spring,13,23,5.8,7.4,45,110,Low,132,48,65,0,2000,20,40,20,1.67,897,Easy,Nepal,Kaski
+Muskmelon,Clay,Monsoon,27,37,5.9,7.7,46,67,Medium,73,46,76,200,800,90,45,90,28.92,2350,Easy,India,Andhra Pradesh
+Litchi,Sandy,Monsoon,20,33,5.3,6.8,118,191,High,119,63,87,200,800,150,80,120,8.94,2935,Medium,Nepal,Kailali
+Coconut,Laterite,Monsoon,23,33,5.5,8.1,118,187,Medium,365,60,85,200,500,120,60,120,2.38,1900,Medium,Asia,Indonesia
+Brinjal,Clay,Autumn,21,33,6.1,7.7,68,121,Medium,105,62,81,200,800,120,60,100,25.37,2968,Medium,Nepal,Bara
+Mustard,Peaty,Summer,9,27,5.7,7.4,28,101,Low,108,46,73,0,2000,60,40,40,1.31,880,Easy,Nepal,Kaski
+Jute,Sandy,Winter,23,36,6.1,7.6,119,181,High,118,68,86,200,600,80,40,80,2.53,696,Medium,India,Haryana
+Plum,Loamy,Spring,12,26,6.0,7.1,74,168,Medium,126,51,76,1000,2500,90,45,90,11.56,2438,Hard,Nepal,Bara
+Buckwheat,Alluvial,Summer,15,24,5.6,7.2,66,148,Low,86,54,75,800,2500,60,30,30,1.15,357,Hard,Nepal,Sunsari
+Safflower,Alluvial,Spring,13,31,6.0,7.2,36,73,Low,140,42,60,300,1000,60,30,30,1.35,532,Medium,India,Gujarat
+Fennel,Laterite,Monsoon,9,29,6.3,7.5,12,60,Medium,153,46,68,300,1000,80,40,60,1.18,1129,Medium,Asia,Bangladesh
+Fenugreek,Alluvial,Winter,9,28,6.1,7.4,16,72,Medium,40,49,67,200,800,60,30,40,7.16,897,Easy,India,Maharashtra
+Fenugreek Seed,Laterite,Autumn,12,32,6.0,7.4,15,61,Medium,86,42,67,300,1000,60,30,30,0.87,651,Medium,Nepal,Kaski
+Cotton,Red,Winter,22,34,6.8,8.3,36,82,Low,180,43,69,200,600,100,50,100,2.93,1236,Medium,Nepal,Ilam
+Apple,Black,Autumn,13,23,5.8,7.0,96,131,Medium,160,52,71,1500,3000,120,60,120,17.2,3858,Hard,India,Andhra Pradesh
+Cowpea,Silty,Winter,23,37,5.7,7.7,20,79,Low,94,52,80,200,800,60,30,40,5.49,733,Easy,Asia,Sri Lanka
+Potato,Sandy,Spring,14,24,5.0,6.5,57,112,Medium,81,65,87,500,2000,150,80,120,21.76,2301,Medium,India,Andhra Pradesh
+Cumin,Silty,Monsoon,13,31,5.8,8.0,1,22,Low,120,30,59,300,1000,60,30,30,0.59,1003,Hard,Asia,Bangladesh
+Quinoa,Peaty,Autumn,16,30,5.9,8.1,47,81,Low,118,50,69,1000,3000,70,35,35,1.62,420,Hard,Nepal,Kaski
+Barnyard Millet,Silty,Summer,21,33,5.7,7.6,40,103,Medium,71,47,76,300,1200,70,35,35,1.26,300,Easy,Nepal,Sindhupalchok
+Wheat (Spring),Sandy,Winter,10,26,5.7,7.5,52,101,Medium,117,49,78,200,600,120,60,60,3.66,599,Medium,Nepal,Ilam
+Cumin,Laterite,Spring,16,32,5.9,7.9,38,50,Low,128,38,55,300,1000,60,30,30,0.55,1403,Hard,India,Punjab
+Watermelon,Alluvial,Autumn,27,37,5.9,7.2,47,75,Medium,91,45,75,200,800,100,50,100,34.12,2552,Easy,India,Maharashtra
+Tea,Black,Monsoon,8,29,4.8,5.8,215,409,High,365,79,99,500,2000,120,60,60,2.17,2451,Medium,India,Assam
+Linseed,Laterite,Monsoon,11,25,6.1,6.9,30,65,Low,110,36,64,300,1000,60,30,30,1.1,508,Medium,Nepal,Sindhupalchok
+Mustard,Laterite,Summer,12,26,5.7,7.4,28,93,Low,95,53,69,0,2000,60,40,40,1.24,663,Easy,Asia,Vietnam
+Coffee (Arabica),Black,Monsoon,17,22,6.0,6.3,148,250,Medium,260,68,84,800,1600,60,40,80,1.85,1823,Hard,India,West Bengal
+Broccoli,Red,Summer,16,26,5.9,7.1,79,134,High,70,65,86,300,1200,130,65,100,12.75,2639,Hard,India,Tamil Nadu
+Coriander,Silty,Spring,16,24,5.9,7.6,58,73,Medium,54,55,70,200,800,60,30,40,5.04,951,Easy,Asia,Bangladesh
+Tomato,Red,Monsoon,20,28,6.0,7.2,44,116,Medium,72,65,86,200,1000,120,60,100,23.88,3821,Medium,Nepal,Morang
+Coffee,Clay,Summer,16,24,5.6,6.4,131,189,Medium,372,62,82,800,2000,120,60,100,1.29,2952,Hard,Asia,Sri Lanka
+Fenugreek,Alluvial,Monsoon,10,30,5.9,7.5,27,51,Medium,38,48,66,200,800,60,30,40,7.43,1067,Easy,Nepal,Sunsari
+Areca Nut,Alluvial,Spring,22,33,5.4,7.3,153,237,High,355,65,87,200,800,150,80,150,2.32,3244,Medium,Nepal,Mustang
+Drumstick,Peaty,Autumn,23,40,6.1,7.6,47,97,Low,209,46,85,200,800,80,40,60,56.26,2810,Easy,India,Gujarat
+Spinach,Red,Winter,11,27,6.0,7.6,40,73,Medium,48,62,80,200,800,80,40,60,11.57,1383,Easy,Nepal,Dhankuta
+Large Cardamom,Loamy,Spring,10,27,4.5,6.6,148,346,High,332,75,99,1000,2000,40,40,60,0.74,3616,Hard,India,Punjab
+Soybean,Black,Summer,21,33,5.9,7.5,43,117,Medium,103,52,78,300,1000,80,40,60,1.83,646,Medium,Asia,Bangladesh
+Cauliflower,Silty,Summer,14,23,6.2,6.9,62,115,High,60,60,89,200,800,150,80,120,17.99,2367,Medium,Asia,Vietnam
+Rice (Boro),Peaty,Summer,14,30,5.2,7.2,54,80,High,166,45,75,0,500,130,65,65,4.47,979,Medium,India,Uttar Pradesh
+Bitter Gourd,Laterite,Autumn,26,36,6.3,7.3,49,117,Medium,70,62,87,200,800,100,50,80,17.94,1420,Medium,Nepal,Sindhupalchok
+Sunflower,Alluvial,Monsoon,20,33,6.3,7.7,28,99,Medium,101,42,68,300,1000,80,40,80,1.48,774,Medium,India,Tamil Nadu
+Red Chili,Sandy,Monsoon,18,37,5.8,7.7,57,140,Medium,128,53,78,300,1000,100,50,80,1.39,1663,Medium,Nepal,Mustang
+Bitter Gourd,Clay,Monsoon,26,35,5.9,7.3,50,131,Medium,71,63,90,200,800,100,50,80,13.86,1530,Medium,Nepal,Kaski
+Cumin,Silty,Summer,17,28,5.8,8.3,38,24,Low,123,37,55,300,1000,60,30,30,0.7,1387,Hard,Nepal,Mustang
+Banana,Sandy,Autumn,19,36,5.2,6.8,98,205,High,330,67,84,200,800,200,100,300,41.46,4559,Medium,Nepal,Mustang
+Chickpea,Loamy,Monsoon,16,26,6.2,7.3,27,65,Low,105,42,61,300,1000,60,30,40,1.38,701,Medium,Nepal,Gulmi
+Radish,Silty,Winter,9,27,5.8,7.6,43,67,Medium,56,56,77,200,800,80,40,60,13.93,1269,Easy,Asia,Thailand
+Beetroot,Alluvial,Monsoon,12,25,6.0,7.3,41,94,Medium,76,53,70,200,1000,100,50,80,20.16,1579,Medium,India,Assam
+Muskmelon,Black,Spring,25,33,5.8,7.5,59,81,Medium,89,52,70,200,800,90,45,90,20.13,1832,Easy,Asia,Sri Lanka
+Strawberry,Laterite,Monsoon,14,25,5.5,7.3,80,114,Medium,97,64,89,500,1500,100,50,100,14.19,4521,Hard,Nepal,Kaski
+Lentil (Musuro),Loamy,Monsoon,13,24,6.2,7.8,39,102,Low,135,52,69,0,2000,20,40,20,1.31,748,Easy,Asia,Vietnam
+Garlic,Black,Autumn,9,25,5.9,7.7,56,88,Medium,122,54,79,300,1200,120,60,80,9.98,3015,Hard,India,Andhra Pradesh
+Beetroot,Alluvial,Winter,10,23,6.2,7.5,38,87,Medium,88,54,80,200,1000,100,50,80,21.33,1532,Medium,India,Maharashtra
+Rice (Jhum),Alluvial,Monsoon,20,33,5.4,7.1,107,190,Medium,111,61,83,500,1500,80,40,40,2.36,584,Hard,India,Maharashtra
+Apple (Mustang),Black,Autumn,5,26,5.7,6.9,62,110,Medium,181,58,81,2000,3500,50,30,70,9.41,2047,Hard,Nepal,Bara
+Mustard Greens,Alluvial,Summer,8,24,6.0,7.2,38,79,Medium,57,55,78,200,800,80,40,60,8.2,914,Easy,Nepal,Kaski
+Black Pepper,Alluvial,Summer,26,36,5.7,6.8,143,250,High,371,73,89,200,800,120,60,120,0.9,3243,Hard,Nepal,Gulmi
+Rubber,Clay,Autumn,23,33,5.2,7.2,147,297,High,373,74,97,200,800,100,50,100,1.82,1857,Medium,Nepal,Bara
+Muskmelon,Alluvial,Winter,25,33,5.8,7.5,59,84,Medium,81,47,71,200,800,90,45,90,25.36,2536,Easy,Nepal,Chitwan
+Tobacco,Red,Monsoon,14,29,5.3,7.6,32,85,Medium,127,47,72,300,1000,120,60,120,1.8,2627,Hard,Nepal,Mustang
+Rice (Marshi),Sandy,Monsoon,13,32,5.4,7.0,140,247,High,178,65,92,1500,2500,100,50,50,2.97,1075,Medium,India,Punjab
+Strawberry,Laterite,Summer,17,25,5.5,6.9,69,123,Medium,93,64,87,500,1500,100,50,100,17.54,5043,Hard,Nepal,Jhapa
+Sesame,Loamy,Monsoon,26,35,6.0,7.6,29,68,Low,86,45,69,200,800,60,30,30,0.84,569,Easy,Nepal,Bara
+Litchi,Black,Autumn,21,33,5.8,7.1,86,192,High,115,65,82,200,800,150,80,120,7.69,3381,Medium,Nepal,Kailali
+Pear,Red,Autumn,9,26,6.1,7.1,70,169,Medium,122,60,77,1000,2500,100,50,100,13.84,2496,Hard,Asia,Vietnam
+Pomegranate,Black,Summer,14,35,5.5,7.8,76,119,Low,171,47,72,500,1500,120,60,100,10.41,3036,Medium,Nepal,Morang
+Beetroot,Laterite,Spring,12,26,5.9,7.5,47,68,Medium,72,57,71,200,1000,100,50,80,20.38,1357,Medium,India,Punjab
+Barley,Red,Monsoon,11,26,6.0,7.3,28,64,Low,98,39,63,500,1500,80,40,40,2.03,533,Medium,Asia,Thailand
+Capsicum,Clay,Autumn,18,30,5.9,7.0,79,100,Medium,88,62,87,200,1000,110,55,90,17.08,2177,Medium,India,Assam
+Cucumber,Alluvial,Spring,22,36,5.8,7.4,45,103,High,50,63,88,200,800,80,40,60,33.62,1924,Easy,Nepal,Kaski
+Tobacco,Loamy,Summer,13,30,5.6,7.8,54,83,Medium,111,48,67,300,1000,120,60,120,1.67,2399,Hard,India,Assam
+Maize (Rainfed),Peaty,Autumn,19,36,5.5,7.2,80,131,Medium,96,57,79,200,1000,100,50,50,2.14,505,Medium,Nepal,Chitwan
+Pear,Black,Summer,8,23,6.1,6.8,77,149,Medium,119,55,72,1000,2500,100,50,100,13.15,2421,Hard,Nepal,Ilam
+Barley,Red,Summer,10,26,6.3,7.7,50,50,Low,95,40,67,500,1500,80,40,40,2.95,553,Medium,India,West Bengal
+Coffee,Alluvial,Autumn,13,27,5.6,6.2,135,220,Medium,369,69,82,800,2000,120,60,100,1.7,3066,Hard,Nepal,Jhapa
+Castor,Red,Autumn,19,39,5.9,7.8,25,41,Low,172,33,58,200,800,80,40,40,1.5,668,Medium,India,Haryana
+Almond,Red,Spring,6,29,5.9,8.0,48,80,Low,172,40,70,500,2000,80,40,80,2.96,4174,Hard,India,Assam
+Orange,Laterite,Winter,15,37,5.7,7.5,118,207,Medium,181,55,81,500,1500,120,60,100,12.75,3304,Medium,Nepal,Bara
+Mustard Greens,Silty,Summer,9,24,5.8,7.2,24,66,Medium,62,52,70,200,800,80,40,60,11.66,1137,Easy,Nepal,Gulmi
+Apricot,Black,Summer,8,28,5.8,7.4,79,125,Medium,129,50,69,1000,2500,90,45,90,6.44,2592,Hard,Nepal,Mustang
+Fenugreek,Laterite,Spring,12,30,5.9,7.6,24,69,Medium,42,46,75,200,800,60,30,40,8.98,795,Easy,Nepal,Gulmi
+Apricot,Laterite,Summer,12,32,5.9,7.6,73,140,Medium,116,51,71,1000,2500,90,45,90,8.87,2712,Hard,Nepal,Jhapa
+Spinach,Peaty,Winter,11,27,6.1,7.7,57,90,Medium,51,62,85,200,800,80,40,60,14.16,1338,Easy,Asia,Thailand
+Coffee (Arabica),Loamy,Summer,15,23,6.2,6.2,160,244,Medium,295,65,82,800,1600,60,40,80,1.73,2631,Hard,Nepal,Kailali
+Onion,Loamy,Autumn,14,23,5.9,7.2,57,94,Medium,102,57,79,200,800,100,50,80,18.11,2443,Medium,Nepal,Mustang
+Wheat (Spring),Sandy,Winter,12,27,6.0,7.7,43,100,Medium,107,47,79,200,600,120,60,60,3.49,827,Medium,India,Himachal Pradesh
+Capsicum,Black,Autumn,16,32,5.9,6.8,64,113,Medium,86,61,85,200,1000,110,55,90,15.65,2023,Medium,India,West Bengal
+Mango,Peaty,Summer,22,34,5.6,7.4,93,170,Low,122,48,71,200,800,100,50,100,11.53,2818,Medium,India,Haryana
+Tobacco,Peaty,Monsoon,14,31,5.5,7.5,25,62,Medium,116,50,71,300,1000,120,60,120,2.0,2659,Hard,India,Haryana
+Pigeon Pea,Silty,Winter,22,35,6.1,7.2,22,77,Low,170,41,71,300,1000,60,30,40,1.34,521,Medium,Nepal,Kaski
+Potato,Black,Autumn,17,24,4.8,6.4,30,117,Medium,74,58,87,500,2000,150,80,120,23.43,2454,Medium,India,Assam
+Turmeric,Clay,Summer,21,31,4.7,7.4,168,254,High,265,66,89,0,1500,60,60,120,22.79,1522,Easy,Nepal,Sindhupalchok
+Litchi,Loamy,Autumn,21,35,5.4,7.1,101,196,High,115,66,83,200,800,150,80,120,8.64,3473,Medium,India,Tamil Nadu
+Watermelon,Loamy,Autumn,25,33,6.0,7.5,30,63,Medium,94,48,80,200,800,100,50,100,28.29,2650,Easy,Nepal,Sunsari
+Bottle Gourd,Red,Summer,22,33,6.3,7.5,54,81,High,97,56,80,200,800,90,45,70,25.3,1543,Easy,Nepal,Gulmi
+Guava,Loamy,Monsoon,18,35,5.7,7.5,94,140,Medium,182,50,77,200,1000,100,50,100,19.54,2787,Easy,India,Assam
+Cardamom,Peaty,Monsoon,13,29,4.9,6.5,130,294,High,366,76,94,800,2000,100,50,100,0.56,4117,Hard,Asia,Vietnam
+Walnut,Clay,Summer,3,24,6.1,7.6,91,152,Medium,177,45,70,1500,3000,100,50,100,4.26,3408,Hard,Nepal,Kailali
+Pumpkin,Clay,Winter,21,37,6.0,7.7,31,69,Medium,97,49,70,200,800,80,40,80,34.21,2194,Easy,Asia,Thailand
+Grapes,Laterite,Spring,16,36,6.2,7.4,36,82,Medium,140,47,70,300,1000,150,80,120,17.46,4457,Hard,Nepal,Sindhupalchok
+Cabbage,Silty,Monsoon,17,25,5.9,7.2,70,114,High,84,65,80,200,800,140,70,110,20.94,2036,Medium,Nepal,Bara
+Brinjal,Silty,Autumn,18,37,6.2,7.4,43,117,Medium,92,57,81,200,800,120,60,100,24.66,2881,Medium,India,Haryana
+Safflower,Black,Summer,17,29,6.3,7.5,27,40,Low,134,43,63,300,1000,60,30,30,1.39,519,Medium,India,Maharashtra
+Fenugreek,Silty,Monsoon,12,30,6.1,7.4,19,75,Medium,46,49,71,200,800,60,30,40,8.7,1029,Easy,Nepal,Kaski
+Pear,Loamy,Summer,9,23,5.8,6.9,90,133,Medium,114,53,70,1000,2500,100,50,100,9.97,2558,Hard,Nepal,Kaski
+Kodo Millet,Sandy,Monsoon,22,35,5.3,7.7,41,108,Low,90,40,70,400,1500,60,30,30,1.44,257,Medium,Asia,Indonesia
+Rice (Marshi),Peaty,Monsoon,14,31,5.6,7.1,140,265,High,171,72,92,1500,2500,100,50,50,3.67,947,Medium,Nepal,Sunsari
+Coffee (Arabica),Silty,Spring,14,22,6.2,6.7,134,254,Medium,249,71,85,800,1600,60,40,80,1.35,2448,Hard,India,West Bengal
+Spinach,Alluvial,Monsoon,9,25,6.2,7.7,53,87,Medium,57,65,81,200,800,80,40,60,12.22,1142,Easy,Nepal,Sunsari
+Black Pepper,Silty,Autumn,23,33,5.8,6.9,167,267,High,366,70,86,200,800,120,60,120,1.1,3466,Hard,Asia,Thailand
+Little Millet,Clay,Monsoon,22,34,5.6,7.7,65,94,Low,85,41,65,400,1500,60,30,30,1.26,357,Medium,India,Gujarat
+Peach,Peaty,Summer,16,31,6.2,7.1,63,167,Medium,128,56,76,500,2000,100,50,100,12.02,2918,Hard,Asia,Bangladesh
+Turmeric,Black,Spring,20,32,4.8,7.2,146,248,High,227,68,95,0,1500,60,60,120,29.19,2311,Easy,Nepal,Bara
+Muskmelon,Laterite,Spring,25,35,5.8,7.7,43,88,Medium,73,48,77,200,800,90,45,90,25.6,2070,Easy,Asia,Bangladesh
+Buckwheat,Black,Summer,13,23,5.6,6.9,70,144,Low,91,48,76,800,2500,60,30,30,1.2,345,Hard,Nepal,Ilam
+Guava,Clay,Monsoon,22,36,5.5,7.7,62,163,Medium,170,52,83,200,1000,100,50,100,22.48,2193,Easy,Nepal,Gulmi
+Coriander,Peaty,Autumn,14,23,5.8,7.3,47,96,Medium,43,59,77,200,800,60,30,40,6.15,888,Easy,India,Haryana
+Banana,Laterite,Monsoon,20,35,5.4,7.3,102,213,High,328,66,90,200,800,200,100,300,31.47,4431,Medium,Nepal,Jhapa
+Strawberry,Laterite,Summer,13,24,5.7,6.9,72,125,Medium,80,68,82,500,1500,100,50,100,17.27,4991,Hard,India,Assam
+Cotton,Silty,Spring,20,37,6.5,8.1,46,64,Low,170,44,60,200,600,100,50,100,2.55,973,Medium,Nepal,Gulmi
+Tomato,Black,Autumn,17,28,5.9,6.7,57,135,Medium,63,68,82,200,1000,120,60,100,26.37,3499,Medium,Nepal,Ilam
+Orange,Loamy,Autumn,13,37,5.7,7.3,112,201,Medium,190,55,85,500,1500,120,60,100,10.53,2960,Medium,India,Punjab
+Jute,Red,Summer,24,35,6.2,7.2,101,188,High,114,72,92,200,600,80,40,80,2.77,737,Medium,India,Assam
+Muskmelon,Black,Monsoon,23,33,5.7,7.7,57,79,Medium,72,52,72,200,800,90,45,90,20.87,2188,Easy,India,Himachal Pradesh
+Barnyard Millet,Loamy,Winter,18,36,5.3,7.5,70,107,Medium,79,51,73,300,1200,70,35,35,1.7,351,Easy,Asia,Bangladesh
+Pear,Peaty,Summer,9,27,6.1,7.3,62,159,Medium,125,55,70,1000,2500,100,50,100,12.67,2675,Hard,Nepal,Sindhupalchok
+Watermelon,Laterite,Winter,23,37,6.2,7.4,48,69,Medium,86,54,80,200,800,100,50,100,34.86,2891,Easy,India,Assam
+Green Beans,Clay,Autumn,18,29,5.8,7.2,42,117,Medium,75,65,88,200,1000,70,35,50,11.76,1085,Medium,India,Himachal Pradesh
+Coriander,Sandy,Monsoon,15,27,6.2,7.5,24,97,Medium,40,54,71,200,800,60,30,40,6.67,705,Easy,Nepal,Sunsari
+Litchi,Silty,Summer,19,35,5.2,7.3,83,208,High,127,66,84,200,800,150,80,120,8.18,2849,Medium,Nepal,Sindhupalchok
+Rice (Jhum),Alluvial,Summer,22,34,5.2,6.8,121,202,Medium,111,68,89,500,1500,80,40,40,2.26,527,Hard,India,Punjab
+Muskmelon,Black,Spring,24,35,5.7,7.5,33,82,Medium,72,47,70,200,800,90,45,90,24.42,1999,Easy,Asia,Sri Lanka
+Barnyard Millet,Clay,Autumn,19,33,5.5,7.2,40,140,Medium,76,52,77,300,1200,70,35,35,1.76,363,Easy,Nepal,Jhapa
+Sugarcane,Silty,Autumn,20,35,6.0,7.5,83,208,High,362,62,87,200,800,150,80,150,67.04,2868,Medium,Asia,Vietnam
+Okra,Clay,Summer,26,37,5.7,7.5,30,87,Medium,60,56,75,200,800,80,40,60,14.17,1370,Easy,Asia,Bangladesh
+Drumstick,Sandy,Monsoon,24,40,5.9,7.3,48,92,Low,194,47,84,200,800,80,40,60,41.92,3130,Easy,Nepal,Gulmi
+Black Pepper,Sandy,Autumn,23,34,5.5,6.7,152,247,High,357,66,94,200,800,120,60,120,0.83,3825,Hard,Nepal,Jhapa
+Sunflower,Silty,Autumn,19,35,6.1,7.7,31,72,Medium,118,48,65,300,1000,80,40,80,1.47,746,Medium,Nepal,Kaski
+Spinach,Clay,Monsoon,8,27,6.3,7.5,34,88,Medium,52,63,80,200,800,80,40,60,11.38,1626,Easy,India,Gujarat
+Fenugreek Seed,Sandy,Monsoon,11,28,6.1,7.6,13,48,Medium,96,50,66,300,1000,60,30,30,0.71,776,Medium,India,Maharashtra
+Lentil (Musuro),Red,Winter,15,26,6.1,7.8,35,107,Low,138,45,69,0,2000,20,40,20,1.69,1263,Easy,Nepal,Chitwan
+Sweet Potato,Alluvial,Spring,19,28,5.6,7.1,40,95,Low,122,58,76,300,1500,80,40,80,15.8,1533,Easy,Asia,Thailand
+Green Gram,Laterite,Autumn,23,36,5.8,7.6,20,79,Low,75,47,67,200,800,40,20,25,0.88,374,Easy,Asia,Bangladesh
+Ginger,Silty,Spring,19,36,5.2,6.5,160,293,High,264,72,93,300,1500,80,50,50,24.45,1735,Medium,Nepal,Kaski
+Red Chili,Red,Spring,21,36,5.9,7.8,80,126,Medium,121,55,78,300,1000,100,50,80,1.31,1791,Medium,Nepal,Morang
+Millet (Pearl),Alluvial,Summer,25,42,5.9,7.9,39,73,Low,76,25,63,200,800,60,30,30,1.29,370,Easy,Nepal,Mustang
+Coffee (Arabica),Laterite,Winter,14,26,6.0,6.8,133,258,Medium,287,69,87,800,1600,60,40,80,1.6,1672,Hard,Asia,Thailand
+Turmeric,Sandy,Winter,20,28,4.6,7.4,137,249,High,273,73,93,0,1500,60,60,120,29.6,2239,Easy,Nepal,Kaski
+Lemon,Red,Spring,22,33,5.3,7.7,68,141,Medium,122,57,75,200,1000,100,50,80,13.53,2241,Easy,Nepal,Jhapa
+Fennel,Laterite,Monsoon,11,28,5.8,7.6,27,67,Medium,149,46,74,300,1000,80,40,60,1.17,1061,Medium,India,Uttar Pradesh
+Cumin,Peaty,Winter,16,29,6.2,8.2,25,57,Low,110,37,59,300,1000,60,30,30,0.48,1393,Hard,Nepal,Kaski
+Jute,Black,Monsoon,23,37,6.0,7.5,108,181,High,129,67,93,200,600,80,40,80,2.67,842,Medium,Nepal,Ilam
+Papaya,Loamy,Monsoon,20,34,5.9,7.6,74,132,Medium,265,57,84,200,800,150,80,150,38.25,2893,Easy,Nepal,Kailali
+Cotton,Alluvial,Monsoon,18,36,6.7,7.8,22,89,Low,180,45,65,200,600,100,50,100,2.22,1268,Medium,India,Maharashtra
+Finger Millet,Black,Autumn,19,28,5.6,7.7,51,137,Low,108,49,74,500,2000,70,35,35,1.34,394,Medium,India,Gujarat
+Sunflower,Loamy,Monsoon,19,34,5.9,7.4,29,62,Medium,110,44,72,300,1000,80,40,80,1.59,798,Medium,India,West Bengal
+Broccoli,Loamy,Winter,14,23,6.3,6.7,61,102,High,68,65,84,300,1200,130,65,100,11.75,2572,Hard,India,Punjab
+Guava,Peaty,Autumn,22,35,5.3,7.6,62,159,Medium,184,58,81,200,1000,100,50,100,17.91,2789,Easy,Nepal,Sindhupalchok
+Rice (Aus),Alluvial,Summer,19,39,5.1,7.8,113,197,High,114,64,85,0,500,120,60,60,3.26,698,Easy,Nepal,Kailali
+Watermelon,Alluvial,Autumn,26,36,5.9,7.8,41,97,Medium,87,53,75,200,800,100,50,100,28.74,2536,Easy,Nepal,Kailali
+Quinoa,Sandy,Summer,14,29,5.8,7.8,55,117,Low,122,47,74,1000,3000,70,35,35,1.43,478,Hard,Nepal,Dhankuta
+Drumstick,Red,Autumn,27,38,6.0,7.3,64,92,Low,207,50,80,200,800,80,40,60,55.43,3345,Easy,India,Haryana
+Black Pepper,Red,Spring,25,36,5.6,7.3,161,254,High,357,69,94,200,800,120,60,120,0.82,4125,Hard,India,Punjab
+Apple,Silty,Autumn,13,25,6.2,6.9,67,131,Medium,153,54,76,1500,3000,120,60,120,16.41,4035,Hard,Asia,Thailand
+Drumstick,Silty,Winter,25,38,6.0,7.6,51,89,Low,204,54,76,200,800,80,40,60,45.89,3332,Easy,Asia,Vietnam
+Plum,Peaty,Summer,12,27,6.0,6.9,93,155,Medium,113,50,78,1000,2500,90,45,90,8.2,2464,Hard,Asia,Thailand
+Sugarcane,Alluvial,Monsoon,22,34,6.3,7.8,95,215,High,366,56,85,200,800,150,80,150,74.43,2824,Medium,Nepal,Bara
+Rice (Basmati),Sandy,Summer,21,38,5.7,7.6,69,153,Medium,130,53,76,300,800,100,50,50,3.03,1420,Medium,Nepal,Chitwan
+Linseed,Black,Winter,11,27,5.9,7.2,40,45,Low,120,42,62,300,1000,60,30,30,1.04,553,Medium,Nepal,Kailali
+Tobacco,Laterite,Winter,16,28,5.3,7.8,56,83,Medium,129,48,68,300,1000,120,60,120,2.03,2582,Hard,India,Maharashtra
+Drumstick,Clay,Winter,26,42,6.1,7.8,67,87,Low,200,46,85,200,800,80,40,60,52.66,3130,Easy,Asia,Indonesia
+Rice (Aman),Loamy,Monsoon,18,40,4.7,7.6,138,288,High,146,70,89,0,500,110,55,55,3.84,860,Easy,Nepal,Sunsari
+Mustard,Clay,Monsoon,9,26,5.7,7.6,31,116,Low,120,50,72,0,2000,60,40,40,1.37,924,Easy,Nepal,Jhapa
+Ridge Gourd,Loamy,Spring,25,37,6.3,7.7,49,98,Medium,75,63,86,200,800,80,40,60,15.58,1788,Easy,India,Gujarat
+Oats,Clay,Summer,11,24,5.8,7.0,58,115,Medium,92,58,80,500,1500,90,45,45,2.41,553,Medium,India,Maharashtra
+Cashew,Loamy,Summer,23,35,5.3,7.4,65,133,Low,234,57,79,200,800,80,40,60,1.42,2334,Medium,Nepal,Mustang
+Sesame,Sandy,Winter,26,33,5.8,7.3,26,60,Low,99,42,69,200,800,60,30,30,0.77,583,Easy,India,Tamil Nadu
+Capsicum,Alluvial,Spring,19,29,5.9,7.2,65,133,Medium,84,64,80,200,1000,110,55,90,16.91,1955,Medium,Asia,Vietnam
+Oats,Clay,Winter,11,24,5.8,7.2,80,132,Medium,107,54,84,500,1500,90,45,45,1.79,415,Medium,India,Tamil Nadu
+Guava,Clay,Monsoon,18,36,5.5,7.8,71,165,Medium,174,58,79,200,1000,100,50,100,17.45,2648,Easy,Nepal,Kaski
+Rice (Marshi),Red,Summer,17,30,5.4,7.1,111,234,High,174,66,96,1500,2500,100,50,50,3.27,1121,Medium,Nepal,Sunsari
+Jute,Peaty,Spring,25,35,6.3,7.3,102,200,High,122,65,85,200,600,80,40,80,2.87,878,Medium,Nepal,Mustang
+Guava,Peaty,Summer,20,34,5.5,7.6,90,138,Medium,186,57,85,200,1000,100,50,100,20.24,2555,Easy,Nepal,Chitwan
+Red Chili,Alluvial,Spring,20,34,5.8,7.3,71,134,Medium,125,53,83,300,1000,100,50,80,1.74,1641,Medium,India,Assam
+Soybean,Alluvial,Autumn,22,33,5.8,7.7,60,90,Medium,109,55,80,300,1000,80,40,60,1.96,813,Medium,Asia,Thailand
+Tomato,Loamy,Spring,20,26,5.8,7.3,75,131,Medium,69,61,85,200,1000,120,60,100,20.75,3358,Medium,Asia,Thailand
+Mustard Greens,Loamy,Monsoon,8,26,6.1,7.2,20,92,Medium,61,60,70,200,800,80,40,60,10.91,1044,Easy,Asia,Vietnam
+Sweet Potato,Clay,Spring,20,32,5.7,7.1,53,70,Low,114,50,84,300,1500,80,40,80,16.67,1636,Easy,Nepal,Dhankuta
+Millet (Finger),Loamy,Winter,21,33,5.6,7.5,48,107,Low,83,40,71,500,1500,70,35,35,1.76,331,Medium,Nepal,Sunsari
+Wheat (Spring),Sandy,Winter,8,26,6.2,7.6,38,112,Medium,107,48,71,200,600,120,60,60,3.89,802,Medium,India,Andhra Pradesh
+Apple (Mustang),Peaty,Autumn,5,26,5.6,7.3,97,107,Medium,210,60,77,2000,3500,50,30,70,13.94,2393,Hard,Nepal,Dhankuta
+Coriander,Silty,Summer,17,24,6.2,7.5,26,78,Medium,55,60,77,200,800,60,30,40,6.92,665,Easy,Nepal,Sindhupalchok
+Jute,Peaty,Autumn,26,35,5.8,7.3,113,212,High,114,67,85,200,600,80,40,80,2.95,788,Medium,India,Punjab
+Okra,Clay,Autumn,27,37,6.3,7.2,35,95,Medium,50,56,76,200,800,80,40,60,12.0,1243,Easy,Asia,Thailand
+Rice (Aman),Clay,Monsoon,21,38,4.7,7.3,131,317,High,130,73,86,0,500,110,55,55,4.18,1106,Easy,Asia,Indonesia
+Kodo Millet,Black,Autumn,20,34,5.4,7.5,61,105,Low,82,50,73,400,1500,60,30,30,1.5,318,Medium,Nepal,Jhapa
+Brinjal,Black,Autumn,18,34,6.1,7.5,80,103,Medium,91,58,89,200,800,120,60,100,28.2,2949,Medium,India,West Bengal
+Sesame,Alluvial,Monsoon,23,36,5.9,7.3,13,56,Low,90,38,67,200,800,60,30,30,0.84,578,Easy,Nepal,Mustang
+Cucumber,Sandy,Spring,20,37,6.1,7.6,53,108,High,68,60,82,200,800,80,40,60,32.78,2599,Easy,Asia,Vietnam
+Pomegranate,Sandy,Autumn,17,33,5.6,7.5,47,106,Low,188,45,69,500,1500,120,60,100,9.94,2614,Medium,India,Tamil Nadu
+Coriander Seed,Laterite,Autumn,17,23,5.9,7.5,31,70,Medium,93,44,71,300,1000,60,30,40,0.88,1016,Medium,Nepal,Bara
+Tea,Loamy,Winter,10,28,4.6,5.7,206,386,High,365,83,96,500,2000,120,60,60,1.62,3944,Medium,Nepal,Chitwan
+Papaya,Laterite,Monsoon,20,34,6.0,7.2,100,150,Medium,272,65,84,200,800,150,80,150,36.71,3686,Easy,Asia,Thailand
+Large Cardamom,Peaty,Summer,9,27,4.7,6.2,153,357,High,314,78,100,1000,2000,40,40,60,0.56,2588,Hard,Asia,Thailand
+Millet (Pearl),Clay,Summer,25,40,5.9,8.2,53,70,Low,80,31,56,200,800,60,30,30,1.73,346,Easy,Nepal,Sunsari
+Capsicum,Black,Monsoon,16,32,6.2,7.2,77,118,Medium,73,66,84,200,1000,110,55,90,14.85,2591,Medium,Nepal,Mustang
+Radish,Silty,Monsoon,9,26,6.0,7.3,52,70,Medium,68,60,75,200,800,80,40,60,15.0,1185,Easy,Nepal,Jhapa
+Millet (Finger),Black,Autumn,18,34,5.2,7.7,43,102,Low,83,36,73,500,1500,70,35,35,1.67,454,Medium,Nepal,Mustang
+Lemon,Peaty,Monsoon,19,36,5.3,7.6,61,135,Medium,127,58,81,200,1000,100,50,80,15.08,2345,Easy,Nepal,Sunsari
+Rice (Aman),Sandy,Monsoon,18,37,5.1,7.7,165,292,High,145,69,94,0,500,110,55,55,3.44,945,Easy,India,West Bengal
+Coffee,Sandy,Autumn,15,23,5.4,6.5,131,213,Medium,359,61,89,800,2000,120,60,100,1.65,2977,Hard,Asia,Vietnam
+Pomegranate,Alluvial,Spring,13,35,5.6,7.3,46,117,Low,174,45,75,500,1500,120,60,100,13.44,2877,Medium,Nepal,Morang
+Foxtail Millet,Loamy,Autumn,21,34,5.9,7.3,58,98,Low,80,41,69,300,1200,60,30,30,1.23,289,Easy,Asia,Thailand
+Jackfruit,Laterite,Monsoon,24,37,5.4,7.4,92,216,Medium,185,55,85,200,800,100,50,100,23.65,2348,Easy,Asia,Vietnam
+Fenugreek Seed,Peaty,Summer,9,32,5.8,7.8,12,64,Medium,93,44,67,300,1000,60,30,30,0.73,616,Medium,India,Andhra Pradesh
+Carrot,Alluvial,Autumn,10,25,6.1,7.2,46,65,Medium,96,64,78,200,1000,100,50,100,26.05,1826,Easy,Nepal,Bara
+Potato,Sandy,Summer,13,25,5.0,6.4,57,116,Medium,73,56,83,500,2000,150,80,120,21.4,2562,Medium,Nepal,Chitwan
+Ridge Gourd,Loamy,Winter,26,35,6.0,7.7,41,119,Medium,68,63,87,200,800,80,40,60,16.37,1760,Easy,Nepal,Kaski
+Mustard Greens,Silty,Spring,10,25,5.7,7.4,42,75,Medium,54,59,74,200,800,80,40,60,9.79,1288,Easy,Nepal,Ilam
+Pigeon Pea,Clay,Monsoon,19,34,5.9,7.5,39,82,Low,186,41,71,300,1000,60,30,40,0.99,591,Medium,Nepal,Morang
+Coconut,Sandy,Spring,26,35,5.5,8.1,94,207,Medium,372,62,89,200,500,120,60,120,2.08,1675,Medium,Nepal,Ilam
+Millet (Finger),Sandy,Monsoon,18,33,5.7,7.3,32,115,Low,97,35,69,500,1500,70,35,35,1.62,351,Medium,India,West Bengal
+Ridge Gourd,Silty,Summer,23,36,6.1,7.7,52,115,Medium,66,64,89,200,800,80,40,60,15.89,1566,Easy,Nepal,Morang
+Areca Nut,Black,Spring,19,36,5.3,7.5,135,248,High,355,68,87,200,800,150,80,150,1.81,2564,Medium,Nepal,Bara
+Red Chili,Silty,Summer,18,36,6.2,7.6,63,115,Medium,125,56,76,300,1000,100,50,80,1.35,1639,Medium,India,Andhra Pradesh
+Maize (Irrigated),Alluvial,Autumn,18,35,5.3,7.2,46,109,High,115,63,87,200,1000,120,60,60,4.1,891,Medium,India,Punjab
+Sorghum (Jowar),Loamy,Monsoon,26,40,5.8,7.9,55,86,Low,128,33,66,300,1000,80,40,40,1.89,444,Medium,Nepal,Ilam
+Rice (Boro),Red,Summer,16,30,5.1,7.4,34,95,High,157,46,75,0,500,130,65,65,4.38,1096,Medium,Asia,Vietnam
+Pear,Red,Spring,12,24,5.8,7.2,90,149,Medium,111,50,74,1000,2500,100,50,100,13.82,2512,Hard,Asia,Sri Lanka
+Maize (Rainfed),Sandy,Spring,18,35,5.6,6.9,59,133,Medium,85,50,83,200,1000,100,50,50,2.1,595,Medium,Nepal,Kaski
+Coffee,Alluvial,Autumn,17,27,5.4,6.7,109,211,Medium,370,66,84,800,2000,120,60,100,1.78,3085,Hard,India,Maharashtra
+Walnut,Red,Summer,5,27,5.8,7.3,62,152,Medium,190,48,73,1500,3000,100,50,100,4.46,3293,Hard,Nepal,Bara
+Barley,Alluvial,Spring,12,26,5.9,7.3,46,66,Low,110,44,65,500,1500,80,40,40,2.32,533,Medium,Asia,Bangladesh
+Guava,Red,Winter,22,33,5.5,7.5,76,148,Medium,182,52,75,200,1000,100,50,100,20.28,2841,Easy,India,Andhra Pradesh
+Foxtail Millet,Sandy,Spring,19,35,6.0,7.6,20,80,Low,76,45,62,300,1200,60,30,30,1.27,359,Easy,India,Assam
+Carrot,Clay,Monsoon,11,25,5.8,7.6,26,73,Medium,94,56,76,200,1000,100,50,100,21.23,2400,Easy,Asia,Bangladesh
+Sorghum (Jowar),Sandy,Spring,26,42,5.9,7.8,25,68,Low,126,37,67,300,1000,80,40,40,1.95,480,Medium,Asia,Indonesia
+Capsicum,Black,Spring,17,31,5.7,7.3,49,139,Medium,73,69,81,200,1000,110,55,90,15.03,2328,Medium,Nepal,Mustang
+Spinach,Laterite,Monsoon,9,24,6.1,7.5,34,70,Medium,49,60,83,200,800,80,40,60,10.48,1484,Easy,India,Gujarat
+Spinach,Red,Winter,11,26,5.8,7.7,23,76,Medium,55,59,85,200,800,80,40,60,10.58,1552,Easy,Nepal,Sindhupalchok
+Pumpkin,Peaty,Summer,20,36,6.2,7.6,57,69,Medium,108,48,80,200,800,80,40,80,29.95,1809,Easy,Asia,Sri Lanka
+Cauliflower,Red,Autumn,13,24,6.2,6.9,68,83,High,75,62,89,200,800,150,80,120,16.87,1865,Medium,Nepal,Gulmi
+Red Chili,Silty,Monsoon,19,35,6.0,7.3,80,140,Medium,119,52,85,300,1000,100,50,80,1.6,2110,Medium,Nepal,Sindhupalchok
+Cashew,Red,Monsoon,23,34,5.5,7.3,40,106,Low,243,56,82,200,800,80,40,60,1.6,2002,Medium,Asia,Sri Lanka
+Maize (Irrigated),Alluvial,Summer,19,33,5.2,7.2,47,98,High,103,60,87,200,1000,120,60,60,4.77,841,Medium,India,Maharashtra
+Fennel,Peaty,Summer,9,30,5.9,7.7,30,67,Medium,156,41,68,300,1000,80,40,60,0.93,1303,Medium,Nepal,Gulmi
+Turmeric,Laterite,Winter,18,30,4.5,7.5,152,267,High,210,66,95,0,1500,60,60,120,26.24,1437,Easy,Asia,Thailand
+Rice (Aus),Clay,Summer,22,40,5.1,7.5,85,205,High,129,57,81,0,500,120,60,60,3.7,860,Easy,India,Himachal Pradesh
+Kodo Millet,Sandy,Monsoon,20,36,5.6,7.6,50,99,Low,91,46,68,400,1500,60,30,30,1.2,281,Medium,India,West Bengal
+Guava,Black,Autumn,18,36,5.5,7.6,65,139,Medium,171,55,85,200,1000,100,50,100,20.08,2867,Easy,Nepal,Mustang
+Horse Gram,Clay,Autumn,18,37,5.6,7.4,32,50,Low,121,36,70,300,1000,40,20,25,0.85,379,Easy,India,West Bengal
+Rice (Marshi),Peaty,Summer,15,32,5.5,7.0,112,255,High,170,71,96,1500,2500,100,50,50,2.54,946,Medium,Nepal,Ilam
+Rice (Basmati),Laterite,Monsoon,18,39,6.1,7.8,84,145,Medium,114,59,82,300,800,100,50,50,2.78,1428,Medium,India,Punjab
+Barnyard Millet,Clay,Autumn,21,34,5.6,7.6,57,125,Medium,80,51,79,300,1200,70,35,35,1.28,362,Easy,Nepal,Mustang
+Quinoa,Black,Monsoon,17,30,5.8,8.2,70,84,Low,125,42,72,1000,3000,70,35,35,1.56,439,Hard,Nepal,Morang
+Brinjal,Red,Summer,22,34,6.1,7.3,66,105,Medium,94,64,87,200,800,120,60,100,20.25,2518,Medium,India,Maharashtra
+Rice (Basmati),Clay,Summer,20,38,6.2,7.6,91,158,Medium,129,55,85,300,800,100,50,50,2.74,1175,Medium,India,Assam
+Jute,Silty,Monsoon,22,37,6.2,7.4,92,219,High,121,65,87,200,600,80,40,80,2.08,926,Medium,Nepal,Ilam
+Garlic,Silty,Autumn,10,24,5.8,7.5,50,84,Medium,112,51,79,300,1200,120,60,80,10.77,2376,Hard,Asia,Indonesia
+Rice (Basmati),Laterite,Monsoon,22,42,6.1,7.4,97,152,Medium,123,51,81,300,800,100,50,50,2.74,994,Medium,India,Uttar Pradesh
+Kodo Millet,Sandy,Autumn,22,37,5.5,7.5,33,111,Low,85,49,70,400,1500,60,30,30,1.05,296,Medium,Nepal,Sunsari
+Millet (Pearl),Alluvial,Autumn,23,38,5.9,8.1,20,96,Low,74,35,60,200,800,60,30,30,1.4,401,Easy,Asia,Thailand
+Rice (Marshi),Sandy,Monsoon,16,31,5.8,7.0,127,268,High,167,68,97,1500,2500,100,50,50,3.04,1163,Medium,Nepal,Kaski
+Muskmelon,Alluvial,Summer,26,37,5.9,7.2,21,67,Medium,70,51,74,200,800,90,45,90,23.21,2143,Easy,India,Maharashtra
+Sunflower,Laterite,Autumn,20,36,6.3,7.6,26,83,Medium,111,45,73,300,1000,80,40,80,1.3,711,Medium,India,Andhra Pradesh
+Rice (Boro),Loamy,Summer,13,28,5.2,7.4,66,94,High,155,48,77,0,500,130,65,65,3.94,1149,Medium,Nepal,Sunsari
+Cardamom,Laterite,Spring,14,30,4.9,6.4,131,281,High,362,71,100,800,2000,100,50,100,0.52,5967,Hard,Nepal,Bara
+Bottle Gourd,Clay,Spring,21,35,6.2,7.2,57,85,High,83,65,90,200,800,90,45,70,28.27,1587,Easy,Nepal,Ilam
+Capsicum,Sandy,Spring,18,32,5.7,6.8,62,129,Medium,81,63,83,200,1000,110,55,90,14.21,2033,Medium,India,Haryana
+Linseed,Peaty,Spring,11,27,6.2,7.0,43,42,Low,126,43,61,300,1000,60,30,30,1.14,524,Medium,Nepal,Morang
+Guava,Red,Spring,22,37,5.5,7.6,93,146,Medium,189,52,82,200,1000,100,50,100,18.28,2641,Easy,India,Uttar Pradesh
+Cardamom,Loamy,Summer,14,28,5.1,6.7,151,289,High,368,76,97,800,2000,100,50,100,0.4,5184,Hard,Asia,Indonesia
+Coriander Seed,Silty,Summer,13,23,5.7,7.3,45,63,Medium,99,42,65,300,1000,60,30,40,0.66,777,Medium,Nepal,Gulmi
+Spinach,Black,Spring,12,26,6.2,7.2,36,67,Medium,52,59,79,200,800,80,40,60,11.67,1625,Easy,Nepal,Kailali
+Garlic,Clay,Winter,12,26,5.8,7.2,28,69,Medium,130,59,74,300,1200,120,60,80,10.85,2361,Hard,India,Haryana
+Walnut,Clay,Winter,3,24,6.0,7.7,83,150,Medium,179,46,70,1500,3000,100,50,100,5.89,3082,Hard,Nepal,Mustang
+Cowpea,Clay,Monsoon,26,34,6.1,7.8,40,100,Low,92,50,77,200,800,60,30,40,7.15,822,Easy,Nepal,Mustang
+Cumin,Red,Monsoon,13,28,6.0,8.0,19,45,Low,124,30,55,300,1000,60,30,30,0.52,1176,Hard,India,Punjab
+Drumstick,Sandy,Summer,25,42,6.0,7.7,46,82,Low,206,48,79,200,800,80,40,60,51.5,2677,Easy,Nepal,Jhapa
+Jackfruit,Loamy,Winter,23,33,5.2,7.6,86,193,Medium,175,60,82,200,800,100,50,100,20.75,2035,Easy,Nepal,Gulmi
+Coffee,Peaty,Winter,14,24,5.7,6.5,121,206,Medium,372,68,85,800,2000,120,60,100,1.76,2779,Hard,Nepal,Morang
+Kodo Millet,Sandy,Summer,22,33,5.5,7.2,30,90,Low,83,43,67,400,1500,60,30,30,1.55,359,Medium,India,Tamil Nadu
+Apple (Mustang),Alluvial,Autumn,7,26,5.8,6.9,94,132,Medium,239,60,80,2000,3500,50,30,70,14.77,5806,Hard,Nepal,Kaski
+Cotton,Peaty,Winter,21,37,6.3,8.1,47,73,Low,184,42,64,200,600,100,50,100,2.93,1306,Medium,Asia,Vietnam
+Rice (Jhum),Alluvial,Monsoon,20,33,5.3,7.2,130,182,Medium,114,69,83,500,1500,80,40,40,2.4,677,Hard,Nepal,Morang
+Garlic,Sandy,Summer,10,25,5.8,7.3,24,96,Medium,118,52,79,300,1200,120,60,80,13.69,2745,Hard,India,Gujarat
+Coffee,Peaty,Autumn,16,23,5.4,6.5,104,202,Medium,372,70,89,800,2000,120,60,100,1.37,2462,Hard,Nepal,Kailali
+Foxtail Millet,Black,Autumn,22,37,5.9,7.6,48,100,Low,85,35,60,300,1200,60,30,30,1.23,269,Easy,Nepal,Chitwan
+Red Chili,Black,Winter,21,34,5.9,7.3,43,109,Medium,117,55,79,300,1000,100,50,80,1.7,2115,Medium,Nepal,Kailali
+Chili,Black,Summer,22,33,5.9,7.7,53,139,Medium,91,62,89,200,1000,100,50,80,10.47,1860,Medium,Nepal,Jhapa
+Oats,Alluvial,Spring,10,23,5.8,7.1,71,121,Medium,96,54,76,500,1500,90,45,45,1.86,458,Medium,Nepal,Morang
+Cumin,Loamy,Monsoon,17,28,6.2,8.2,26,22,Low,113,36,54,300,1000,60,30,30,0.5,1275,Hard,Nepal,Ilam
+Castor,Clay,Monsoon,19,42,6.1,7.7,43,68,Low,173,31,58,200,800,80,40,40,1.43,665,Medium,Nepal,Dhankuta
+Cowpea,Loamy,Monsoon,23,34,6.2,7.4,33,95,Low,97,52,70,200,800,60,30,40,6.13,727,Easy,India,Haryana
+Millet (Pearl),Red,Monsoon,27,41,6.3,7.9,29,86,Low,85,28,59,200,800,60,30,30,1.64,298,Easy,Asia,Vietnam
+Spinach,Laterite,Monsoon,11,27,5.9,7.5,33,80,Medium,53,55,76,200,800,80,40,60,11.11,1147,Easy,Nepal,Mustang
+Coffee,Loamy,Spring,16,24,5.3,6.4,130,186,Medium,363,62,83,800,2000,120,60,100,1.55,3292,Hard,Nepal,Bara
+Areca Nut,Black,Autumn,18,34,5.4,7.6,160,266,High,365,73,88,200,800,150,80,150,2.32,2884,Medium,Nepal,Dhankuta
+Coffee (Arabica),Sandy,Summer,13,25,6.2,6.4,141,261,Medium,264,66,81,800,1600,60,40,80,1.04,2686,Hard,Asia,Sri Lanka
+Apple (Mustang),Red,Autumn,7,25,5.4,7.2,64,111,Medium,216,59,84,2000,3500,50,30,70,13.23,2556,Hard,Asia,Sri Lanka
+Jackfruit,Silty,Spring,25,36,5.3,7.6,106,201,Medium,178,65,80,200,800,100,50,100,21.92,2109,Easy,Nepal,Ilam
+Drumstick,Black,Autumn,25,38,6.2,7.4,48,100,Low,191,52,80,200,800,80,40,60,51.96,2504,Easy,India,Himachal Pradesh
+Fenugreek,Peaty,Autumn,12,30,5.9,7.3,19,75,Medium,32,54,72,200,800,60,30,40,7.95,768,Easy,Nepal,Chitwan
+Orange,Laterite,Winter,16,34,5.5,7.5,98,218,Medium,180,65,81,500,1500,120,60,100,9.8,2888,Medium,India,Haryana
+Guava,Red,Autumn,19,37,5.4,7.8,69,155,Medium,185,59,75,200,1000,100,50,100,21.37,2222,Easy,Nepal,Gulmi
+Mustard Greens,Alluvial,Autumn,8,26,6.0,7.7,56,71,Medium,59,56,80,200,800,80,40,60,9.62,1309,Easy,Nepal,Jhapa
+Lentil,Silty,Spring,13,27,5.8,7.5,12,49,Low,81,39,64,300,1000,50,25,30,0.98,677,Medium,Nepal,Ilam
+Apple,Clay,Autumn,16,26,6.0,6.7,71,145,Medium,141,51,75,1500,3000,120,60,120,17.91,3030,Hard,Asia,Thailand
+Red Kidney Bean,Red,Monsoon,16,23,6.3,6.8,70,106,Medium,119,65,83,500,1500,70,35,50,1.28,954,Hard,India,Andhra Pradesh
+Turmeric,Black,Spring,20,28,4.3,7.3,153,258,High,267,71,92,0,1500,60,60,120,26.25,2488,Easy,Nepal,Bara
+Mustard,Silty,Spring,8,24,5.8,7.6,60,86,Low,93,48,74,0,2000,60,40,40,1.21,939,Easy,Nepal,Morang
+Cabbage,Alluvial,Winter,14,23,5.8,6.9,55,119,High,89,66,81,200,800,140,70,110,19.78,2572,Medium,Nepal,Sunsari
+Brinjal,Sandy,Spring,20,35,6.1,7.2,60,130,Medium,102,61,88,200,800,120,60,100,22.18,3140,Medium,Asia,Indonesia
+Millet (Finger),Silty,Monsoon,20,35,5.4,7.3,67,89,Low,84,39,73,500,1500,70,35,35,2.1,424,Medium,Nepal,Kaski
+Cashew,Laterite,Winter,23,36,5.7,7.2,80,119,Low,241,60,79,200,800,80,40,60,1.68,2392,Medium,Asia,Bangladesh
+Apple,Silty,Autumn,17,23,5.7,7.2,63,159,Medium,141,57,78,1500,3000,120,60,120,17.42,3274,Hard,India,Punjab
+Brinjal,Clay,Autumn,18,35,5.9,7.3,79,107,Medium,93,60,88,200,800,120,60,100,25.25,3241,Medium,India,Gujarat
+Bottle Gourd,Loamy,Summer,22,35,5.9,7.8,41,103,High,86,58,87,200,800,90,45,70,27.35,1573,Easy,India,Uttar Pradesh
+Cardamom,Alluvial,Spring,17,32,4.9,6.8,166,294,High,366,72,98,800,2000,100,50,100,0.45,4924,Hard,Nepal,Bara
+Cumin,Loamy,Autumn,17,29,5.8,8.2,38,38,Low,123,38,53,300,1000,60,30,30,0.72,996,Hard,Asia,Indonesia
+Areca Nut,Loamy,Summer,19,33,5.5,7.5,144,231,High,359,68,95,200,800,150,80,150,2.22,2949,Medium,Nepal,Kaski
+Cabbage,Loamy,Summer,16,24,6.1,6.8,36,108,High,70,69,88,200,800,140,70,110,16.24,2295,Medium,India,Assam
+Mustard Greens,Peaty,Monsoon,12,26,5.8,7.8,31,76,Medium,70,57,77,200,800,80,40,60,8.95,1307,Easy,Asia,Sri Lanka
+Pigeon Pea,Alluvial,Winter,18,37,6.0,7.4,37,76,Low,185,41,68,300,1000,60,30,40,1.02,571,Medium,Nepal,Jhapa
+Castor,Silty,Summer,20,42,6.0,8.1,41,75,Low,189,38,61,200,800,80,40,40,1.49,508,Medium,Nepal,Mustang
+Beetroot,Silty,Monsoon,10,25,6.2,7.2,27,93,Medium,73,60,71,200,1000,100,50,80,14.72,1794,Medium,Nepal,Morang
+Coriander Seed,Black,Summer,17,23,5.8,7.3,45,61,Medium,90,44,65,300,1000,60,30,40,0.65,790,Medium,Nepal,Gulmi
+Drumstick,Silty,Spring,27,40,6.1,7.4,36,87,Low,201,48,80,200,800,80,40,60,59.25,2717,Easy,Nepal,Gulmi
+Rubber,Alluvial,Winter,27,34,5.2,7.2,164,299,High,361,73,95,200,800,100,50,100,1.84,2591,Medium,Nepal,Ilam
+Finger Millet,Laterite,Summer,18,28,5.2,7.5,79,115,Low,95,50,77,500,2000,70,35,35,1.32,336,Medium,India,Uttar Pradesh
+Strawberry,Red,Summer,14,26,5.8,7.1,40,111,Medium,81,68,89,500,1500,100,50,100,15.1,4002,Hard,Asia,Vietnam
+Red Chili,Loamy,Spring,22,33,5.9,7.6,46,113,Medium,117,53,82,300,1000,100,50,80,1.67,1675,Medium,Nepal,Ilam
+Papaya,Alluvial,Monsoon,20,36,6.1,7.6,66,147,Medium,262,62,84,200,800,150,80,150,38.84,4001,Easy,Nepal,Bara
+Sorghum (Jowar),Black,Monsoon,26,38,6.1,8.3,53,85,Low,112,40,66,300,1000,80,40,40,1.62,528,Medium,Nepal,Morang
+Oats,Peaty,Autumn,12,23,6.2,7.1,79,115,Medium,96,54,78,500,1500,90,45,45,2.1,396,Medium,Nepal,Sunsari
+Pineapple,Silty,Spring,20,31,4.6,6.4,98,131,Medium,180,64,90,200,800,120,60,120,20.24,3079,Medium,Asia,Sri Lanka
+Peas,Alluvial,Winter,10,23,5.7,7.6,55,79,Medium,66,62,85,300,1200,60,30,40,7.27,1275,Medium,Nepal,Sunsari
+Apple (Mustang),Black,Autumn,4,27,5.7,6.9,85,116,Medium,198,60,76,2000,3500,50,30,70,9.99,2484,Hard,Asia,Thailand
+Bottle Gourd,Laterite,Monsoon,21,34,6.1,7.6,44,100,High,89,56,86,200,800,90,45,70,28.94,1606,Easy,Nepal,Sindhupalchok
+Pineapple,Black,Winter,22,32,4.3,6.3,66,134,Medium,174,63,86,200,800,120,60,120,27.4,2439,Medium,India,Punjab
+Coffee (Arabica),Black,Monsoon,17,25,6.1,6.6,151,260,Medium,265,75,85,800,1600,60,40,80,1.3,2259,Hard,Nepal,Chitwan
+Sesame,Clay,Summer,23,36,6.2,7.3,26,42,Low,99,44,65,200,800,60,30,30,0.82,451,Easy,Nepal,Ilam
+Coconut,Silty,Winter,24,33,5.3,7.9,94,194,Medium,365,58,83,200,500,120,60,120,2.51,1996,Medium,Nepal,Sunsari
+Lemon,Loamy,Summer,20,34,5.3,7.2,76,158,Medium,119,58,83,200,1000,100,50,80,15.01,1955,Easy,Nepal,Gulmi
+Jute,Peaty,Winter,26,36,5.9,7.8,98,212,High,128,67,90,200,600,80,40,80,2.45,773,Medium,India,Uttar Pradesh
+Potato,Peaty,Monsoon,15,27,5.3,6.4,30,80,Medium,74,58,86,500,2000,150,80,120,22.37,2078,Medium,India,Assam
+Chickpea,Peaty,Autumn,14,23,6.1,7.6,26,41,Low,102,36,66,300,1000,60,30,40,1.2,672,Medium,Asia,Bangladesh
+Coriander,Laterite,Summer,16,25,6.1,7.7,36,60,Medium,40,58,76,200,800,60,30,40,5.8,652,Easy,Asia,Sri Lanka
+Mango,Sandy,Monsoon,26,35,5.6,7.5,69,165,Low,129,54,80,200,800,100,50,100,10.48,2235,Medium,Asia,Vietnam
+Onion,Laterite,Summer,13,23,5.8,7.3,40,97,Medium,114,65,82,200,800,100,50,80,21.58,2256,Medium,Nepal,Dhankuta
+Bitter Gourd,Silty,Spring,24,35,5.9,7.8,46,139,Medium,79,65,88,200,800,100,50,80,14.98,1434,Medium,India,Andhra Pradesh
+Castor,Loamy,Autumn,20,40,6.1,8.3,10,44,Low,173,34,55,200,800,80,40,40,1.55,675,Medium,Nepal,Dhankuta
+Oats,Black,Summer,10,26,6.3,6.9,59,113,Medium,107,51,84,500,1500,90,45,45,2.39,443,Medium,Asia,Bangladesh
+Tomato,Peaty,Monsoon,19,30,5.7,7.2,44,140,Medium,75,68,87,200,1000,120,60,100,27.05,4127,Medium,Nepal,Sunsari
+Pineapple,Laterite,Monsoon,21,30,4.8,6.6,87,131,Medium,178,60,80,200,800,120,60,120,29.74,3456,Medium,Nepal,Sindhupalchok
+Almond,Black,Summer,6,30,6.1,8.2,54,97,Low,178,36,69,500,2000,80,40,80,3.42,4334,Hard,India,Gujarat
+Jackfruit,Red,Monsoon,24,35,5.8,7.4,99,213,Medium,175,61,88,200,800,100,50,100,21.51,2034,Easy,India,Maharashtra
+Onion,Red,Winter,14,25,6.2,7.8,63,83,Medium,105,57,78,200,800,100,50,80,15.53,1947,Medium,Nepal,Mustang
+Almond,Laterite,Monsoon,3,32,5.9,8.2,28,69,Low,186,39,66,500,2000,80,40,80,2.59,4243,Hard,India,Assam
+Red Kidney Bean,Clay,Winter,17,24,5.8,6.8,56,135,Medium,127,56,88,500,1500,70,35,50,1.2,927,Hard,India,Uttar Pradesh
+Cardamom,Loamy,Monsoon,14,28,5.2,6.7,141,302,High,365,73,91,800,2000,100,50,100,0.46,5612,Hard,India,Haryana
+Maize (Irrigated),Clay,Summer,22,35,5.3,7.0,43,99,High,107,60,80,200,1000,120,60,60,4.51,928,Medium,India,West Bengal
+Kodo Millet,Black,Winter,19,33,5.6,7.6,64,117,Low,97,44,68,400,1500,60,30,30,1.33,342,Medium,Nepal,Chitwan
+Litchi,Clay,Monsoon,19,35,5.4,7.2,89,185,High,121,63,90,200,800,150,80,120,7.64,2625,Medium,Asia,Thailand
+Apple (Mustang),Black,Autumn,5,23,5.6,7.2,90,107,Medium,232,59,78,2000,3500,50,30,70,13.41,5772,Hard,Nepal,Mustang
+Bitter Gourd,Peaty,Monsoon,24,37,6.0,7.7,80,139,Medium,73,63,85,200,800,100,50,80,17.3,1832,Medium,Nepal,Kailali
+Chili,Alluvial,Autumn,21,35,6.2,7.6,64,119,Medium,85,62,80,200,1000,100,50,80,11.26,2149,Medium,Nepal,Bara
+Cauliflower,Laterite,Spring,16,23,5.7,6.7,33,103,High,67,66,80,200,800,150,80,120,17.59,2116,Medium,Nepal,Chitwan
+Kodo Millet,Loamy,Autumn,19,36,5.6,7.3,58,87,Low,90,50,71,400,1500,60,30,30,1.1,360,Medium,India,Tamil Nadu
+Safflower,Laterite,Spring,13,30,5.8,7.6,38,74,Low,132,38,62,300,1000,60,30,30,1.04,620,Medium,India,Maharashtra
+Cumin,Peaty,Winter,16,31,6.1,8.1,4,52,Low,115,32,58,300,1000,60,30,30,0.56,980,Hard,Asia,Indonesia
+Carrot,Clay,Autumn,11,26,5.8,7.4,21,93,Medium,82,59,84,200,1000,100,50,100,25.36,2181,Easy,Nepal,Dhankuta
+Foxtail Millet,Silty,Autumn,22,34,6.0,7.7,33,91,Low,74,44,65,300,1200,60,30,30,1.27,330,Easy,Asia,Indonesia
+Rice (Boro),Loamy,Summer,15,30,4.7,7.6,43,81,High,160,52,71,0,500,130,65,65,5.02,1147,Medium,Nepal,Sindhupalchok
+Cashew,Sandy,Monsoon,27,33,5.3,7.5,59,114,Low,249,50,84,200,800,80,40,60,1.62,1817,Medium,India,Tamil Nadu
+Capsicum,Laterite,Winter,16,28,6.2,7.1,57,110,Medium,70,66,81,200,1000,110,55,90,17.13,1893,Medium,Nepal,Sindhupalchok
+Turmeric,Sandy,Winter,22,30,4.3,7.6,147,230,High,240,67,95,0,1500,60,60,120,23.68,1137,Easy,Nepal,Kailali
+Peach,Black,Summer,17,31,5.8,7.1,100,170,Medium,120,53,70,500,2000,100,50,100,12.45,2589,Hard,India,Andhra Pradesh
+Plum,Black,Monsoon,10,27,5.8,6.9,81,135,Medium,130,55,77,1000,2500,90,45,90,9.61,2492,Hard,India,Punjab
+Rice (Boro),Silty,Monsoon,17,31,5.1,7.5,46,114,High,155,48,73,0,500,130,65,65,3.91,1016,Medium,India,Andhra Pradesh
+Tomato,Peaty,Winter,17,28,6.1,7.3,78,106,Medium,75,70,85,200,1000,120,60,100,21.51,3144,Medium,Nepal,Chitwan
+Safflower,Laterite,Summer,15,31,6.0,7.5,28,51,Low,129,39,65,300,1000,60,30,30,1.01,532,Medium,Nepal,Jhapa
+Pear,Silty,Spring,11,26,6.3,7.1,94,150,Medium,130,50,70,1000,2500,100,50,100,9.65,3220,Hard,India,Gujarat
+Carrot,Sandy,Winter,10,24,5.8,7.2,26,85,Medium,99,56,81,200,1000,100,50,100,22.38,1996,Easy,Nepal,Dhankuta
+Coriander,Sandy,Monsoon,14,26,6.1,7.5,24,72,Medium,40,51,76,200,800,60,30,40,6.58,652,Easy,Asia,Indonesia
+Fenugreek,Clay,Summer,9,29,5.9,7.7,32,45,Medium,38,53,69,200,800,60,30,40,9.25,758,Easy,India,Punjab
+Fenugreek Seed,Loamy,Winter,9,32,5.8,7.5,44,73,Medium,82,49,74,300,1000,60,30,30,0.83,564,Medium,Nepal,Morang
+Safflower,Black,Summer,14,32,6.3,7.7,36,53,Low,121,42,65,300,1000,60,30,30,1.09,618,Medium,Nepal,Morang
+Wheat (Spring),Silty,Winter,12,25,5.8,7.3,61,82,Medium,109,48,78,200,600,120,60,60,3.71,687,Medium,Asia,Bangladesh
+Green Beans,Clay,Winter,20,29,6.1,7.2,51,104,Medium,83,62,84,200,1000,70,35,50,9.41,1122,Medium,India,Punjab
+Oats,Black,Spring,12,27,5.8,6.8,50,140,Medium,103,57,82,500,1500,90,45,45,2.13,475,Medium,Nepal,Dhankuta
+Black Pepper,Red,Autumn,27,37,5.3,7.3,142,270,High,364,73,89,200,800,120,60,120,0.88,2852,Hard,Nepal,Ilam
+Watermelon,Black,Autumn,24,33,5.8,7.4,20,72,Medium,81,48,78,200,800,100,50,100,33.73,2533,Easy,India,West Bengal
+Kodo Millet,Red,Autumn,18,37,5.5,7.7,59,114,Low,88,49,66,400,1500,60,30,30,1.13,271,Medium,Nepal,Kailali
+Soybean,Sandy,Summer,18,35,6.2,7.7,57,86,Medium,109,56,78,300,1000,80,40,60,1.46,740,Medium,Nepal,Dhankuta
+Bottle Gourd,Silty,Autumn,21,36,5.8,7.5,31,113,High,83,57,87,200,800,90,45,70,27.97,2105,Easy,Nepal,Jhapa
+Fennel,Red,Monsoon,9,32,5.8,7.7,27,68,Medium,157,49,74,300,1000,80,40,60,1.06,1105,Medium,Nepal,Chitwan
+Buckwheat (Phapar),Alluvial,Monsoon,11,25,4.8,6.8,70,110,Low,74,52,74,2000,4000,20,20,20,1.55,402,Easy,Nepal,Gulmi
+Kodo Millet,Alluvial,Monsoon,21,34,5.3,7.2,42,107,Low,93,50,75,400,1500,60,30,30,1.15,308,Medium,Nepal,Kailali
+Horse Gram,Clay,Spring,20,33,5.5,7.8,23,68,Low,127,44,70,300,1000,40,20,25,0.9,408,Easy,Nepal,Morang
+Coffee,Black,Winter,15,26,5.6,6.2,123,216,Medium,359,61,89,800,2000,120,60,100,1.47,3532,Hard,Nepal,Sunsari
+Pigeon Pea,Alluvial,Monsoon,20,34,6.1,7.5,49,60,Low,185,41,66,300,1000,60,30,40,0.96,660,Medium,Nepal,Bara
+Wheat (Winter),Black,Winter,6,22,6.0,7.4,28,97,Medium,123,41,74,300,800,110,55,55,3.26,607,Medium,India,Andhra Pradesh
+Wheat (Spring),Loamy,Winter,11,26,5.9,7.7,58,117,Medium,105,46,75,200,600,120,60,60,4.19,659,Medium,India,Gujarat
+Sorghum (Jowar),Sandy,Winter,23,39,6.2,8.1,39,82,Low,125,36,62,300,1000,80,40,40,2.32,420,Medium,Nepal,Kaski
+Finger Millet,Red,Monsoon,19,30,5.6,7.3,47,114,Low,102,44,78,500,2000,70,35,35,1.82,308,Medium,Asia,Sri Lanka
+Potato,Loamy,Autumn,15,24,5.1,6.3,52,100,Medium,82,64,86,500,2000,150,80,120,16.43,2380,Medium,Nepal,Dhankuta
+Pigeon Pea,Loamy,Spring,19,33,6.1,7.4,22,91,Low,190,44,65,300,1000,60,30,40,1.24,779,Medium,Nepal,Bara
+Papaya,Clay,Summer,23,35,6.3,7.2,70,134,Medium,260,62,83,200,800,150,80,150,34.65,2870,Easy,Nepal,Gulmi
+Onion,Silty,Autumn,13,25,5.8,7.6,60,109,Medium,120,55,83,200,800,100,50,80,20.88,1909,Medium,Asia,Sri Lanka
+Sugarcane,Peaty,Autumn,20,35,5.9,7.5,119,184,High,365,60,81,200,800,150,80,150,80.8,2394,Medium,Asia,Sri Lanka
+Lemon,Peaty,Spring,22,36,5.8,7.8,97,146,Medium,117,55,79,200,1000,100,50,80,15.32,1878,Easy,Nepal,Jhapa
+Rice (Marshi),Loamy,Monsoon,17,31,5.4,6.7,135,255,High,157,75,96,1500,2500,100,50,50,3.89,1180,Medium,India,Punjab
+Chili,Alluvial,Autumn,20,33,5.9,7.7,77,140,Medium,82,62,85,200,1000,100,50,80,9.61,2182,Medium,India,Gujarat
+Barnyard Millet,Loamy,Spring,22,34,5.4,7.4,53,121,Medium,81,45,77,300,1200,70,35,35,1.66,338,Easy,Nepal,Bara
+Brinjal,Alluvial,Summer,19,35,6.2,7.4,45,110,Medium,102,64,83,200,800,120,60,100,23.51,2831,Medium,India,Gujarat
+Peas,Silty,Monsoon,12,27,5.9,7.4,23,79,Medium,65,58,78,300,1200,60,30,40,8.48,1336,Medium,Asia,Bangladesh
+Coriander,Laterite,Summer,13,27,6.1,7.5,33,95,Medium,55,55,75,200,800,60,30,40,6.73,662,Easy,Nepal,Dhankuta
+Cowpea,Silty,Spring,25,35,5.8,7.6,40,64,Low,91,55,71,200,800,60,30,40,6.72,850,Easy,Nepal,Mustang
+Almond,Clay,Winter,7,30,6.2,8.2,32,64,Low,182,40,65,500,2000,80,40,80,2.78,4439,Hard,Nepal,Sunsari
+Spinach,Loamy,Summer,9,26,5.8,7.4,34,65,Medium,49,60,77,200,800,80,40,60,12.27,1401,Easy,Nepal,Dhankuta
+Green Beans,Black,Summer,17,32,6.0,7.8,49,111,Medium,88,63,83,200,1000,70,35,50,11.09,1509,Medium,Asia,Thailand
+Pumpkin,Red,Summer,18,37,6.3,7.3,31,93,Medium,102,54,75,200,800,80,40,80,28.65,1759,Easy,India,Andhra Pradesh
+Green Beans,Black,Monsoon,19,30,6.3,7.4,37,100,Medium,75,59,87,200,1000,70,35,50,8.4,1084,Medium,India,Assam
+Red Chili,Clay,Spring,21,37,5.8,7.6,40,121,Medium,113,53,82,300,1000,100,50,80,1.6,1997,Medium,Nepal,Ilam
+Apple (Mustang),Laterite,Autumn,3,24,5.7,7.0,65,136,Medium,195,56,83,2000,3500,50,30,70,11.63,4080,Hard,India,Tamil Nadu
+Orange,Clay,Monsoon,14,37,5.3,7.3,114,181,Medium,186,60,75,500,1500,120,60,100,11.53,3016,Medium,Nepal,Mustang
+Black Pepper,Peaty,Summer,24,36,5.5,7.1,141,249,High,370,66,90,200,800,120,60,120,0.88,3767,Hard,Nepal,Chitwan
+Pineapple,Black,Autumn,22,28,4.4,6.7,69,166,Medium,180,63,87,200,800,120,60,120,20.0,2470,Medium,India,Andhra Pradesh
+Ginger,Laterite,Summer,19,33,5.4,6.7,143,299,High,261,73,85,300,1500,80,50,50,23.79,2466,Medium,Nepal,Bara
+Sugarcane,Peaty,Spring,18,35,6.2,7.6,103,181,High,362,63,85,200,800,150,80,150,76.11,2109,Medium,India,Uttar Pradesh
+Black Gram,Red,Winter,27,36,5.8,7.6,52,81,Medium,98,51,76,200,800,50,25,30,1.18,645,Easy,Nepal,Chitwan
+Peas,Sandy,Monsoon,9,27,5.8,7.5,56,84,Medium,68,55,78,300,1200,60,30,40,6.68,1125,Medium,Asia,Bangladesh
+Foxtail Millet,Silty,Spring,20,37,6.1,7.7,26,99,Low,88,43,70,300,1200,60,30,30,1.15,311,Easy,India,Assam
+Black Gram,Loamy,Monsoon,27,37,6.3,7.3,39,92,Medium,92,45,75,200,800,50,25,30,0.8,627,Easy,India,Maharashtra
+Peach,Clay,Spring,15,29,5.8,6.9,62,161,Medium,115,56,76,500,2000,100,50,100,11.39,2103,Hard,Nepal,Chitwan
+Almond,Red,Winter,6,31,6.0,8.3,34,84,Low,176,42,66,500,2000,80,40,80,2.84,3376,Hard,India,Gujarat
+Wheat (Winter),Red,Winter,6,20,6.3,7.4,38,91,Medium,123,50,68,300,800,110,55,55,3.17,584,Medium,Asia,Bangladesh
+Soybean,Red,Autumn,22,33,6.3,7.6,44,97,Medium,105,58,75,300,1000,80,40,60,1.66,802,Medium,Nepal,Sunsari
+Coriander,Laterite,Summer,14,23,6.2,7.5,20,70,Medium,40,60,76,200,800,60,30,40,6.55,911,Easy,India,Punjab
+Black Gram,Peaty,Autumn,24,37,6.1,7.3,54,62,Medium,91,50,78,200,800,50,25,30,1.16,616,Easy,Asia,Bangladesh
+Cotton,Black,Autumn,18,33,6.5,8.2,53,62,Low,172,40,60,200,600,100,50,100,2.25,1096,Medium,Asia,Indonesia
+Fennel,Sandy,Summer,12,32,5.7,7.8,45,79,Medium,144,47,67,300,1000,80,40,60,0.96,1059,Medium,Nepal,Mustang
+Peas,Black,Winter,10,24,6.0,7.7,59,62,Medium,63,56,78,300,1200,60,30,40,7.86,1296,Medium,Nepal,Kailali
+Fenugreek,Black,Autumn,12,30,5.7,7.5,48,62,Medium,37,48,65,200,800,60,30,40,6.76,887,Easy,India,Andhra Pradesh
+Pineapple,Black,Summer,20,32,4.5,6.6,96,137,Medium,175,61,80,200,800,120,60,120,28.52,3459,Medium,India,Tamil Nadu
+Garlic,Silty,Autumn,8,27,5.8,7.2,34,83,Medium,117,53,80,300,1200,120,60,80,10.4,2833,Hard,Nepal,Dhankuta
+Foxtail Millet,Silty,Spring,21,36,6.2,7.8,38,81,Low,86,41,69,300,1200,60,30,30,1.57,327,Easy,Nepal,Sindhupalchok
+Apple,Sandy,Autumn,14,26,5.9,7.0,67,150,Medium,143,52,73,1500,3000,120,60,120,12.78,3355,Hard,India,West Bengal
+Sesame,Alluvial,Autumn,27,35,5.9,7.5,23,56,Low,86,36,61,200,800,60,30,30,0.79,456,Easy,India,Punjab
+Rice (Boro),Sandy,Summer,17,32,4.9,7.6,69,116,High,165,46,74,0,500,130,65,65,4.1,1036,Medium,India,Assam
+Quinoa,Alluvial,Summer,14,30,6.2,7.9,36,82,Low,125,46,68,1000,3000,70,35,35,1.27,380,Hard,India,Andhra Pradesh
+Tobacco,Laterite,Autumn,15,32,5.5,7.8,30,61,Medium,113,51,73,300,1000,120,60,120,1.96,2026,Hard,Nepal,Gulmi
+Rice (Aman),Laterite,Summer,19,40,5.2,7.4,153,282,High,149,68,86,0,500,110,55,55,4.54,1038,Easy,Asia,Sri Lanka
+Sesame,Clay,Spring,24,34,6.0,7.8,20,71,Low,87,43,63,200,800,60,30,30,0.89,587,Easy,Asia,Sri Lanka
+Pigeon Pea,Alluvial,Summer,19,37,6.2,7.5,42,87,Low,170,47,67,300,1000,60,30,40,1.15,694,Medium,Nepal,Kaski
+Fenugreek,Red,Spring,11,28,6.2,7.3,41,68,Medium,37,45,75,200,800,60,30,40,6.85,918,Easy,Nepal,Bara
+Horse Gram,Peaty,Spring,21,37,5.5,7.3,14,57,Low,111,45,60,300,1000,40,20,25,0.75,379,Easy,India,Punjab
+Plum,Sandy,Autumn,10,23,6.0,6.9,75,167,Medium,123,59,72,1000,2500,90,45,90,8.49,2719,Hard,Asia,Thailand
+Brinjal,Silty,Summer,19,35,5.7,7.2,44,111,Medium,95,58,90,200,800,120,60,100,25.57,2766,Medium,Asia,Bangladesh
+Tea,Red,Monsoon,8,30,4.7,5.3,220,396,High,365,85,100,500,2000,120,60,60,1.86,2044,Medium,Nepal,Mustang
+Apple,Loamy,Autumn,16,25,5.9,7.2,64,138,Medium,154,57,75,1500,3000,120,60,120,15.72,2835,Hard,Asia,Indonesia
+Millet (Pearl),Loamy,Winter,24,38,5.8,7.9,30,61,Low,89,27,61,200,800,60,30,30,1.3,340,Easy,India,Haryana
+Oats,Sandy,Winter,11,26,5.8,7.1,40,116,Medium,101,56,81,500,1500,90,45,45,2.21,463,Medium,Nepal,Jhapa
+Cotton,Clay,Autumn,21,37,6.4,7.7,44,67,Low,182,37,63,200,600,100,50,100,2.89,1157,Medium,Asia,Bangladesh
+Coffee,Sandy,Autumn,17,24,5.5,6.4,120,202,Medium,374,61,89,800,2000,120,60,100,1.8,3318,Hard,Nepal,Sunsari
+Ginger,Loamy,Spring,20,33,5.7,6.7,135,301,High,258,66,85,300,1500,80,50,50,18.87,2019,Medium,Nepal,Morang
+Maize (Rainfed),Silty,Summer,20,36,5.7,6.8,67,132,Medium,100,57,75,200,1000,100,50,50,2.72,562,Medium,India,Gujarat
+Turmeric,Alluvial,Spring,21,32,4.7,7.7,134,265,High,239,69,85,0,1500,60,60,120,25.59,1568,Easy,Asia,Bangladesh
+Apple,Clay,Autumn,13,26,6.1,7.0,80,144,Medium,154,53,73,1500,3000,120,60,120,16.91,3219,Hard,Asia,Vietnam
+Potato,Black,Winter,15,27,4.9,6.5,61,87,Medium,87,55,81,500,2000,150,80,120,16.68,2932,Medium,India,Andhra Pradesh
+Linseed,Sandy,Monsoon,10,24,5.9,7.3,43,55,Low,126,42,69,300,1000,60,30,30,1.01,587,Medium,India,Andhra Pradesh
+Cardamom,Alluvial,Monsoon,13,32,4.7,6.2,159,295,High,356,77,100,800,2000,100,50,100,0.44,5204,Hard,Nepal,Dhankuta
+Beetroot,Peaty,Monsoon,12,23,5.9,7.3,47,83,Medium,84,58,70,200,1000,100,50,80,19.55,1656,Medium,Nepal,Kailali
+Wheat (Winter),Red,Winter,3,18,6.2,7.4,53,98,Medium,139,40,66,300,800,110,55,55,2.71,741,Medium,Asia,Thailand
+Wheat (Spring),Silty,Winter,12,25,6.0,7.5,48,119,Medium,106,53,76,200,600,120,60,60,3.92,699,Medium,Nepal,Chitwan
+Groundnut,Alluvial,Summer,21,33,6.1,7.3,57,60,Medium,120,41,68,200,800,60,30,60,1.34,841,Medium,India,Uttar Pradesh
+Pigeon Pea,Loamy,Monsoon,20,37,6.1,7.4,55,81,Low,189,43,70,300,1000,60,30,40,1.0,652,Medium,Nepal,Chitwan
+Wheat (Spring),Peaty,Winter,11,26,6.3,7.4,34,111,Medium,112,50,70,200,600,120,60,60,3.9,645,Medium,Asia,Thailand
+Green Beans,Laterite,Monsoon,17,30,6.0,7.5,60,94,Medium,83,58,81,200,1000,70,35,50,8.91,1256,Medium,India,Andhra Pradesh
+Chili,Laterite,Winter,20,37,5.7,7.7,40,111,Medium,92,57,80,200,1000,100,50,80,9.91,2396,Medium,Asia,Bangladesh
+Millet (Pearl),Sandy,Monsoon,24,42,5.9,7.8,34,94,Low,73,28,57,200,800,60,30,30,1.4,322,Easy,India,Gujarat
+Coconut,Loamy,Spring,27,34,5.7,8.1,120,196,Medium,358,64,83,200,500,120,60,120,2.47,1812,Medium,Nepal,Kailali
+Turmeric,Black,Spring,18,32,4.7,7.3,160,250,High,237,75,95,0,1500,60,60,120,20.22,1137,Easy,India,Uttar Pradesh
+Finger Millet,Clay,Monsoon,17,31,5.4,7.6,50,107,Low,107,49,80,500,2000,70,35,35,1.83,437,Medium,India,Haryana
+Cardamom,Silty,Winter,14,29,5.0,6.7,148,281,High,363,70,95,800,2000,100,50,100,0.48,5825,Hard,Nepal,Kailali
+Cucumber,Clay,Summer,22,33,5.9,7.8,65,102,High,65,70,84,200,800,80,40,60,31.72,2254,Easy,Nepal,Mustang
+Cotton,Laterite,Spring,19,36,6.7,7.8,27,69,Low,172,38,68,200,600,100,50,100,2.35,1412,Medium,Nepal,Sindhupalchok
+Soybean,Loamy,Monsoon,22,37,6.0,7.5,63,96,Medium,113,51,80,300,1000,80,40,60,1.93,797,Medium,India,West Bengal
+Carrot,Clay,Autumn,12,23,5.8,7.7,29,70,Medium,99,57,82,200,1000,100,50,100,25.41,1825,Easy,India,Maharashtra
+Rice (Basmati),Loamy,Summer,18,39,6.2,7.3,85,138,Medium,110,57,77,300,800,100,50,50,2.51,1107,Medium,Asia,Bangladesh
+Black Gram,Alluvial,Monsoon,27,36,6.0,7.4,60,75,Medium,97,50,70,200,800,50,25,30,0.95,635,Easy,India,Gujarat
+Muskmelon,Laterite,Spring,26,33,6.2,7.5,24,61,Medium,76,51,70,200,800,90,45,90,28.14,2153,Easy,Nepal,Dhankuta
+Sesame,Red,Monsoon,27,33,6.2,7.7,39,62,Low,94,38,70,200,800,60,30,30,0.69,461,Easy,Nepal,Jhapa
+Large Cardamom,Black,Monsoon,10,26,4.3,6.2,136,351,High,340,78,100,1000,2000,40,40,60,0.61,3678,Hard,Nepal,Ilam
+Black Gram,Red,Summer,25,33,6.2,7.8,39,87,Medium,83,46,75,200,800,50,25,30,1.1,659,Easy,Nepal,Morang
+Wheat (Spring),Red,Winter,8,23,6.0,7.5,67,101,Medium,119,54,76,200,600,120,60,60,2.91,761,Medium,Nepal,Kailali
+Watermelon,Black,Monsoon,26,35,6.3,7.7,40,81,Medium,96,48,71,200,800,100,50,100,28.68,2820,Easy,India,Punjab
+Coriander,Alluvial,Spring,13,23,6.2,7.4,21,85,Medium,55,54,77,200,800,60,30,40,6.87,683,Easy,Nepal,Sindhupalchok
+Potato,Black,Winter,17,24,5.1,6.6,35,94,Medium,77,58,82,500,2000,150,80,120,16.1,2950,Medium,Nepal,Gulmi
+Pigeon Pea,Loamy,Winter,21,37,5.9,7.6,53,94,Low,178,40,72,300,1000,60,30,40,1.19,760,Medium,Nepal,Sindhupalchok
+Maize (Irrigated),Silty,Summer,18,37,5.8,7.0,56,82,High,101,59,83,200,1000,120,60,60,4.73,848,Medium,Nepal,Ilam
+Tea,Black,Spring,10,28,4.3,5.7,180,402,High,365,77,99,500,2000,120,60,60,1.74,3054,Medium,Nepal,Kailali
+Cashew,Red,Autumn,27,37,5.7,7.6,76,119,Low,242,53,76,200,800,80,40,60,1.66,2277,Medium,India,West Bengal
+Soybean,Loamy,Summer,21,34,6.3,7.4,34,83,Medium,120,52,78,300,1000,80,40,60,1.62,593,Medium,Asia,Bangladesh
+Apple,Silty,Autumn,13,25,5.7,7.2,86,130,Medium,143,60,75,1500,3000,120,60,120,17.04,2871,Hard,Nepal,Sindhupalchok
+Red Kidney Bean,Peaty,Spring,15,27,6.3,7.2,61,140,Medium,119,56,88,500,1500,70,35,50,1.43,814,Hard,India,Himachal Pradesh
+Chili,Peaty,Winter,21,34,6.0,7.7,52,116,Medium,93,61,89,200,1000,100,50,80,11.38,1696,Medium,Nepal,Dhankuta
+Garlic,Loamy,Summer,8,26,6.1,7.3,55,68,Medium,113,57,77,300,1200,120,60,80,9.69,2267,Hard,India,Assam
+Orange,Loamy,Summer,16,34,5.5,7.5,87,208,Medium,190,58,80,500,1500,120,60,100,13.29,3188,Medium,Nepal,Jhapa
+Almond,Loamy,Monsoon,6,32,6.0,7.7,20,87,Low,179,40,70,500,2000,80,40,80,3.05,3479,Hard,India,Tamil Nadu
+Ridge Gourd,Peaty,Spring,23,37,6.2,7.5,50,94,Medium,68,61,81,200,800,80,40,60,17.13,1520,Easy,Nepal,Bara
+Pigeon Pea,Sandy,Winter,18,33,6.0,7.7,49,98,Low,186,42,71,300,1000,60,30,40,1.29,565,Medium,Nepal,Kaski
+Muskmelon,Loamy,Autumn,24,34,5.8,7.4,22,88,Medium,80,47,71,200,800,90,45,90,27.49,2516,Easy,Asia,Sri Lanka
+Guava,Red,Autumn,21,33,5.5,7.5,73,144,Medium,171,52,84,200,1000,100,50,100,17.25,2186,Easy,India,Haryana
+Ridge Gourd,Silty,Autumn,23,35,5.9,7.8,64,111,Medium,79,59,80,200,800,80,40,60,21.04,1722,Easy,Nepal,Chitwan
+Fennel,Red,Spring,8,32,6.3,7.3,40,48,Medium,143,40,69,300,1000,80,40,60,1.1,1120,Medium,Asia,Sri Lanka
+Sugarcane,Peaty,Autumn,21,36,5.8,7.5,116,206,High,362,60,89,200,800,150,80,150,77.96,2113,Medium,Asia,Indonesia
+Cauliflower,Red,Autumn,14,27,5.7,7.1,47,119,High,61,62,90,200,800,150,80,120,15.7,1673,Medium,Asia,Vietnam
+Groundnut,Clay,Winter,18,35,6.1,7.3,25,62,Medium,110,42,66,200,800,60,30,60,1.27,668,Medium,Asia,Bangladesh
+Cotton,Alluvial,Monsoon,18,36,6.4,8.0,51,94,Low,174,40,61,200,600,100,50,100,2.35,1387,Medium,Nepal,Morang
+Potato,Alluvial,Autumn,14,23,5.2,6.7,32,98,Medium,88,64,89,500,2000,150,80,120,22.01,2849,Medium,Nepal,Kailali
+Coffee,Alluvial,Monsoon,17,26,5.6,6.5,123,206,Medium,368,63,85,800,2000,120,60,100,1.46,3118,Hard,Asia,Sri Lanka
+Guava,Peaty,Winter,21,34,5.5,7.6,65,157,Medium,185,52,83,200,1000,100,50,100,18.32,2140,Easy,Asia,Sri Lanka
+Grapes,Clay,Monsoon,13,33,6.3,7.7,61,101,Medium,141,55,73,300,1000,150,80,120,18.68,3535,Hard,Nepal,Kailali
+Muskmelon,Silty,Autumn,23,36,5.9,7.2,37,73,Medium,86,53,78,200,800,90,45,90,25.51,2516,Easy,Asia,Vietnam
+Cashew,Red,Monsoon,24,33,5.7,7.4,73,101,Low,245,56,79,200,800,80,40,60,1.69,2089,Medium,Asia,Indonesia
+Wheat (Winter),Red,Winter,4,18,6.3,7.3,43,84,Medium,126,45,65,300,800,110,55,55,2.95,623,Medium,Nepal,Jhapa
+Rice (Jhum),Peaty,Summer,21,34,5.4,6.9,138,213,Medium,110,63,82,500,1500,80,40,40,2.49,570,Hard,Nepal,Mustang
+Pumpkin,Clay,Winter,19,33,6.2,7.5,44,66,Medium,92,54,80,200,800,80,40,80,26.05,1675,Easy,Nepal,Mustang
+Linseed,Clay,Summer,11,26,6.3,6.9,37,50,Low,130,41,67,300,1000,60,30,30,0.87,541,Medium,Asia,Vietnam
+Black Gram,Peaty,Summer,25,35,6.0,7.5,44,96,Medium,92,46,78,200,800,50,25,30,1.0,585,Easy,Nepal,Bara
+Mustard Greens,Peaty,Winter,12,26,6.1,7.6,20,64,Medium,53,57,73,200,800,80,40,60,9.37,1182,Easy,Asia,Sri Lanka
+Orange,Loamy,Spring,17,33,5.3,7.7,109,196,Medium,178,60,84,500,1500,120,60,100,12.24,2738,Medium,Asia,Thailand
+Jute,Black,Summer,25,34,5.8,7.8,117,215,High,124,73,89,200,600,80,40,80,2.87,764,Medium,India,Andhra Pradesh
+Bottle Gourd,Clay,Spring,22,35,6.2,7.3,61,100,High,98,55,89,200,800,90,45,70,25.15,1788,Easy,India,Himachal Pradesh
+Peach,Silty,Summer,13,31,6.0,6.8,84,170,Medium,120,54,74,500,2000,100,50,100,11.97,2547,Hard,Nepal,Dhankuta
+Rubber,Black,Winter,26,37,5.4,6.8,143,297,High,375,74,92,200,800,100,50,100,1.71,2080,Medium,India,Tamil Nadu
+Areca Nut,Black,Summer,18,33,5.4,7.5,136,254,High,373,67,88,200,800,150,80,150,2.39,2939,Medium,India,Gujarat
+Jackfruit,Black,Spring,23,33,5.5,7.5,116,191,Medium,188,55,84,200,800,100,50,100,20.92,2017,Easy,India,Andhra Pradesh
+Lentil,Black,Winter,17,23,6.0,7.6,31,53,Low,100,43,66,300,1000,50,25,30,1.28,541,Medium,Nepal,Kaski
+Rice (Marshi),Sandy,Summer,17,28,5.5,7.2,117,237,High,156,73,94,1500,2500,100,50,50,3.21,997,Medium,India,West Bengal
+Capsicum,Clay,Autumn,20,30,5.7,6.8,51,134,Medium,82,69,86,200,1000,110,55,90,17.11,2173,Medium,Asia,Vietnam
+Pumpkin,Laterite,Summer,19,36,5.9,7.4,36,75,Medium,100,53,78,200,800,80,40,80,28.65,1837,Easy,India,Maharashtra
+Kodo Millet,Peaty,Winter,20,37,5.6,7.7,46,97,Low,81,44,71,400,1500,60,30,30,1.47,324,Medium,Asia,Vietnam
+Bottle Gourd,Black,Winter,20,35,6.1,7.6,49,80,High,82,55,83,200,800,90,45,70,29.32,1756,Easy,India,Tamil Nadu
+Mustard,Loamy,Monsoon,12,23,5.9,7.8,34,88,Low,112,52,74,0,2000,60,40,40,1.26,1085,Easy,Asia,Thailand
+Garlic,Black,Autumn,9,23,5.9,7.4,42,79,Medium,116,53,70,300,1200,120,60,80,12.71,2833,Hard,Asia,Thailand
+Carrot,Laterite,Autumn,11,27,6.3,7.4,28,83,Medium,94,63,75,200,1000,100,50,100,24.0,2001,Easy,Nepal,Kaski
+Pigeon Pea,Clay,Spring,18,35,5.9,7.3,36,65,Low,176,42,70,300,1000,60,30,40,1.25,653,Medium,Nepal,Bara
+Litchi,Silty,Summer,20,35,5.3,6.9,116,187,High,124,63,83,200,800,150,80,120,8.05,3386,Medium,India,Punjab
+Buckwheat (Phapar),Red,Autumn,12,26,5.2,7.1,47,95,Low,63,54,66,2000,4000,20,20,20,1.12,760,Easy,India,Tamil Nadu
+Jackfruit,Peaty,Summer,24,37,5.6,7.3,101,180,Medium,190,60,82,200,800,100,50,100,18.28,2051,Easy,Nepal,Sunsari
+Plum,Peaty,Monsoon,11,24,5.9,7.0,81,157,Medium,130,54,79,1000,2500,90,45,90,11.11,2970,Hard,Nepal,Chitwan
+Coconut,Sandy,Monsoon,27,33,5.4,7.8,83,218,Medium,370,61,81,200,500,120,60,120,2.98,1606,Medium,Asia,Thailand
+Pear,Alluvial,Winter,9,26,6.3,7.1,69,153,Medium,111,57,73,1000,2500,100,50,100,11.26,3094,Hard,India,Tamil Nadu
+Green Beans,Alluvial,Autumn,20,28,5.7,7.8,47,80,Medium,72,59,85,200,1000,70,35,50,10.3,1154,Medium,India,Himachal Pradesh
+Coriander,Silty,Monsoon,17,25,5.9,7.2,31,82,Medium,60,54,73,200,800,60,30,40,5.95,688,Easy,Asia,Vietnam
+Chili,Loamy,Summer,18,33,5.9,7.3,63,105,Medium,95,62,80,200,1000,100,50,80,10.79,1808,Medium,India,Haryana
+Fennel,Silty,Spring,11,30,5.9,7.5,32,80,Medium,159,40,66,300,1000,80,40,60,0.96,1063,Medium,Asia,Bangladesh
+Chili,Alluvial,Autumn,20,34,6.0,7.3,66,137,Medium,89,63,80,200,1000,100,50,80,11.03,1724,Medium,Asia,Vietnam
+Apricot,Alluvial,Spring,8,31,5.9,7.4,73,124,Medium,111,46,68,1000,2500,90,45,90,7.65,2428,Hard,Asia,Indonesia
+Muskmelon,Black,Autumn,27,36,6.2,7.2,60,61,Medium,80,55,70,200,800,90,45,90,23.56,2396,Easy,India,Andhra Pradesh
+Green Beans,Silty,Autumn,18,32,6.2,7.7,45,90,Medium,90,63,84,200,1000,70,35,50,9.95,1476,Medium,Nepal,Gulmi
+Wheat (Winter),Laterite,Winter,6,21,5.9,7.7,42,62,Medium,133,46,73,300,800,110,55,55,2.6,528,Medium,Asia,Vietnam
+Little Millet,Alluvial,Spring,22,33,5.6,7.7,31,81,Low,76,39,75,400,1500,60,30,30,0.97,336,Medium,Nepal,Sindhupalchok
+Grapes,Loamy,Autumn,15,33,6.1,7.3,31,113,Medium,145,46,74,300,1000,150,80,120,23.71,3355,Hard,Nepal,Ilam
+Watermelon,Clay,Winter,26,34,5.8,7.4,43,72,Medium,92,48,78,200,800,100,50,100,35.04,2168,Easy,Nepal,Bara
+Sorghum (Jowar),Loamy,Winter,23,41,6.1,8.3,43,64,Low,112,40,60,300,1000,80,40,40,1.71,470,Medium,India,Punjab
+Rice (Basmati),Laterite,Monsoon,20,42,6.3,7.6,65,146,Medium,121,51,75,300,800,100,50,50,3.56,1075,Medium,Asia,Sri Lanka
+Turmeric,Silty,Summer,20,31,4.5,7.8,151,265,High,272,67,90,0,1500,60,60,120,23.7,2259,Easy,Nepal,Kaski
+Little Millet,Laterite,Autumn,22,34,5.6,7.5,64,112,Low,79,44,69,400,1500,60,30,30,1.04,253,Medium,Nepal,Kailali
+Sunflower,Black,Autumn,19,35,5.7,7.4,29,90,Medium,115,45,75,300,1000,80,40,80,1.66,748,Medium,Nepal,Gulmi
+Oats,Silty,Monsoon,9,23,5.7,7.2,52,122,Medium,101,60,81,500,1500,90,45,45,2.46,543,Medium,India,West Bengal
+Watermelon,Peaty,Summer,27,33,6.1,7.5,29,97,Medium,86,47,75,200,800,100,50,100,28.69,2845,Easy,Nepal,Sunsari
+Sweet Potato,Sandy,Winter,18,29,5.8,6.8,22,74,Low,111,57,84,300,1500,80,40,80,13.95,1963,Easy,Asia,Vietnam
+Barley,Peaty,Winter,9,24,5.7,7.4,42,64,Low,92,35,64,500,1500,80,40,40,2.7,460,Medium,Nepal,Bara
+Litchi,Black,Monsoon,19,36,5.7,6.8,87,187,High,114,65,86,200,800,150,80,120,8.63,2451,Medium,India,Tamil Nadu
+Mango,Alluvial,Summer,22,33,5.3,7.6,72,160,Low,122,55,72,200,800,100,50,100,9.84,2882,Medium,India,Tamil Nadu
+Cabbage,Black,Spring,16,27,5.9,7.2,44,101,High,70,62,82,200,800,140,70,110,18.5,2129,Medium,Asia,Sri Lanka
+Green Beans,Clay,Winter,17,28,6.0,7.2,64,82,Medium,87,61,89,200,1000,70,35,50,10.45,1473,Medium,Nepal,Chitwan
+Black Pepper,Sandy,Summer,25,36,5.6,6.8,169,249,High,371,70,93,200,800,120,60,120,1.14,3566,Hard,Asia,Sri Lanka
+Lemon,Silty,Summer,20,37,5.6,7.7,78,150,Medium,112,57,83,200,1000,100,50,80,14.66,1957,Easy,Nepal,Chitwan
+Buckwheat,Clay,Winter,17,26,5.3,6.8,86,129,Low,90,53,78,800,2500,60,30,30,0.96,320,Hard,Asia,Vietnam
+Sorghum (Jowar),Laterite,Monsoon,23,42,6.0,8.1,58,85,Low,110,35,61,300,1000,80,40,40,2.16,396,Medium,Nepal,Mustang
+Cumin,Clay,Autumn,14,31,6.0,7.9,27,48,Low,125,39,57,300,1000,60,30,30,0.6,1336,Hard,Asia,Sri Lanka
+Guava,Black,Monsoon,20,33,5.7,7.2,74,140,Medium,190,54,84,200,1000,100,50,100,18.42,2906,Easy,Nepal,Mustang
+Mustard,Clay,Winter,8,25,5.7,7.6,21,120,Low,114,47,69,0,2000,60,40,40,1.24,805,Easy,Nepal,Morang
+Black Gram,Red,Summer,27,37,5.8,7.6,21,70,Medium,96,47,70,200,800,50,25,30,1.14,529,Easy,Nepal,Mustang
+Cowpea,Peaty,Summer,24,36,6.2,7.2,56,98,Low,91,51,80,200,800,60,30,40,5.19,814,Easy,Asia,Thailand
+Millet (Pearl),Black,Spring,25,41,6.1,8.1,59,73,Low,83,35,63,200,800,60,30,30,1.24,286,Easy,India,Haryana
+Tea,Red,Winter,10,28,4.6,5.5,206,409,High,365,79,100,500,2000,120,60,60,2.4,3384,Medium,India,Maharashtra
+Sugarcane,Alluvial,Autumn,19,36,5.8,7.7,108,197,High,355,58,81,200,800,150,80,150,64.32,2214,Medium,Asia,Thailand
+Buckwheat,Silty,Autumn,16,25,5.7,6.8,63,132,Low,91,55,72,800,2500,60,30,30,1.14,286,Hard,Nepal,Bara
+Apple (Mustang),Sandy,Autumn,6,27,5.3,6.9,99,109,Medium,217,64,77,2000,3500,50,30,70,8.38,2847,Hard,India,West Bengal
+Red Chili,Silty,Winter,22,35,6.3,7.5,59,118,Medium,110,54,83,300,1000,100,50,80,1.7,2068,Medium,Nepal,Jhapa
+Sorghum (Jowar),Silty,Spring,27,38,6.3,7.8,21,94,Low,117,31,68,300,1000,80,40,40,2.31,495,Medium,Nepal,Chitwan
+Tobacco,Clay,Autumn,17,29,5.2,7.2,42,74,Medium,128,46,73,300,1000,120,60,120,1.74,2594,Hard,India,Gujarat
+Ginger,Alluvial,Spring,19,36,5.7,6.6,130,302,High,254,70,91,300,1500,80,50,50,21.49,2346,Medium,Nepal,Mustang
+Apple (Mustang),Laterite,Autumn,7,27,5.7,7.0,61,115,Medium,237,61,85,2000,3500,50,30,70,12.71,2203,Hard,Asia,Indonesia
+Lentil (Musuro),Silty,Spring,13,26,6.3,7.6,47,88,Low,122,48,71,0,2000,20,40,20,1.18,1249,Easy,Nepal,Kailali
+Barnyard Millet,Peaty,Winter,19,36,5.4,7.4,53,133,Medium,77,55,75,300,1200,70,35,35,1.57,380,Easy,Nepal,Chitwan
+Turmeric,Clay,Spring,21,30,4.3,7.2,157,261,High,259,75,85,0,1500,60,60,120,27.82,1284,Easy,Nepal,Sindhupalchok
+Cashew,Red,Monsoon,23,36,5.5,7.7,47,130,Low,246,55,81,200,800,80,40,60,1.62,2370,Medium,India,Maharashtra
+Black Pepper,Clay,Winter,23,33,5.6,7.3,146,267,High,357,74,89,200,800,120,60,120,1.08,3231,Hard,India,Haryana
+Cumin,Clay,Summer,16,32,5.9,7.7,28,24,Low,119,36,51,300,1000,60,30,30,0.54,1279,Hard,Asia,Thailand
+Grapes,Laterite,Monsoon,15,36,6.0,7.4,51,107,Medium,145,55,75,300,1000,150,80,120,20.26,3971,Hard,Nepal,Gulmi
+Pigeon Pea,Clay,Spring,19,33,6.0,7.6,48,97,Low,181,47,70,300,1000,60,30,40,1.36,610,Medium,Nepal,Kailali
+Areca Nut,Black,Autumn,19,37,5.4,7.8,168,246,High,357,69,86,200,800,150,80,150,1.93,2684,Medium,Nepal,Ilam
+Banana,Red,Winter,19,35,5.4,7.0,117,180,High,331,66,84,200,800,200,100,300,38.46,4398,Medium,Nepal,Dhankuta
+Grapes,Peaty,Monsoon,13,37,5.8,7.5,60,110,Medium,158,55,71,300,1000,150,80,120,19.07,3202,Hard,Nepal,Bara
+Apple (Mustang),Peaty,Autumn,3,24,5.3,7.2,94,115,Medium,234,61,76,2000,3500,50,30,70,9.18,4102,Hard,Nepal,Morang
+Jute,Loamy,Summer,26,35,6.1,7.3,86,213,High,123,75,87,200,600,80,40,80,2.98,893,Medium,Nepal,Sindhupalchok
+Carrot,Loamy,Spring,12,25,6.1,7.7,41,90,Medium,98,57,75,200,1000,100,50,100,27.28,1880,Easy,Nepal,Kaski
+Chili,Clay,Monsoon,19,33,6.1,7.3,69,104,Medium,92,58,89,200,1000,100,50,80,10.24,2352,Medium,India,Himachal Pradesh
+Pigeon Pea,Alluvial,Summer,21,36,5.8,7.3,23,89,Low,171,44,67,300,1000,60,30,40,1.44,581,Medium,Nepal,Jhapa
+Coffee (Arabica),Red,Autumn,13,24,5.8,6.7,130,258,Medium,242,75,80,800,1600,60,40,80,1.73,2092,Hard,Nepal,Bara
+Lentil (Musuro),Loamy,Winter,15,26,6.1,7.7,37,95,Low,138,51,67,0,2000,20,40,20,1.44,878,Easy,India,Gujarat
+Drumstick,Clay,Monsoon,24,39,6.0,7.6,45,107,Low,204,49,81,200,800,80,40,60,54.64,2935,Easy,Nepal,Jhapa
+Linseed,Black,Autumn,9,26,5.9,6.9,31,51,Low,129,36,60,300,1000,60,30,30,1.11,559,Medium,Asia,Bangladesh
+Sorghum (Jowar),Clay,Winter,24,41,5.9,8.0,53,80,Low,122,36,60,300,1000,80,40,40,2.22,387,Medium,India,West Bengal
+Horse Gram,Loamy,Autumn,18,33,5.8,7.5,41,50,Low,115,43,67,300,1000,40,20,25,0.79,471,Easy,Nepal,Chitwan
+Rice (Jhum),Alluvial,Monsoon,21,36,5.2,7.3,137,213,Medium,128,60,87,500,1500,80,40,40,2.19,482,Hard,India,Andhra Pradesh
+Mustard,Clay,Winter,8,25,6.0,7.4,26,82,Low,113,48,70,0,2000,60,40,40,1.06,643,Easy,India,Haryana
+Wheat (Winter),Black,Winter,6,19,6.2,7.7,50,98,Medium,130,46,72,300,800,110,55,55,3.24,701,Medium,Nepal,Ilam
+Rice (Boro),Laterite,Monsoon,14,28,5.2,7.3,32,86,High,157,48,80,0,500,130,65,65,4.9,1052,Medium,Nepal,Dhankuta
+Green Gram,Loamy,Monsoon,25,34,5.8,7.3,20,67,Low,80,46,66,200,800,40,20,25,0.86,476,Easy,India,Punjab
+Grapes,Laterite,Monsoon,17,34,6.1,7.4,48,107,Medium,147,55,79,300,1000,150,80,120,22.58,4154,Hard,Asia,Thailand
+Pear,Loamy,Spring,10,24,6.2,6.9,99,158,Medium,110,55,77,1000,2500,100,50,100,9.81,2264,Hard,India,Andhra Pradesh
+Groundnut,Laterite,Autumn,20,33,5.9,7.8,37,98,Medium,118,46,73,200,800,60,30,60,1.66,931,Medium,Nepal,Ilam
+Okra,Clay,Winter,26,36,6.2,7.8,63,115,Medium,53,55,77,200,800,80,40,60,11.95,1559,Easy,India,Maharashtra
+Kodo Millet,Peaty,Autumn,21,34,5.4,7.5,59,100,Low,95,47,66,400,1500,60,30,30,1.1,366,Medium,Nepal,Chitwan
+Walnut,Laterite,Monsoon,4,23,5.9,7.7,87,155,Medium,184,53,75,1500,3000,100,50,100,5.82,3563,Hard,India,Andhra Pradesh
+Soybean,Silty,Summer,20,33,5.8,7.4,43,95,Medium,109,54,84,300,1000,80,40,60,1.71,758,Medium,Asia,Indonesia
+Banana,Red,Spring,22,37,5.4,7.0,91,201,High,320,67,86,200,800,200,100,300,36.6,4243,Medium,Nepal,Chitwan
+Sesame,Silty,Spring,27,36,6.1,7.5,13,46,Low,89,41,67,200,800,60,30,30,0.74,480,Easy,Nepal,Ilam
+Rice (Aman),Sandy,Monsoon,18,38,5.2,7.8,140,318,High,136,75,95,0,500,110,55,55,4.58,788,Easy,India,Punjab
+Rice (Jhum),Red,Summer,20,37,5.5,7.2,132,186,Medium,127,67,83,500,1500,80,40,40,2.22,618,Hard,India,Assam
+Peach,Alluvial,Summer,17,31,6.0,7.2,77,132,Medium,112,57,72,500,2000,100,50,100,12.37,2687,Hard,Nepal,Morang
+Coconut,Alluvial,Summer,23,34,5.7,7.8,82,180,Medium,371,58,89,200,500,120,60,120,2.36,1685,Medium,Asia,Bangladesh
+Pear,Red,Spring,10,25,5.9,6.8,68,135,Medium,122,50,76,1000,2500,100,50,100,13.11,2586,Hard,India,Andhra Pradesh
+Mustard,Red,Spring,12,25,5.7,7.6,45,110,Low,117,48,66,0,2000,60,40,40,1.43,875,Easy,Nepal,Morang
+Watermelon,Black,Autumn,27,35,6.0,7.7,29,78,Medium,90,54,71,200,800,100,50,100,30.07,2773,Easy,Nepal,Kailali
+Areca Nut,Loamy,Autumn,19,33,5.7,7.8,163,230,High,368,74,93,200,800,150,80,150,2.17,2484,Medium,Nepal,Gulmi
+Rice (Jhum),Black,Summer,20,35,5.7,7.3,138,220,Medium,122,67,86,500,1500,80,40,40,2.18,575,Hard,Asia,Indonesia
+Tobacco,Peaty,Summer,13,32,5.5,7.7,22,94,Medium,123,51,73,300,1000,120,60,120,1.81,2976,Hard,Asia,Bangladesh
+Oats,Loamy,Spring,11,24,5.8,6.9,59,113,Medium,95,52,78,500,1500,90,45,45,1.86,515,Medium,India,Himachal Pradesh
+Kodo Millet,Peaty,Winter,21,35,5.7,7.7,50,80,Low,89,41,66,400,1500,60,30,30,1.37,307,Medium,Asia,Bangladesh
+Jute,Clay,Spring,22,37,5.9,7.2,107,220,High,111,71,87,200,600,80,40,80,2.11,795,Medium,India,West Bengal
+Rice (Jhum),Loamy,Summer,22,36,5.3,6.9,120,192,Medium,119,66,90,500,1500,80,40,40,2.37,676,Hard,Nepal,Sindhupalchok
+Barnyard Millet,Peaty,Autumn,19,34,5.4,7.4,56,138,Medium,75,49,80,300,1200,70,35,35,1.42,333,Easy,Nepal,Jhapa
+Strawberry,Black,Winter,17,26,5.7,7.1,49,105,Medium,88,70,88,500,1500,100,50,100,17.72,5218,Hard,India,Uttar Pradesh
+Guava,Clay,Spring,20,37,5.4,7.8,99,137,Medium,178,51,80,200,1000,100,50,100,23.15,2878,Easy,Nepal,Sunsari
+Lentil (Musuro),Clay,Monsoon,17,23,5.8,7.4,41,90,Low,117,50,67,0,2000,20,40,20,1.46,1259,Easy,India,Gujarat
+Rice (Aman),Black,Monsoon,18,40,5.1,7.6,151,295,High,132,73,87,0,500,110,55,55,3.97,854,Easy,Nepal,Bara
+Sweet Potato,Red,Autumn,19,32,5.2,6.9,29,68,Low,110,59,76,300,1500,80,40,80,16.35,1440,Easy,Nepal,Bara
+Tobacco,Alluvial,Monsoon,15,31,5.4,7.3,50,67,Medium,110,51,75,300,1000,120,60,120,1.76,2825,Hard,Nepal,Kaski
+Muskmelon,Loamy,Spring,24,37,5.9,7.4,34,61,Medium,70,50,70,200,800,90,45,90,28.67,1991,Easy,Nepal,Sunsari
+Capsicum,Red,Spring,20,28,5.9,7.2,67,115,Medium,76,63,87,200,1000,110,55,90,16.25,2150,Medium,Asia,Indonesia
+Okra,Alluvial,Winter,24,37,5.7,7.4,66,80,Medium,57,59,84,200,800,80,40,60,11.9,1395,Easy,Nepal,Jhapa
+Fennel,Clay,Spring,8,32,6.1,7.4,19,53,Medium,149,45,67,300,1000,80,40,60,1.02,1314,Medium,Nepal,Ilam
+Cowpea,Loamy,Summer,26,33,6.3,7.5,58,62,Low,89,55,71,200,800,60,30,40,6.15,816,Easy,India,Maharashtra
+Cucumber,Alluvial,Autumn,20,35,6.0,7.3,59,109,High,69,70,81,200,800,80,40,60,34.43,2452,Easy,India,Tamil Nadu
+Apple,Black,Autumn,17,27,5.9,7.0,96,163,Medium,144,59,72,1500,3000,120,60,120,17.24,3600,Hard,India,Punjab
+Pineapple,Loamy,Monsoon,18,30,4.7,6.4,100,168,Medium,181,67,87,200,800,120,60,120,22.73,2738,Medium,Nepal,Jhapa
+Cashew,Sandy,Winter,25,36,5.5,7.5,49,111,Low,237,55,80,200,800,80,40,60,1.34,2303,Medium,India,Andhra Pradesh
+Turmeric,Sandy,Winter,18,28,4.8,7.7,152,270,High,273,74,94,0,1500,60,60,120,21.96,1221,Easy,Nepal,Sunsari
+Chickpea,Black,Summer,13,27,6.1,7.4,10,48,Low,93,43,61,300,1000,60,30,40,1.75,787,Medium,Nepal,Mustang
+Little Millet,Loamy,Summer,22,35,5.8,7.4,65,87,Low,90,45,72,400,1500,60,30,30,1.07,274,Medium,Nepal,Jhapa
+Chickpea,Sandy,Autumn,16,24,5.9,7.7,40,62,Low,97,43,63,300,1000,60,30,40,1.71,599,Medium,Nepal,Kaski
+Black Pepper,Silty,Summer,23,35,5.7,6.9,149,254,High,364,72,94,200,800,120,60,120,0.94,3527,Hard,Nepal,Morang
+Little Millet,Laterite,Monsoon,21,36,5.7,7.4,49,91,Low,78,41,71,400,1500,60,30,30,0.99,339,Medium,Nepal,Sunsari
+Coffee (Arabica),Black,Monsoon,17,26,5.8,6.2,136,267,Medium,292,72,86,800,1600,60,40,80,1.06,2451,Hard,Asia,Sri Lanka
+Papaya,Sandy,Winter,20,37,6.3,7.8,62,168,Medium,273,64,87,200,800,150,80,150,38.38,3687,Easy,India,Maharashtra
+Onion,Black,Autumn,11,26,5.7,7.5,56,92,Medium,102,61,79,200,800,100,50,80,14.86,2530,Medium,India,Gujarat
+Pineapple,Silty,Spring,22,28,4.8,6.3,84,146,Medium,171,62,83,200,800,120,60,120,20.41,3561,Medium,Nepal,Chitwan
+Wheat (Winter),Clay,Winter,3,21,5.9,7.5,57,85,Medium,125,47,67,300,800,110,55,55,3.11,529,Medium,India,Assam
+Watermelon,Red,Summer,25,36,6.1,7.5,57,87,Medium,88,47,79,200,800,100,50,100,32.21,2999,Easy,India,Haryana
+Rice (Jhum),Alluvial,Monsoon,18,34,5.5,7.0,132,198,Medium,112,61,80,500,1500,80,40,40,2.94,652,Hard,Asia,Thailand
+Linseed,Peaty,Autumn,10,27,6.2,6.8,36,77,Low,113,41,62,300,1000,60,30,30,0.88,627,Medium,Asia,Vietnam
+Horse Gram,Peaty,Winter,18,36,5.3,7.6,33,44,Low,127,35,65,300,1000,40,20,25,0.76,396,Easy,Nepal,Kailali
+Tobacco,Clay,Summer,14,30,5.4,7.8,57,65,Medium,116,47,65,300,1000,120,60,120,2.3,2137,Hard,Asia,Thailand
+Cucumber,Laterite,Autumn,22,33,5.7,7.5,46,128,High,63,64,90,200,800,80,40,60,29.59,2383,Easy,Nepal,Chitwan
+Rubber,Laterite,Monsoon,25,35,5.6,7.3,149,319,High,362,75,90,200,800,100,50,100,2.07,1882,Medium,Nepal,Ilam
+Sunflower,Peaty,Summer,22,33,5.9,7.6,48,77,Medium,115,45,66,300,1000,80,40,80,1.54,574,Medium,India,Assam
+Sunflower,Silty,Monsoon,21,34,6.0,7.2,34,76,Medium,101,45,75,300,1000,80,40,80,1.33,652,Medium,India,Punjab
+Bitter Gourd,Sandy,Autumn,25,34,6.0,7.7,43,100,Medium,85,59,80,200,800,100,50,80,17.17,1388,Medium,Nepal,Sindhupalchok
+Tomato,Alluvial,Monsoon,20,27,6.0,7.1,56,128,Medium,76,61,80,200,1000,120,60,100,21.46,3781,Medium,India,West Bengal
+Strawberry,Clay,Monsoon,17,24,5.6,7.0,65,124,Medium,93,60,87,500,1500,100,50,100,16.76,5579,Hard,India,Uttar Pradesh
+Turmeric,Loamy,Autumn,22,31,4.2,7.4,166,242,High,245,74,90,0,1500,60,60,120,28.74,1411,Easy,Nepal,Morang
+Safflower,Laterite,Monsoon,17,28,5.9,7.5,48,52,Low,122,36,67,300,1000,60,30,30,1.35,598,Medium,Nepal,Sindhupalchok
+Tobacco,Red,Monsoon,16,31,5.3,7.4,21,97,Medium,125,48,68,300,1000,120,60,120,2.28,2193,Hard,Nepal,Ilam
+Lemon,Laterite,Winter,19,36,5.6,7.5,90,142,Medium,114,51,77,200,1000,100,50,80,17.08,2212,Easy,Nepal,Kailali
+Almond,Laterite,Spring,6,31,5.8,8.2,44,77,Low,179,39,61,500,2000,80,40,80,2.92,3521,Hard,Asia,Indonesia
+Pomegranate,Black,Summer,15,35,5.3,7.8,40,112,Low,172,50,66,500,1500,120,60,100,12.5,3593,Medium,Asia,Vietnam
+Rice (Jhum),Silty,Summer,20,33,5.6,7.2,131,201,Medium,127,69,80,500,1500,80,40,40,2.91,551,Hard,Nepal,Sindhupalchok
+Fenugreek Seed,Clay,Autumn,11,32,6.3,7.5,18,72,Medium,95,47,67,300,1000,60,30,30,0.87,696,Medium,Nepal,Bara
+Linseed,Clay,Summer,9,26,5.7,6.8,40,40,Low,120,44,65,300,1000,60,30,30,1.15,540,Medium,Asia,Bangladesh
+Groundnut,Clay,Autumn,19,34,6.0,7.4,34,83,Medium,110,46,74,200,800,60,30,60,1.52,710,Medium,Nepal,Kaski
+Watermelon,Sandy,Monsoon,23,36,5.8,7.4,41,67,Medium,92,47,74,200,800,100,50,100,34.91,2251,Easy,Nepal,Sindhupalchok
+Litchi,Laterite,Spring,20,34,5.5,7.2,105,204,High,123,61,84,200,800,150,80,120,7.77,3462,Medium,Nepal,Kaski
+Rice (Basmati),Red,Monsoon,22,38,5.9,7.8,80,153,Medium,111,50,75,300,800,100,50,50,3.4,1182,Medium,Nepal,Ilam
+Rice (Jhum),Alluvial,Monsoon,18,35,5.4,7.0,130,207,Medium,128,69,81,500,1500,80,40,40,2.45,541,Hard,India,Himachal Pradesh
+Chickpea,Laterite,Spring,15,25,5.8,7.5,40,66,Low,103,43,65,300,1000,60,30,40,1.65,831,Medium,India,Uttar Pradesh
+Broccoli,Loamy,Spring,14,27,6.2,7.2,55,105,High,65,67,84,300,1200,130,65,100,13.1,2548,Hard,Nepal,Kaski
+Black Gram,Laterite,Winter,23,33,6.2,7.2,43,60,Medium,99,49,71,200,800,50,25,30,1.08,578,Easy,India,Andhra Pradesh
+Barnyard Millet,Peaty,Spring,18,36,5.4,7.3,45,134,Medium,80,50,72,300,1200,70,35,35,1.29,355,Easy,Asia,Sri Lanka
+Sweet Potato,Clay,Spring,19,31,5.7,7.2,22,80,Low,121,54,83,300,1500,80,40,80,15.54,1604,Easy,India,Gujarat
+Safflower,Silty,Monsoon,17,29,5.8,7.3,20,74,Low,127,44,64,300,1000,60,30,30,1.0,671,Medium,Nepal,Kailali
+Rice (Basmati),Alluvial,Summer,20,40,6.0,7.4,96,138,Medium,110,55,76,300,800,100,50,50,3.24,1406,Medium,Asia,Indonesia
+Wheat (Spring),Laterite,Winter,11,23,5.8,7.8,44,102,Medium,120,55,80,200,600,120,60,60,3.59,797,Medium,Asia,Bangladesh
+Potato,Loamy,Spring,14,24,5.1,6.7,47,119,Medium,89,57,86,500,2000,150,80,120,23.5,2247,Medium,Nepal,Morang
+Wheat (Spring),Sandy,Winter,12,25,5.7,7.5,47,117,Medium,103,47,80,200,600,120,60,60,3.95,657,Medium,Asia,Bangladesh
+Buckwheat,Alluvial,Spring,14,26,5.4,6.9,63,139,Low,84,54,72,800,2500,60,30,30,1.34,244,Hard,India,Andhra Pradesh
+Fenugreek Seed,Sandy,Summer,9,29,6.1,7.7,27,68,Medium,88,42,74,300,1000,60,30,30,0.89,575,Medium,Nepal,Mustang
+Safflower,Red,Summer,14,29,6.1,7.8,35,59,Low,122,38,60,300,1000,60,30,30,1.14,501,Medium,Nepal,Kaski
+Rubber,Silty,Monsoon,27,36,5.3,7.1,153,290,High,363,76,96,200,800,100,50,100,2.0,1963,Medium,Nepal,Gulmi
+Green Beans,Black,Summer,20,31,6.2,7.6,59,111,Medium,73,64,86,200,1000,70,35,50,11.9,1070,Medium,India,Gujarat
+Sorghum (Jowar),Red,Winter,26,40,6.3,8.2,39,70,Low,130,35,64,300,1000,80,40,40,1.7,369,Medium,Nepal,Morang
+Buckwheat (Phapar),Black,Autumn,9,26,5.2,6.8,50,90,Low,87,52,69,2000,4000,20,20,20,1.27,658,Easy,India,Gujarat
+Papaya,Black,Spring,24,37,6.3,7.3,71,130,Medium,275,59,85,200,800,150,80,150,47.64,4145,Easy,Nepal,Morang
+Papaya,Laterite,Summer,24,37,5.7,7.2,100,155,Medium,278,65,80,200,800,150,80,150,40.62,3535,Easy,Nepal,Sunsari
+Cowpea,Laterite,Winter,24,36,6.2,7.2,34,97,Low,94,49,79,200,800,60,30,40,5.36,830,Easy,Nepal,Mustang
+Peach,Clay,Winter,17,31,6.2,6.7,71,148,Medium,127,58,71,500,2000,100,50,100,11.66,2289,Hard,India,Haryana
+Barnyard Millet,Laterite,Monsoon,20,37,5.4,7.6,40,112,Medium,75,47,74,300,1200,70,35,35,1.58,286,Easy,Nepal,Ilam
+Rice (Jhum),Laterite,Monsoon,21,35,5.6,7.2,113,215,Medium,112,69,83,500,1500,80,40,40,2.81,584,Hard,Asia,Sri Lanka
+Areca Nut,Loamy,Autumn,18,34,5.4,7.2,157,241,High,361,73,86,200,800,150,80,150,2.08,3157,Medium,India,Maharashtra
+Beetroot,Black,Spring,8,24,6.1,7.7,31,71,Medium,79,57,70,200,1000,100,50,80,17.55,1433,Medium,Nepal,Sunsari
+Cashew,Sandy,Autumn,25,33,5.3,7.4,66,118,Low,242,58,83,200,800,80,40,60,1.44,1846,Medium,Nepal,Sindhupalchok
+Sugarcane,Loamy,Spring,18,35,6.0,7.4,89,199,High,361,62,80,200,800,150,80,150,79.41,2116,Medium,Nepal,Bara
+Okra,Peaty,Monsoon,25,36,5.7,7.6,47,97,Medium,67,53,77,200,800,80,40,60,12.6,1673,Easy,Nepal,Sindhupalchok
+Radish,Black,Monsoon,12,26,6.3,7.5,60,64,Medium,54,60,76,200,800,80,40,60,13.64,1318,Easy,Nepal,Chitwan
+Red Kidney Bean,Peaty,Spring,13,25,5.9,6.9,79,135,Medium,121,65,89,500,1500,70,35,50,1.17,670,Hard,Asia,Indonesia
+Okra,Loamy,Autumn,26,34,6.2,7.3,45,102,Medium,57,58,75,200,800,80,40,60,10.84,1272,Easy,Nepal,Morang
+Garlic,Peaty,Monsoon,12,26,5.7,7.5,21,91,Medium,130,54,71,300,1200,120,60,80,14.06,2768,Hard,India,Punjab
+Fennel,Sandy,Autumn,9,29,6.1,7.8,15,51,Medium,150,47,69,300,1000,80,40,60,1.19,911,Medium,Asia,Sri Lanka
+Watermelon,Red,Monsoon,26,35,6.1,7.2,58,83,Medium,85,54,74,200,800,100,50,100,33.73,2685,Easy,Nepal,Gulmi
+Barnyard Millet,Red,Spring,19,36,5.8,7.3,53,126,Medium,74,51,80,300,1200,70,35,35,1.68,357,Easy,Asia,Indonesia
+Rubber,Silty,Autumn,23,34,5.2,7.1,133,310,High,361,80,95,200,800,100,50,100,1.85,1810,Medium,Nepal,Jhapa
+Lentil (Musuro),Laterite,Autumn,15,26,5.7,7.8,26,99,Low,119,51,68,0,2000,20,40,20,1.34,874,Easy,Nepal,Gulmi
+Peas,Clay,Monsoon,11,26,5.9,7.2,30,81,Medium,67,60,85,300,1200,60,30,40,7.13,1333,Medium,India,Punjab
+Large Cardamom,Red,Spring,10,25,4.3,6.6,137,353,High,317,77,100,1000,2000,40,40,60,0.56,3850,Hard,Nepal,Dhankuta
+Capsicum,Red,Winter,17,31,5.8,6.7,60,101,Medium,79,63,85,200,1000,110,55,90,13.85,1780,Medium,India,Haryana
+Garlic,Alluvial,Autumn,10,27,5.9,7.5,20,98,Medium,111,59,78,300,1200,120,60,80,10.95,2762,Hard,India,Maharashtra
+Peach,Laterite,Autumn,17,32,6.0,7.2,82,167,Medium,123,56,75,500,2000,100,50,100,13.79,2985,Hard,India,West Bengal
+Rice (Jhum),Loamy,Monsoon,19,35,5.6,6.9,107,198,Medium,119,68,87,500,1500,80,40,40,2.96,708,Hard,India,West Bengal
+Oats,Red,Summer,8,24,5.8,7.1,50,126,Medium,94,53,85,500,1500,90,45,45,2.16,397,Medium,Nepal,Mustang
+Fenugreek,Black,Summer,10,29,6.1,7.3,12,52,Medium,46,53,67,200,800,60,30,40,7.27,808,Easy,Nepal,Ilam
+Sorghum (Jowar),Loamy,Autumn,25,41,5.9,7.9,47,95,Low,110,39,61,300,1000,80,40,40,2.31,463,Medium,Asia,Indonesia
+Coriander Seed,Peaty,Winter,14,27,5.8,7.4,29,46,Medium,98,47,66,300,1000,60,30,40,0.8,1024,Medium,Nepal,Sindhupalchok
+Coriander Seed,Silty,Spring,16,23,6.0,7.5,34,52,Medium,100,48,69,300,1000,60,30,40,0.72,860,Medium,Nepal,Sindhupalchok
+Papaya,Peaty,Spring,23,36,6.3,7.5,83,157,Medium,280,60,83,200,800,150,80,150,36.63,3735,Easy,Nepal,Morang
+Millet (Pearl),Alluvial,Monsoon,23,41,5.8,8.0,20,90,Low,88,26,62,200,800,60,30,30,1.2,393,Easy,Asia,Thailand
+Cashew,Silty,Summer,24,34,5.3,7.7,66,125,Low,234,53,77,200,800,80,40,60,1.31,2017,Medium,Asia,Indonesia
+Red Kidney Bean,Clay,Spring,15,27,6.1,6.8,47,110,Medium,119,55,82,500,1500,70,35,50,0.98,743,Hard,India,Uttar Pradesh
+Chickpea,Loamy,Winter,13,24,5.8,7.7,42,45,Low,106,45,62,300,1000,60,30,40,1.66,819,Medium,Nepal,Sunsari
+Carrot,Black,Autumn,10,24,6.3,7.3,24,68,Medium,83,55,84,200,1000,100,50,100,29.48,2286,Easy,Nepal,Mustang
+Beetroot,Clay,Monsoon,8,27,5.9,7.6,31,79,Medium,82,55,78,200,1000,100,50,80,19.4,1703,Medium,Asia,Bangladesh
+Chili,Silty,Summer,18,34,6.0,7.4,48,138,Medium,100,63,80,200,1000,100,50,80,11.19,2089,Medium,Asia,Bangladesh
+Tea,Alluvial,Autumn,9,32,4.7,5.2,192,388,High,365,82,100,500,2000,120,60,60,2.01,3147,Medium,Asia,Bangladesh
+Pomegranate,Loamy,Monsoon,17,34,5.3,7.4,52,103,Low,176,43,74,500,1500,120,60,100,10.58,3570,Medium,Nepal,Morang
+Broccoli,Loamy,Spring,15,24,5.9,7.2,40,137,High,75,70,86,300,1200,130,65,100,13.84,2144,Hard,Nepal,Morang
+Sunflower,Red,Monsoon,18,37,6.0,7.7,32,94,Medium,117,48,70,300,1000,80,40,80,1.65,670,Medium,Nepal,Ilam
+Sorghum (Jowar),Loamy,Autumn,27,38,6.0,8.3,36,97,Low,121,32,62,300,1000,80,40,40,1.77,522,Medium,Nepal,Chitwan
+Potato,Alluvial,Spring,13,27,5.3,6.3,48,101,Medium,81,63,85,500,2000,150,80,120,19.12,2171,Medium,India,Punjab
+Pear,Clay,Monsoon,11,26,6.0,7.0,99,133,Medium,117,51,80,1000,2500,100,50,100,13.46,3198,Hard,India,Haryana
+Sorghum (Jowar),Silty,Spring,24,38,6.0,8.0,39,60,Low,130,40,60,300,1000,80,40,40,2.22,462,Medium,India,Andhra Pradesh
+Plum,Black,Winter,9,23,6.1,7.1,83,166,Medium,128,56,78,1000,2500,90,45,90,10.25,2931,Hard,India,Assam
+Sunflower,Clay,Autumn,22,33,6.2,7.8,29,65,Medium,113,48,65,300,1000,80,40,80,1.27,705,Medium,Nepal,Chitwan
+Castor,Loamy,Winter,19,40,5.9,8.0,26,55,Low,179,37,58,200,800,80,40,40,1.72,568,Medium,Nepal,Mustang
+Beetroot,Sandy,Spring,9,24,5.8,7.6,26,100,Medium,75,51,77,200,1000,100,50,80,20.71,1233,Medium,Nepal,Morang
+Cabbage,Laterite,Autumn,17,26,6.2,6.7,41,113,High,87,62,86,200,800,140,70,110,19.39,2383,Medium,Asia,Thailand
+Green Beans,Loamy,Spring,19,31,6.2,7.4,56,119,Medium,82,64,82,200,1000,70,35,50,9.74,1047,Medium,Nepal,Gulmi
+Watermelon,Red,Summer,25,37,6.2,7.5,43,89,Medium,86,53,76,200,800,100,50,100,33.55,2629,Easy,Nepal,Chitwan
+Rice (Marshi),Clay,Monsoon,16,31,5.7,7.0,124,265,High,175,65,100,1500,2500,100,50,50,2.93,931,Medium,Nepal,Kaski
+Rice (Aman),Black,Summer,20,40,4.7,7.2,165,318,High,144,72,90,0,500,110,55,55,4.17,822,Easy,Asia,Thailand
+Foxtail Millet,Laterite,Monsoon,19,33,5.8,7.4,23,79,Low,80,35,64,300,1200,60,30,30,1.46,309,Easy,Nepal,Gulmi
+Orange,Black,Winter,13,34,5.7,7.8,92,215,Medium,182,57,81,500,1500,120,60,100,12.62,2272,Medium,Nepal,Chitwan
+Pomegranate,Silty,Spring,13,35,5.6,7.4,62,123,Low,184,50,72,500,1500,120,60,100,12.49,3813,Medium,Asia,Bangladesh
+Guava,Silty,Autumn,22,37,5.4,7.3,99,141,Medium,174,54,82,200,1000,100,50,100,20.17,2976,Easy,India,Maharashtra
+Barnyard Millet,Laterite,Monsoon,19,34,5.4,7.3,70,107,Medium,80,55,79,300,1200,70,35,35,1.3,322,Easy,Nepal,Dhankuta
+Ridge Gourd,Alluvial,Autumn,25,33,6.0,7.6,70,100,Medium,64,56,82,200,800,80,40,60,17.06,1611,Easy,India,West Bengal
+Cardamom,Clay,Spring,16,28,4.7,6.3,153,318,High,357,79,99,800,2000,100,50,100,0.55,5456,Hard,India,Maharashtra
+Apricot,Silty,Summer,11,32,6.0,7.8,50,107,Medium,113,54,66,1000,2500,90,45,90,8.82,2182,Hard,India,West Bengal
+Jute,Silty,Winter,22,36,6.3,7.8,86,218,High,122,68,91,200,600,80,40,80,2.37,671,Medium,India,Gujarat
+Black Pepper,Laterite,Spring,26,33,5.3,6.9,157,270,High,370,69,89,200,800,120,60,120,0.9,2947,Hard,Asia,Sri Lanka
+Rice (Basmati),Black,Monsoon,19,39,6.0,7.3,80,168,Medium,124,50,85,300,800,100,50,50,3.59,1189,Medium,Nepal,Sunsari
+Papaya,Alluvial,Autumn,24,33,5.8,7.3,90,140,Medium,280,59,84,200,800,150,80,150,43.71,3573,Easy,Nepal,Kaski
+Jackfruit,Red,Spring,23,37,5.6,7.7,99,211,Medium,189,65,88,200,800,100,50,100,19.83,2604,Easy,Nepal,Gulmi
+Maize (Irrigated),Clay,Monsoon,18,37,5.5,7.1,52,116,High,112,58,83,200,1000,120,60,60,3.51,947,Medium,Nepal,Gulmi
+Quinoa,Loamy,Spring,14,30,6.1,7.9,30,119,Low,123,48,68,1000,3000,70,35,35,1.38,526,Hard,India,Gujarat
+Lentil,Laterite,Monsoon,14,24,6.1,7.7,34,48,Low,95,43,68,300,1000,50,25,30,1.27,680,Medium,Nepal,Gulmi
+Apricot,Alluvial,Summer,8,31,5.8,7.7,44,111,Medium,117,49,71,1000,2500,90,45,90,8.5,2307,Hard,India,West Bengal
+Linseed,Loamy,Summer,9,24,5.7,7.2,38,43,Low,110,38,62,300,1000,60,30,30,0.92,592,Medium,Nepal,Ilam
+Rice (Aman),Laterite,Monsoon,21,39,5.2,7.3,159,284,High,145,75,85,0,500,110,55,55,4.31,1046,Easy,India,Maharashtra
+Watermelon,Laterite,Winter,23,34,6.1,7.7,36,98,Medium,94,54,78,200,800,100,50,100,29.51,2643,Easy,Asia,Thailand
+Bottle Gourd,Loamy,Autumn,21,33,6.1,7.4,43,87,High,96,57,89,200,800,90,45,70,20.42,1486,Easy,Nepal,Bara
+Banana,Black,Summer,22,33,5.3,7.2,88,198,High,332,66,82,200,800,200,100,300,40.29,4471,Medium,Nepal,Kaski
+Muskmelon,Red,Spring,23,33,6.2,7.6,56,60,Medium,81,52,75,200,800,90,45,90,28.88,2072,Easy,Asia,Bangladesh
+Almond,Loamy,Spring,6,32,5.9,7.9,20,78,Low,179,41,62,500,2000,80,40,80,3.14,3306,Hard,Nepal,Ilam
+Cowpea,Alluvial,Summer,23,35,5.8,7.4,28,88,Low,81,45,80,200,800,60,30,40,5.47,960,Easy,India,Uttar Pradesh
+Rice (Boro),Peaty,Summer,15,28,5.2,7.7,37,93,High,161,53,77,0,500,130,65,65,4.93,1006,Medium,India,Gujarat
+Papaya,Red,Spring,21,33,6.1,7.3,90,138,Medium,280,60,84,200,800,150,80,150,36.91,3448,Easy,India,Tamil Nadu
+Cardamom,Red,Winter,17,29,5.2,6.4,137,287,High,368,70,94,800,2000,100,50,100,0.45,4257,Hard,India,Gujarat
+Horse Gram,Laterite,Monsoon,18,33,5.7,7.6,47,62,Low,119,42,65,300,1000,40,20,25,0.94,337,Easy,Nepal,Gulmi
+Muskmelon,Laterite,Autumn,24,37,6.0,7.7,36,97,Medium,88,51,79,200,800,90,45,90,20.66,1860,Easy,Nepal,Bara
+Radish,Laterite,Autumn,9,23,6.2,7.7,33,69,Medium,51,56,70,200,800,80,40,60,17.66,1392,Easy,Nepal,Ilam
+Muskmelon,Red,Winter,26,34,5.8,7.3,55,81,Medium,90,47,73,200,800,90,45,90,20.91,2051,Easy,Nepal,Bara
+Rice (Basmati),Laterite,Monsoon,20,41,5.9,7.5,78,165,Medium,111,60,85,300,800,100,50,50,3.03,1282,Medium,India,Maharashtra

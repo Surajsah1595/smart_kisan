@@ -10,6 +10,8 @@ import 'user_registration.dart';
 import 'localization_service.dart';
 import 'notification_service.dart';
 
+import 'package:easy_localization/easy_localization.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -17,13 +19,23 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    final notificationService = NotificationService();
+    await notificationService.initFCM();
   } catch (e) {
-    print('⚠️ Firebase initialization warning: $e');
+    print(' Firebase initialization warning: $e');
   }
 
   await LocalizationService.loadLanguage();
+  await EasyLocalization.ensureInitialized();
 
-  runApp(const MyApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('hi'), Locale('ne')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -58,13 +70,13 @@ class _MyAppState extends State<MyApp> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final theme = prefs.getString('ui_theme') ?? 'Auto Mode';
-      print('📱 Loading theme from preferences: $theme');
+      print(' Loading theme from preferences: $theme');
       setState(() {
         _themeMode = _stringToThemeMode(theme);
       });
-      print('✅ Theme loaded: $_themeMode');
+      print(' Theme loaded: $_themeMode');
     } catch (e) {
-      print('❌ Error loading theme: $e');
+      print(' Error loading theme: $e');
     }
   }
 
@@ -89,9 +101,9 @@ class _MyAppState extends State<MyApp> {
         }
       });
 
-      print('✓ Notifications initialization (auth watcher) set up');
+      print(' Notifications initialization (auth watcher) set up');
     } catch (e) {
-      print('❌ Error initializing notification auth watcher: $e');
+      print(' Error initializing notification auth watcher: $e');
     }
   }
 
@@ -118,16 +130,16 @@ class _MyAppState extends State<MyApp> {
             final priority = (latestData['priority'] ?? 'normal').toString().toLowerCase();
             final isRead = latestData['isRead'] ?? false;
             if (!isRead && priority == 'high') {
-              print('✅ New high-priority notification: $title');
+              print(' New high-priority notification: $title');
               WidgetsBinding.instance.addPostFrameCallback((_) => _showNotificationSnackbar(title));
             }
           }
         }
       }, onError: (error) {
-        print('❌ Notification stream error: $error');
+        print(' Notification stream error: $error');
       });
     } catch (e) {
-      print('❌ Failed to attach notification listener: $e');
+      print(' Failed to attach notification listener: $e');
     }
   }
 
@@ -136,7 +148,7 @@ class _MyAppState extends State<MyApp> {
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('🔔 $title'),
+          content: Text(' $title'),
           backgroundColor: Colors.green.shade700,
           duration: const Duration(seconds: 4),
         ),
@@ -178,34 +190,37 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: navigatorKey,
       title: 'Smart Kisan',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       themeMode: _themeMode,
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF008236),
+          seedColor: const Color(0xFF2C7C48),
           brightness: Brightness.light,
         ),
         fontFamily: 'Roboto',
         textTheme: const TextTheme(
-          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF101727)),
-          displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF101727)),
-          displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF101727)),
-          headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
-          headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF101727)),
-          headlineSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF495565)),
-          titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF101727)),
-          titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF495565)),
-          titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF495565)),
+          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: const Color(0xFF101727)),
+          displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: const Color(0xFF101727)),
+          displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF101727)),
+          headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: const Color(0xFF101727)),
+          headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: const Color(0xFF101727)),
+          headlineSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFF495565)),
+          titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: const Color(0xFF101727)),
+          titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF495565)),
+          titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: const Color(0xFF495565)),
           bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color(0xFF354152)),
-          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFF495565)),
-          bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Color(0xFF495565)),
-          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF008236)),
-          labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF008236)),
-          labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF008236)),
+          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: const Color(0xFF495565)),
+          bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: const Color(0xFF495565)),
+          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
+          labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
+          labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFDCFCE7),
+          
           elevation: 0,
           centerTitle: false,
         ),
@@ -216,7 +231,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.dark,
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00A63D),
+          seedColor: const Color(0xFF2C7C48),
           brightness: Brightness.dark,
         ),
         fontFamily: 'Roboto',
@@ -233,12 +248,12 @@ class _MyAppState extends State<MyApp> {
           bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color(0xFFE5E7EB)),
           bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFFD1D5DC)),
           bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Color(0xFFD1D5DC)),
-          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF00A63D)),
-          labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF00A63D)),
-          labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF00A63D)),
+          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
+          labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
+          labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: const Color(0xFF00C950)),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1F1F1F),
+          
           elevation: 0,
           centerTitle: false,
         ),
