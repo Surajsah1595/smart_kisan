@@ -67,3 +67,20 @@ app.*.map.json
 *.bat
 *.txt
 *_original.dart
+
+# --- Target only root level AI clutter, protect ml_backend ---
+/*_error*.py
+/*_fix*.py
+/add_*.py
+/analyze_*.py
+/auto_*.py
+/extract_*.py
+/generate_*.py
+/refactor.py
+/rewrite_*.py
+/sync_*.py
+/theme_*.py
+/*.bat
+/analyze_output.txt
+/flutter_run_verbose.txt
+*_original.dart
