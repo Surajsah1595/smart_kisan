@@ -4,7 +4,7 @@ import 'localization_service.dart';
 import 'package:http/http.dart' as http;
 
 class AiService {
-  static const String apiKey = 'AIzaSyCLAUyhq-lLrTiSfB8mZa0kfkXv4f-x5nM';
+  static const String apiKey = '';
 
   // We will try these models in order. The app will use the first one that works.
   static const List<String> _modelCandidates = [

@@ -61,3 +61,9 @@ app.*.map.json
 *.ipa
 *.so
 *.bin
+
+# --- Hide AI Script Clutter & Backup Files ---
+*.py
+*.bat
+*.txt
+*_original.dart
