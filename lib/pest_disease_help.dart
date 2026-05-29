@@ -7,12 +7,16 @@ import 'ai_service.dart';
 import 'notification_service.dart';
 import 'localization_service.dart';
 
-// For better logging visibility
+/// Purpose: A top-level logging utility that prefixes every message with a module tag for easy filtering in the debug console.
+/// Inputs: [message] - The diagnostic text to log.
+/// Outputs: Prints the tagged message via [debugPrint].
 void _log(String message) {
-  debugPrint(' PEST_DISEASE: $message');
+  debugPrint(' PEST_DISEASE: $message'); // 1. Prefix ensures grep-ability across the entire debug output.
 }
 
-// Active Alert Item Widget (Separate class)
+/// Purpose: A self-contained, reusable StatelessWidget that renders a single pest/disease alert card.
+/// This widget is intentionally extracted into its own class to follow the Single-Responsibility Principle.
+/// It receives all visual and data parameters from the parent [_PestDiseaseHelpScreenState] at build time.
 class ActiveAlertItem extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -45,6 +49,9 @@ class ActiveAlertItem extends StatelessWidget {
     this.onTap,
   });
 
+  /// Purpose: Builds the alert card widget tree, including the icon, severity badge, description, treatment box, and product preview.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns a styled GestureDetector wrapping the card layout.
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -233,11 +240,16 @@ class ActiveAlertItem extends StatelessWidget {
     );
   }
 
+  /// Purpose: Generates a short comma-separated preview string of recommended product names for display in the card footer.
+  /// Inputs: None (reads from the instance's [productRecommendations] list).
+  /// Outputs: Returns a truncated string like "Mancozeb 75%, Tricyclazole +1 more".
   String _getProductsPreview() {
     if (productRecommendations.isEmpty) return '';
     
     List<String> productNames = [];
+    // 1. Iterate over at most 2 products to keep the preview concise.
     for (var product in productRecommendations.take(2)) {
+      // 2. Handle both raw Map payloads and strongly-typed ProductRecommendation objects.
       if (product is Map<String, dynamic>) {
         productNames.add(product['productName'] ?? 'Product');
       } else if (product.runtimeType.toString().contains('ProductRecommendation')) {
@@ -245,6 +257,7 @@ class ActiveAlertItem extends StatelessWidget {
       }
     }
     
+    // 3. Assemble the preview and append a "+N more" suffix if the list exceeds 2.
     String preview = productNames.join(', ');
     if (productRecommendations.length > 2) {
       preview += ' +${productRecommendations.length - 2} more';
@@ -253,7 +266,8 @@ class ActiveAlertItem extends StatelessWidget {
   }
 }
 
-// Recent Scan Item Widget (Separate class)
+/// Purpose: A self-contained, reusable StatelessWidget that renders a single historical scan row item.
+/// Like [ActiveAlertItem], this is extracted to maintain composability and testability.
 class RecentScanItem extends StatelessWidget {
   final String cropName;
   final String date;
@@ -276,6 +290,9 @@ class RecentScanItem extends StatelessWidget {
     this.onTap,
   });
 
+  /// Purpose: Builds the horizontal row for a single scan record, showing crop name, date, status, and confidence.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns a GestureDetector wrapping the scan card.
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -369,7 +386,8 @@ class RecentScanItem extends StatelessWidget {
   }
 }
 
-// Main Pest Disease Help Screen
+/// Purpose: The main Stateful screen for the Pest & Disease Help module. It orchestrates the camera/gallery
+/// scanning pipeline, renders live Firestore alerts via StreamBuilder, and provides a knowledge base search.
 class PestDiseaseHelpScreen extends StatefulWidget {
   const PestDiseaseHelpScreen({super.key});
 
@@ -378,8 +396,12 @@ class PestDiseaseHelpScreen extends StatefulWidget {
 }
 
 class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
+  // 1. Instantiate the singleton service for all database and AI operations.
   late final PestDiseaseService _pestDiseaseService = PestDiseaseService();
 
+  /// Purpose: Root build method that assembles the full screen layout: AppBar Header, Scan CTA, Live Alerts, Scan History, Tips, and Search.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns the main Scaffold widget.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -470,6 +492,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Renders the "Scan Your Crop" Call-To-Action card at the top of the scrollable content area.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns a styled container with a button that triggers the scan dialog.
   Widget _buildScanCropSection(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -541,6 +566,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Renders the "Active Alerts" section using a Firestore StreamBuilder for real-time reactivity.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns a Column containing live-rendered [ActiveAlertItem] widgets or an empty-state message.
   Widget _buildActiveAlertsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -554,12 +582,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           ),
         ),
         const SizedBox(height: 16),
+        // 1. Subscribe to the live Firestore query filtered to unresolved alerts.
         StreamBuilder<List<PestAlertData>>(
           stream: _pestDiseaseService.getActiveAlerts(),
           initialData: const [],
           builder: (context, snapshot) {
             final alerts = snapshot.data ?? [];
             
+            // 2. Empty State: Display a friendly message if no alerts are active.
             if (alerts.isEmpty) {
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -573,12 +603,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               );
             }
 
+            // 3. Success State: Map each alert document to a styled card widget.
             return Column(
               children: alerts.map((alert) {
                 final severity = alert.severity;
                 final Color severityColor;
                 final Color severityBgColor;
                 
+                // 4. Map severity string to theme-aware color tokens.
                 if (severity == 'High') {
                   severityColor = Theme.of(context).colorScheme.error;
                   severityBgColor = Theme.of(context).colorScheme.error.withOpacity(0.1);
@@ -616,6 +648,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Renders the "Recent Scans" section using a Firestore StreamBuilder for real-time scan history.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Returns a Column of [RecentScanItem] widgets.
   Widget _buildRecentScansSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -629,12 +664,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           ),
         ),
         const SizedBox(height: 16),
+        // 1. Subscribe to the latest 5 scan records, ordered by date.
         StreamBuilder<List<PestScanData>>(
           stream: _pestDiseaseService.getRecentScans(limit: 5),
           initialData: const [],
           builder: (context, snapshot) {
             final scans = snapshot.data ?? [];
 
+            // 2. Empty State: Prompt the user to take their first scan.
             if (scans.isEmpty) {
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -648,6 +685,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
               );
             }
 
+            // 3. Success State: Map each scan document to a visual status using color and icon logic.
             return Column(
               children: scans.map((scan) {
                 final Color statusColor;
@@ -655,6 +693,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
                 final Color iconBgColor;
                 final String displayStatus;
 
+                // 4. Determine the visual representation based on the AI analysis status.
                 if (scan.status == 'Healthy') {
                   statusColor = Theme.of(context).colorScheme.primary;
                   icon = Icons.agriculture;
@@ -693,6 +732,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Renders a static list of agronomic best-practice prevention tips.
+  /// Inputs: None.
+  /// Outputs: Returns a styled Column with checklist items.
   Widget _buildPreventionTipsSection() {
     final preventionTips = [
       'Regular field inspections to catch issues early',
@@ -824,7 +866,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
-  // Dialog Methods
+  /// Purpose: Presents a dialog with instructions for the user before they initiate a scan, offering Camera or Gallery options.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Opens an AlertDialog. On user choice, calls [_openCamera] or [_openGallery].
   void _showScanDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -835,6 +879,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           children: [
             Text(LocalizationService.translate('This feature will open your camera to scan crops for pests and diseases.')),
             SizedBox(height: 16),
+            // 1. Display structured instructions to improve scan quality.
             Text(LocalizationService.translate('Make sure to:')),
             Text(LocalizationService.translate('1. Focus on the affected area')),
             Text(LocalizationService.translate('2. Use good lighting')),
@@ -842,10 +887,12 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           ],
         ),
         actions: [
+          // 2. Cancel dismisses the dialog without side effects.
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(LocalizationService.translate('Cancel')),
           ),
+          // 3. Upload Image: Opens the device photo gallery.
           TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -853,6 +900,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
             },
             child: Text(LocalizationService.translate('Upload Image')),
           ),
+          // 4. Open Camera: Launches the live camera capture.
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -868,10 +916,15 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Launches the device camera, captures a photo, uploads it to Firebase Storage, and triggers the AI analysis pipeline.
+  /// Inputs: None.
+  /// Outputs: Initiates the full scan-to-analysis flow or shows a SnackBar error.
   void _openCamera() async {
+    // 1. Instantiate the ImagePicker plugin.
     final ImagePicker picker = ImagePicker();
     try {
       _log('Opening camera...');
+      // 2. Launch the native camera with 85% quality to balance file size vs. AI accuracy.
       final XFile? photo = await picker.pickImage(
         source: ImageSource.camera,
         imageQuality: 85,
@@ -882,17 +935,20 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       if (photo != null) {
         _log('Processing image...');
         print(' DEBUG: photo.path = ${photo.path}');
+        // 3. Guard against the widget being disposed while waiting for the camera.
         if (!mounted) return;
 
-        // Attempt to upload image to Firebase Storage and pass URL to analysis
+        // 4. Attempt to upload the captured image to Firebase Storage for permanent record-keeping.
         String? uploadedUrl;
         try {
           uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
         } catch (e) {
+          // 5. Graceful degradation: Continue analysis even if the upload fails.
           print(' Upload failed, continuing without imageUrl: $e');
         }
 
         print(' DEBUG: About to call _showScanningDialog');
+        // 6. Show a loading spinner dialog and trigger the AI analysis pipeline.
         await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
         print(' DEBUG: _showScanningDialog completed');
       } else {
@@ -911,10 +967,15 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }
   }
 
+  /// Purpose: Opens the device gallery for the user to select an existing photo, then triggers the same AI pipeline.
+  /// Inputs: None.
+  /// Outputs: Initiates the scan-to-analysis flow or shows a SnackBar error.
   void _openGallery() async {
+    // 1. Instantiate the ImagePicker plugin.
     final ImagePicker picker = ImagePicker();
     try {
       _log('Opening gallery...');
+      // 2. Launch the native gallery picker with 85% quality.
       final XFile? photo = await picker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 85,
@@ -925,6 +986,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       if (photo != null) {
         if (!mounted) return;
 
+        // 3. Attempt optional image upload for cloud record.
         String? uploadedUrl;
         try {
           uploadedUrl = await _pestDiseaseService.uploadImageToStorage(photo.path);
@@ -932,6 +994,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
           print(' Upload failed, continuing without imageUrl: $e');
         }
 
+        // 4. Show spinner and delegate to the AI analysis method.
         await _showScanningDialog(context, photo.path, imageUrl: uploadedUrl);
       } else {
         if (!mounted) return;
@@ -948,10 +1011,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }
   }
 
+  /// Purpose: Displays a non-dismissable loading spinner dialog, then calls the AI analysis method.
+  /// Inputs: [context], [imagePath] - Local file path. Optional [imageUrl] - Cloud URL.
+  /// Outputs: Shows a progress dialog while the AI processes, then delegates to [_analyzeCropWithAI].
   Future<void> _showScanningDialog(BuildContext context, String imagePath, {String? imageUrl}) async {
     _log(' Showing scanning dialog for: $imagePath');
     print(' DEBUG: _showScanningDialog START');
     
+    // 1. Present a non-dismissable modal to prevent user interaction during the async AI call.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -982,6 +1049,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     _log(' Dialog shown, calling analysis...');
     
     try {
+      // 2. Delegate the actual network call and JSON parsing to the dedicated method.
       await _analyzeCropWithAI(context, imagePath, imageUrl: imageUrl);
       print(' DEBUG: _analyzeCropWithAI completed successfully');
     } catch (e) {
@@ -990,6 +1058,10 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }
   }
 
+  /// Purpose: The core AI integration method. Sends the image to PestDiseaseService, waits for the Gemini response,
+  /// closes the loading dialog, and presents the results or an error.
+  /// Inputs: [context], [imagePath], optional [imageUrl].
+  /// Outputs: Displays the parsed AI results in a dialog via [_showScanResults].
   Future<void> _analyzeCropWithAI(BuildContext context, String imagePath, {String? imageUrl}) async {
     try {
       print(' DEBUG: _analyzeCropWithAI START');
@@ -999,6 +1071,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       print(' DEBUG: About to call analyzeImageWithAI');
       _log(' About to call analyzeImageWithAI...');
       
+      // 1. Invoke the service layer which handles the Gemini API call and Firestore persistence.
       final result = await _pestDiseaseService.analyzeImageWithAI(imagePath, imageUrl: imageUrl);
       
       print(' DEBUG: analyzeImageWithAI returned');
@@ -1007,6 +1080,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       _log(' Analysis result keys: ${result.keys.toList()}');
       _log(' Status: ${result['status']}');
       
+      // 2. Safety check: The widget may have been disposed during the long async operation.
       if (!context.mounted) {
         print(' DEBUG: Context NOT mounted after analysis');
         _log(' Context NOT mounted after analysis');
@@ -1015,12 +1089,15 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       
       print(' DEBUG: Context still mounted');
       _log(' Context still mounted');
+      // 3. Brief artificial delay to ensure the loading dialog renders fully before dismissal.
       await Future.delayed(const Duration(milliseconds: 500));
       
       print(' DEBUG: About to pop dialog');
+      // 4. Close the loading dialog.
       Navigator.pop(context);
       _log(' Dialog closed, showing results');
       
+      // 5. Re-verify context after the pop operation.
       if (!context.mounted) {
         print(' DEBUG: Context lost after pop');
         _log(' Context lost');
@@ -1028,12 +1105,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       }
       
       print(' DEBUG: About to show results');
+      // 6. Present the structured AI results in a new dialog.
       _showScanResults(context, result);
       _log(' Results shown');
       
     } catch (e) {
       print(' DEBUG: _analyzeCropWithAI caught error: $e');
       _log(' ERROR: $e');
+      // 7. Error recovery: Close the spinner and show a user-friendly error dialog.
       if (context.mounted) {
         Navigator.pop(context); // Close the scanning dialog
         showDialog(
@@ -1053,8 +1132,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }
   }
 
+  /// Purpose: Presents a dialog showing the structured AI analysis results (crop name, status, confidence, description, and product recommendations).
+  /// Inputs: [context], [result] - The parsed Map from the AI service.
+  /// Outputs: Displays an AlertDialog with the analysis summary.
   void _showScanResults(BuildContext context, Map<String, dynamic> result) {
-    // Determine color based on status
+    // 1. Determine the description text color based on the health status for visual semantics.
     Color descriptionColor = Theme.of(context).colorScheme.primary; // Default green for healthy
     
     final status = result['status'] ?? 'Unknown';
@@ -1068,7 +1150,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       descriptionColor = Theme.of(context).colorScheme.error; // Red for errors
     }
 
-    // Get product recommendations if pest/disease is detected
+    // 2. Query the internal product database for relevant agrochemical recommendations.
     final pestName = result['pestName'];
     final recommendations = (pestName != null && pestName.toString().isNotEmpty)
         ? _pestDiseaseService.getProductRecommendations(pestName.toString())
@@ -1133,6 +1215,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Presents a detailed modal for a specific active pest alert, with severity, description, treatment, product recommendations, and a "Resolve" action.
+  /// Inputs: [context], [alert] - The PestAlertData model.
+  /// Outputs: Opens a rich AlertDialog. The "Mark Resolved" button updates Firestore and sends a resolution notification.
   void _showAlertDetails(BuildContext context, PestAlertData alert) {
     showDialog(
       context: context,
@@ -1253,16 +1338,20 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
   
-  /// Convert a block of text into a list of bullet points
+  /// Purpose: Converts a free-form text block (from AI descriptions/treatments) into a formatted bulleted list.
+  /// Inputs: [text] - The raw multi-line or period-separated string.
+  /// Outputs: Returns a list of Row widgets, each prefixed with a bullet symbol.
   List<Widget> _buildBulletPoints(String text) {
-    // Split by common list separators or new lines, keeping the content
+    // 1. Use a multi-pattern Regex to split on newlines, numbered lists, bullet chars, and sentence boundaries.
     List<String> points = text
         .split(RegExp(r'\n|(?=\d+\.)|(?=•)|(?=\-)|(?=\*)|\.(?=\s*[A-Z])'))
         .where((p) => p.trim().isNotEmpty)
+        // 2. Strip any leading list markers (digits, dashes, bullets) from each segment.
         .map((p) => p.trim().replaceAll(RegExp(r'^[\d\.\-•\*\s]+'), '').trim())
         .where((p) => p.isNotEmpty)
         .toList();
 
+    // 3. Fallback: If no split points were found, use the entire text as a single bullet.
     if (points.isEmpty) {
       points = [text];
     }
@@ -1287,9 +1376,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     }).toList();
   }
 
-  /// Build product recommendation card
+  /// Purpose: Renders a single product recommendation card. Handles polymorphism: the input can be either a raw Map or a typed ProductRecommendation object.
+  /// Inputs: [product] - Either a Map<String, dynamic> or a ProductRecommendation instance.
+  /// Outputs: Returns a styled Container widget.
   Widget _buildProductCard(dynamic product) {
-    // Handle both ProductRecommendation objects and maps
+    // 1. Initialize local extraction variables.
     String productName = '';
     String category = '';
     String description = '';
@@ -1298,7 +1389,9 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     String manufacturer = '';
     String dosage = '';
 
+    // 2. Determine the type at runtime and extract fields accordingly.
     if (product is Map<String, dynamic>) {
+      // 2a. Raw map extraction (from Firestore documents).
       productName = product['productName'] ?? '';
       category = product['category'] ?? '';
       description = product['description'] ?? '';
@@ -1307,7 +1400,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       manufacturer = product['manufacturer'] ?? '';
       dosage = product['dosage'] ?? '';
     } else {
-      // Handle ProductRecommendation object
+      // 2b. Typed object extraction (from the in-memory product database).
       productName = product.productName;
       category = product.category;
       description = product.description;
@@ -1408,17 +1501,21 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Attempts to parse the raw AI JSON response into a structured readable format. Falls back to Markdown rendering.
+  /// Inputs: [aiResponse] - The raw string from the Gemini API.
+  /// Outputs: Returns a Widget tree (either structured Column or Markdown body).
   Widget _buildAIResponseWidget(String aiResponse) {
-    // Try parsing AI response as JSON and render key fields; fallback to Markdown/Text
+    // 1. First attempt: Try parsing the response as structured JSON.
     try {
+      // 2. Sanitize the response string by removing Markdown code fence markers.
       String clean = aiResponse.replaceAll('```json', '').replaceAll('```', '').trim();
-      // Try direct parse
       Map<String, dynamic>? data;
+      // 3. Direct JSON parse.
       try {
         final parsed = jsonDecode(clean);
         if (parsed is Map<String, dynamic>) data = parsed;
       } catch (_) {
-        // Try extracting first JSON object via regex
+        // 4. Regex fallback: Extract the first JSON object if there is surrounding conversational text.
         final match = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(clean);
         if (match != null) {
           try {
@@ -1430,6 +1527,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         }
       }
 
+      // 5. If JSON was successfully parsed, render a clean structured layout.
       if (data != null) {
         final pestName = data['pestName'] ?? data['pest'] ?? data['disease'] ?? null;
         final description = data['description'] ?? data['details'] ?? '';
@@ -1480,7 +1578,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       // fallthrough to show raw
     }
 
-    // Fallback: show raw response as selectable Markdown or text
+    // 6. Fallback: Render the raw AI text as Markdown for non-JSON responses.
     if (aiResponse.trim().length > 0) {
       return SizedBox(
         width: double.maxFinite,
@@ -1492,11 +1590,15 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       );
     }
 
+    // 7. Ultimate fallback: No response at all.
     return Text(LocalizationService.translate('No additional details'));
   }
 
+  /// Purpose: Presents a detailed view dialog for a historical scan, including the AI response and product recommendations.
+  /// Inputs: [context], [scan] - The PestScanData model.
+  /// Outputs: Opens an AlertDialog with the full scan details.
   void _showScanDetails(BuildContext context, PestScanData scan) {
-    // Extract pest name from AI response
+    // 1. Extract the pest name from the raw AI JSON response for product lookups.
     String? pestName;
     try {
       final data = jsonDecode(scan.aiResponse);
@@ -1504,7 +1606,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
         pestName = data['pestName'] ?? data['pest'] ?? data['disease'];
       }
     } catch (_) {
-      // Try regex extraction
+      // 2. Regex fallback for malformed JSON.
       final match = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(scan.aiResponse);
       if (match != null) {
         try {
@@ -1516,7 +1618,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       }
     }
 
-    // Get product recommendations if pest is detected
+    // 3. Query product recommendations based on the extracted pest name.
     final recommendations = (pestName != null && pestName.isNotEmpty)
         ? _pestDiseaseService.getProductRecommendations(pestName)
         : <dynamic>[];
@@ -1574,10 +1676,16 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Formats a DateTime into a standardized 'YYYY-MM-DD' string for display.
+  /// Inputs: [date] - A Dart DateTime object.
+  /// Outputs: Returns a zero-padded date string.
   String _formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
+  /// Purpose: Shows a dialog with a text field allowing the user to search the AI knowledge base.
+  /// Inputs: [context] - The BuildContext.
+  /// Outputs: Opens an AlertDialog. On submit, calls [_performSearch].
   void _showSearchDialog(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
 
@@ -1618,7 +1726,11 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     );
   }
 
+  /// Purpose: Validates the search input, then shows a loading dialog while the AI is queried.
+  /// Inputs: [context], [query] - The user's search text.
+  /// Outputs: Delegates to [_searchKnowledgeBase] for the actual API call.
   void _performSearch(BuildContext context, String query) {
+    // 1. Guard: Reject empty queries.
     if (query.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(LocalizationService.translate('Please enter a search term'))),
@@ -1626,6 +1738,7 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
       return;
     }
 
+    // 2. Show a loading dialog while the AI processes the query.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1650,10 +1763,14 @@ class _PestDiseaseHelpScreenState extends State<PestDiseaseHelpScreen> {
     _searchKnowledgeBase(context, query);
   }
 
+  /// Purpose: Sends a structured prompt to the Gemini AI requesting agronomic knowledge, then renders the response as Markdown.
+  /// Inputs: [dialogContext] - The context of the loading dialog. [query] - The user's search text.
+  /// Outputs: Closes the loading dialog and opens a new dialog with the AI's Markdown-formatted response.
   Future<void> _searchKnowledgeBase(BuildContext dialogContext, String query) async {
     try {
       print(' Searching for: $query');
       
+      // 1. Construct a carefully engineered prompt that instructs Gemini to respond in a structured agronomic format.
       final prompt = '''You are an agriculture expert. Provide SHORT and PRACTICAL information about: "$query"
 
 If it's a pest or disease, include:
@@ -1664,22 +1781,25 @@ If it's a pest or disease, include:
 
 Keep it SHORT and practical for farmers. Use bullet points and bold for important terms.''';
 
+      // 2. Send the prompt to the Gemini AI service.
       final response = await AiService().sendMessage(prompt);
       
       print(' Search response received');
       
-      // Use the page's context, not the dialog context
+      // 3. Guard: Verify the widget is still alive before performing UI operations.
       if (!mounted) {
         print(' Widget no longer mounted');
         return;
       }
 
-      // Close the loading dialog
+      // 4. Close the loading dialog.
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
       if (!mounted) return;
+
+      // 5. Display the AI's response in a styled Markdown dialog.
 
       showDialog(
         context: context,

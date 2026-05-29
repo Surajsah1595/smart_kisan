@@ -84,16 +84,22 @@ class _ForgotPasswordScreen1State extends State<ForgotPasswordScreen1> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
-    void _sendResetLink() async {
+  /// Purpose: Validates the email format and dispatches a Firebase Auth reset link request.
+  /// Inputs: None.
+  /// Outputs: Navigates to the Success screen on successful dispatch, or shows a SnackBar error.
+  void _sendResetLink() async {
+    // 1. Trigger the form's internal validation rules (empty check, regex match).
     if (_formKey.currentState!.validate()) {
       try {
+        // 2. Delegate the network request to the AuthService singleton.
         await AuthService.instance.sendPasswordResetEmail(_emailController.text.trim());
         
-        // Skip OTP screens and go straight to Success
+        // 3. Skip intermediary OTP UI and route directly to the "Success/Check Email" view.
         Navigator.push(context, MaterialPageRoute(
           builder: (_) => const ForgotPasswordScreen4()
         ));
       } on FirebaseAuthException catch (e) {
+        // 4. Gracefully handle known Firebase API errors (e.g., user not found).
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? tr('Error sending link')), backgroundColor: Colors.red),
         );
@@ -571,10 +577,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  /// Purpose: Validates credentials and initiates the Firebase sign-in workflow.
+  /// Inputs: None (Reads from _emailController and _passwordController).
+  /// Outputs: Authenticates the session and routes to HomePage on success.
   void _login() async {
+    // 1. Initial form constraints check (non-empty).
     if (!_formKey.currentState!.validate()) return;
 
-    // Local validation
+    // 2. Strict local validation: Verify email formatting.
     if (!_emailController.text.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -585,6 +595,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    // 3. Strict local validation: Verify minimum password length to prevent unnecessary API calls.
     if (_passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -595,7 +606,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Show loading spinner
+    // 4. Render a blocking loading overlay to prevent duplicate submissions.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -603,13 +614,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     try {
+      // 5. Delegate credential verification to the authentication singleton.
       final user = await AuthService.instance.signInWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      Navigator.of(context).pop(); // close loading dialog
+      // 6. Dismiss the loading overlay.
+      Navigator.of(context).pop();
 
+      // 7. On success, extract display name and route the user to their dashboard.
       if (user != null) {
         String userName = user.displayName ?? 'Farmer';
         if (userName.trim().isEmpty) userName = 'Farmer';
@@ -625,6 +639,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } on FirebaseAuthException catch (e) {
+      // 8. Handle specific Firebase authentication errors cleanly.
       Navigator.of(context).pop();
       String message = tr('An error occurred. Please try again.');
       
@@ -640,6 +655,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     } catch (e) {
+      // 9. Catch-all for unexpected exceptions (e.g. network timeouts).
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -931,20 +947,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
+                        // 1. Asynchronous tap handler for Google Auth flow.
                         onTap: () async {
-                          // Show loading
+                          // 2. Prevent user interaction while bridging to Google Services.
                           showDialog(
                             context: context,
                             barrierDismissible: false,
                             builder: (_) => const Center(child: CircularProgressIndicator()),
                           );
 
+                          // 3. Delegate to the auth service singleton to handle OAuth handshakes.
                           final user = await AuthService.instance.signInWithGoogle();
 
-                          Navigator.of(context).pop(); // Close loading
+                          // 4. Tear down the blocking UI.
+                          Navigator.of(context).pop();
 
                           if (user != null) {
+                            // 5. Extract fallback display name if missing.
                             String userName = user.displayName ?? 'Farmer';
+                            // 6. Navigate to home page seamlessly.
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -952,6 +973,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             );
                           } else {
+                            // 7. Handle cancellations or configuration failures gracefully.
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(tr('Google Sign-In failed or cancelled'))),
                             );
@@ -1026,11 +1048,17 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _showPassword = false, _showConfirmPassword = false;
 
+  /// Purpose: Validates the sign-up form and creates a new user via Firebase Auth.
+  /// Inputs: None (Reads from form controllers).
+  /// Outputs: Creates a user, saves metadata to Firestore (via backend), and routes to HomePage.
   void _signup() async {
+    // 1. Log initiation of the sign-up sequence for debugging.
     print('Signup: start');
+    
+    // 2. Validate standard form constraints (non-empty fields).
     if (!_formKey.currentState!.validate()) return;
 
-    // Local validation (keep your existing checks)
+    // 3. Strict local validation: Verify email formatting.
     if (!_emailController.text.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1041,6 +1069,7 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
+    // 4. Strict local validation: Ensure mobile numbers are 10-15 digits.
     if (!RegExp(r'^[0-9]{10,15}$').hasMatch(_mobileController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1051,6 +1080,7 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
+    // 5. Strict local validation: Minimum password length check to prevent API failure.
     if (_passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1061,6 +1091,7 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
+    // 6. Strict local validation: Ensure password confirmation matches.
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1071,7 +1102,7 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    // Show loading dialog
+    // 7. Show a blocking loading dialog to prevent duplicate requests.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1081,6 +1112,7 @@ class _SignupScreenState extends State<SignupScreen> {
     print('Signup: dialog shown');
 
     try {
+      // 8. Delegate user creation and Firestore metadata initialization to the AuthService.
       final user = await AuthService.instance.signUpWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -1090,10 +1122,13 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       print('Signup: signUpWithEmail returned ${user?.uid}');
-      Navigator.of(context).pop(); // close loading dialog
+      // 9. Close the loading dialog.
+      Navigator.of(context).pop(); 
       print('Signup: dialog closed');
 
+      // 10. Handle successful user creation by routing to the Home Dashboard.
       if (user != null) {
+        // 11. Format the fallback display name if Firebase hasn't synced it yet.
         String userName = user.displayName ?? '';
         if (userName.trim().isEmpty) {
           final firstName = _firstNameController.text.trim();
@@ -1103,6 +1138,8 @@ class _SignupScreenState extends State<SignupScreen> {
               : '$firstName $lastName';
         }
         print('Signup: navigating to HomePage');
+        
+        // 12. Navigate, clearing the route stack, explicitly flagging isNewUser for onboarding flows.
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -1112,7 +1149,8 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      Navigator.of(context).pop(); // close loading dialog
+      // 13. Handle known Firebase Auth errors safely.
+      Navigator.of(context).pop(); 
 
       print('SIGNUP ERROR: code=${e.code}, message=${e.message}');
 
@@ -1129,6 +1167,7 @@ class _SignupScreenState extends State<SignupScreen> {
         SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     } catch (e) {
+      // 14. Catch-all fallback for network or unknown exceptions.
       Navigator.of(context).pop();
       print('Signup: unexpected error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1399,20 +1438,25 @@ class _SignupScreenState extends State<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
+                        // 1. Asynchronous tap handler for Google Auth flow (Signup Context).
                         onTap: () async {
-                          // Show loading
+                          // 2. Prevent user interaction while bridging to Google Services.
                           showDialog(
                             context: context,
                             barrierDismissible: false,
                             builder: (_) => const Center(child: CircularProgressIndicator()),
                           );
 
+                          // 3. Delegate to the auth service singleton to handle OAuth handshakes.
                           final user = await AuthService.instance.signInWithGoogle();
 
-                          Navigator.of(context).pop(); // Close loading
+                          // 4. Tear down the blocking UI.
+                          Navigator.of(context).pop();
 
                           if (user != null) {
+                            // 5. Extract fallback display name if missing.
                             String userName = user.displayName ?? 'Farmer';
+                            // 6. Navigate to home page seamlessly, flagging isNewUser conditionally if needed (false here as Google usually handles both).
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -1420,6 +1464,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             );
                           } else {
+                            // 7. Handle cancellations or configuration failures gracefully.
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(tr('Google Sign-In failed or cancelled'))),
                             );
@@ -1476,8 +1521,11 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
     }
   }
 
+  /// Purpose: Validates local biometric data and checks for an active Firebase session.
+  /// Inputs: None.
+  /// Outputs: Navigates to HomePage if successful, otherwise displays errors.
   Future<void> _authenticate() async {
-    // 1. WEB CHECK: Stop immediately if running on a browser
+    // 1. Safety Check: Biometrics are inherently platform-specific; disable for Web.
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1489,7 +1537,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
     }
     bool authenticated = false;
     try {
-      // 1. Check if device supports fingerprint
+      // 2. Hardware Check: Verify if the device possesses biometric sensors.
       final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
       final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
 
@@ -1500,15 +1548,16 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
         return;
       }
 
-      // 2. Scan Fingerprint
+      // 3. Trigger OS-level Biometric Prompt.
       authenticated = await auth.authenticate(
         localizedReason: tr('Scan your fingerprint to login'),
-        options: const AuthenticationOptions( // This class exists in v2.2.0+
+        options: const AuthenticationOptions( 
           stickyAuth: true,
           biometricOnly: true,
         ),
       );
     } on PlatformException catch (e) {
+      // 4. Handle OS-specific exceptions (e.g. Too many attempts, locked out).
       print("Fingerprint Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${tr('Error')}: ${e.message}')),
@@ -1519,25 +1568,24 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
     if (!mounted) return;
 
     if (authenticated) {
-      // 3. Check if Firebase Session exists
+      // 5. Biometric Success: We must still verify that a valid cloud session exists.
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        // Success! Go to Home
+        // 6. Active Session Found: Route to dashboard.
         String userName = user.displayName ?? 'Farmer';
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => HomePage(isNewUser: false, userName: userName)),
         );
       } else {
-        // Fingerprint OK, but App Session Expired
+        // 7. Session Expired: Biometrics passed, but Firebase token is dead. Force manual login.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(tr('Session expired. Please login with Password first.')),
             backgroundColor: Colors.orange,
           ),
         );
-        // Optional: Go back to login
         Navigator.pop(context);
       }
     }
@@ -1647,13 +1695,17 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
     }
   }
 
+  /// Purpose: Validates the entered 4-digit PIN against the stored hash and checks the Firebase session.
+  /// Inputs: None (Uses _enteredPasscode).
+  /// Outputs: Navigates to HomePage on success, shows error Snackbar on failure.
   void _checkPasscode() {
+    // 1. Compare the local passcode buffer.
     if (_enteredPasscode == _correctPasscode) {
-      // 1. PIN Matches, Check Session
+      // 2. Passcode matches; now check if a valid cloud session is alive.
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-         // 2. Session Valid -> Home
+         // 3. Valid Session: Route to dashboard immediately.
         String userName = user.displayName ?? 'Farmer';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(tr('Welcome back!')), backgroundColor: Colors.green)
@@ -1664,14 +1716,15 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
           (route) => false,
         );
       } else {
-        // 3. Session Invalid -> Error
+        // 4. Invalid Session: Token expired, require full re-authentication.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(tr('Session expired. Login with Email first.')), backgroundColor: Colors.orange)
         );
+        // 5. Reset the local passcode buffer.
         setState(() => _enteredPasscode = '');
       }
     } else {
-      // Wrong PIN
+      // 6. Passcode Mismatch: Show error and clear the buffer.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('Incorrect passcode. Try 1234.')), backgroundColor: Colors.red)
       );

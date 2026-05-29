@@ -1,4 +1,6 @@
 /// AUTO-GENERATED FALLBACK TRANSLATIONS
+/// Purpose: Hardcoded fallback translations map used as a failsafe if dynamic localization loading fails.
+/// TODO: Refactor for production - Move this static map into `assets/translations/*.json` files to reduce Dart heap usage.
 class TranslationsMap {
   static const Map<String, Map<String, String>> data = {
     'Confirm Password': {

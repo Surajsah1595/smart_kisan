@@ -15,6 +15,9 @@ import 'ai_chat_page.dart';
 import 'localization_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'market_price_page.dart';
+/// [HomePage] serves as the central dashboard for the Smart Kisan application.
+/// It aggregates and displays current weather data, farm overview statistics, 
+/// recent activities, and provides bottom-bar navigation to all primary modules.
 class HomePage extends StatefulWidget {
   final bool isNewUser;
   final String userName;
@@ -67,25 +70,30 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // Fetch Weather for Home Card
+  /// Purpose: Fetches current weather data from [WeatherService] for display on the home dashboard.
+  /// Inputs: None. (Relies on device GPS location inside the service).
+  /// Outputs: Updates [_homeWeatherData] and triggers local notification checks based on severity.
   Future<void> _fetchHomeWeather() async {
     try {
       print(' _fetchHomeWeather() called');
+      // 1. Invoke the dedicated weather service to fetch data from the external API based on location.
       final data = await _weatherService.getCurrentWeather();
       print(' Weather data fetched: ${data['main']?['temp']}°C');
       
-      // Check weather and create notifications
+      // 2. Delegate to the service to evaluate the fetched data against agronomic thresholds and trigger alerts if needed.
       print(' Calling checkWeatherAndNotify()...');
       await _weatherService.checkWeatherAndNotify();
       print(' checkWeatherAndNotify() completed');
       
+      // 3. Ensure the widget is still mounted before attempting to rebuild the UI.
       if (mounted) {
         setState(() {
-          _homeWeatherData = data;
-          _loadingWeather = false;
+          _homeWeatherData = data; // 4. Cache the payload for the UI to consume.
+          _loadingWeather = false; // 5. Dismiss the loading spinner.
         });
       }
     } catch (e) {
+      // 6. Gracefully catch API failures or GPS permission denials.
       print(" Home Weather Error: $e");
       if (mounted) {
         setState(() {
@@ -95,21 +103,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Purpose: Retrieves the user's display name, preferring Firebase Auth but falling back to Firestore database records.
+  /// Inputs: None. (Uses the globally authenticated user).
+  /// Outputs: Updates the [displayName] state variable for the greeting UI.
   Future<void> _fetchUserName() async {
+    // 1. Get the current active user session from Firebase Auth.
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // 1. Try to get name from Auth Profile (Google/Email)
+      // 2. Strategy 1: Attempt to extract the name directly from the Auth provider profile (e.g., Google OAuth).
       if (user.displayName != null && user.displayName!.isNotEmpty) {
         setState(() {
           displayName = user.displayName!;
         });
       }
 
-      // 2. Try to get name from Firestore (Database) for more accuracy
+      // 3. Strategy 2: If the Auth profile is incomplete (e.g., email signup), query the 'users' Firestore collection.
       try {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (doc.exists) {
+          // 4. Safely cast the document payload.
           final data = doc.data() as Map<String, dynamic>? ?? {};
+          // 5. Look for specific custom fields created during registration.
           if (data.containsKey('firstName') && data.containsKey('lastName')) {
              setState(() {
                displayName = "${data['firstName']} ${data['lastName']}";
@@ -117,18 +131,22 @@ class _HomePageState extends State<HomePage> {
           }
         }
       } catch (e) {
+        // 6. Fail silently to keep the default 'Farmer' greeting intact on error.
         print("Error fetching user data: $e");
       }
     }
   }
 
-  // Fetch Farm Overview Data from Firestore
+  /// Purpose: Aggregates farm statistics by querying multiple Firestore collections.
+  /// Inputs: None. (Queries user-specific subcollections based on UID).
+  /// Outputs: Updates active crop counts, pest alert tallies, and estimated completed tasks.
   Future<void> _fetchFarmOverviewData() async {
+    // 1. Validate the active session before querying the database.
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     try {
-      // Fetch active crops by aggregating across fields -> users/{uid}/fields/{fieldId}/crops
+      // 2. Query all physical 'fields' registered to the farmer.
       final fieldsSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -136,18 +154,20 @@ class _HomePageState extends State<HomePage> {
           .get();
 
       int totalCrops = 0;
+      // 3. Iterate through every field to count the 'crops' subcollection.
       for (var fieldDoc in fieldsSnapshot.docs) {
         try {
+          // 4. Use the optimized `.count()` aggregation query (saves document read quotas on Firebase).
           final cropCount = await fieldDoc.reference.collection('crops').count().get();
           totalCrops += (cropCount.count ?? 0);
         } catch (_) {
-          // fallback: try fetching docs if count() not supported
+          // 5. Fallback strategy: if the SDK version doesn't support .count(), fetch and measure the array length.
           final cropDocs = await fieldDoc.reference.collection('crops').get();
           totalCrops += cropDocs.docs.length;
         }
       }
       
-      // Fetch pest alerts
+      // 6. Query the 'pestAlerts' collection, filtering explicitly for unresolved issues.
       final alertsSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -155,15 +175,16 @@ class _HomePageState extends State<HomePage> {
           .where('resolved', isEqualTo: false)
           .get();
 
-        // Fetch recent notifications (use 'time' field that NotificationService writes)
-        final notificationsSnapshot = await FirebaseFirestore.instance
+      // 7. Query the recent 'notifications' to derive a "tasks completed" metric.
+      final notificationsSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .collection('notifications')
           .orderBy('time', descending: true)
           .limit(50)
           .get();
-          // If no results using 'time', try 'timestamp' as older code might use that key
+          
+          // 8. Migration fallback: Older schemas used 'timestamp' instead of 'time'. Attempt re-query if empty.
           if (notificationsSnapshot.docs.isEmpty) {
             final altSnapshot = await FirebaseFirestore.instance
                 .collection('users')
@@ -174,15 +195,11 @@ class _HomePageState extends State<HomePage> {
                 .get();
             if (altSnapshot.docs.isNotEmpty) {
               print(' Found notifications using \"timestamp\" field');
-              // replace notificationsSnapshot variable by altSnapshot for counting
-              // (we'll keep a local reference)
-              // Use altSnapshot for completedTasks calculation below
-          
-              // set variable by shadowing
-          
+              // (Future implementations would shadow this here)
             }
           }
 
+        // 9. Derive 'completedTasks' by scanning notification payloads for specific success keywords.
         int completedTasks = notificationsSnapshot.docs.where((doc) {
         final data = doc.data() as Map<String, dynamic>? ?? {};
         final title = (data['title'] as String?)?.toLowerCase() ?? '';
@@ -190,28 +207,32 @@ class _HomePageState extends State<HomePage> {
         return type == 'system' || title.contains('task') || title.contains('done') || title.contains('completed');
         }).length;
 
+      // 10. Safely commit the derived analytics back to the UI state.
       if (mounted) {
         setState(() {
           _activeCropsCount = totalCrops;
           _alertsCount = alertsSnapshot.docs.length;
-          _yieldRate = 85.0; // Default value - could fetch from crop data
+          _yieldRate = 85.0; // 11. Mock placeholder: Represents an overall yield health score.
           _tasksDone = completedTasks;
-          _totalTasks = completedTasks + 2; // Estimated total
+          _totalTasks = completedTasks + 2; // 12. Mock calculation for UI rendering (e.g. 3/5 tasks done).
         });
       }
-          print('ℹ Farm overview: crops=$totalCrops alerts=${alertsSnapshot.docs.length} tasksDone=$completedTasks');
+      print('ℹ Farm overview: crops=$totalCrops alerts=${alertsSnapshot.docs.length} tasksDone=$completedTasks');
     } catch (e) {
       print(' Error fetching farm overview: $e');
     }
   }
 
-  // Fetch Recent Activities from Firestore
+  /// Purpose: Fetches and formats the 5 most recent activities (notifications and pest alerts) for the dashboard.
+  /// Inputs: None. (Queries Firestore based on current user UID).
+  /// Outputs: Updates [_recentActivities] with chronological events to drive the UI timeline.
   Future<void> _fetchRecentActivities() async {
+    // 1. Verify user session before executing database queries.
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
     try {
-      // Fetch notifications
+      // 2. Fetch the 10 most recent system notifications from the user's subcollection.
       final notificationsSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -221,7 +242,8 @@ class _HomePageState extends State<HomePage> {
           .get();
 
       List<QueryDocumentSnapshot> docs = notificationsSnapshot.docs;
-      // If no docs with 'time', try 'timestamp'
+      
+      // 3. Migration Fallback: If no notifications use the 'time' schema, retry querying with the older 'timestamp' key.
       if (docs.isEmpty) {
         final alt = await FirebaseFirestore.instance
             .collection('users')
@@ -234,7 +256,7 @@ class _HomePageState extends State<HomePage> {
         if (docs.isNotEmpty) print('ℹ Using notifications ordered by "timestamp"');
       }
 
-      // Fetch pest alerts
+      // 4. Fetch the 10 most recent pest alerts to interleave into the activity feed.
       final alertsSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -245,17 +267,21 @@ class _HomePageState extends State<HomePage> {
 
       List<Map<String, String>> activities = [];
 
-      // Add notifications
+      // 5. Parse and format the notifications into standardized dictionary objects.
       for (var doc in docs) {
         final data = doc.data() as Map<String, dynamic>? ?? {};
+        
+        // 6. Safely cast the varying timestamp fields to a native Dart DateTime object.
         final timestamp = (data['time'] as Timestamp?)?.toDate()
             ?? (data['timestamp'] as Timestamp?)?.toDate()
             ?? (data['createdAt'] as Timestamp?)?.toDate()
             ?? DateTime.now();
+            
+        // 7. Calculate the time elapsed since the event.
         final duration = DateTime.now().difference(timestamp);
-        
-        String timeAgo = _formatTimeAgo(duration);
+        String timeAgo = _formatTimeAgo(duration); // 8. Delegate formatting to the helper function.
 
+        // 9. Append to the local aggregated list.
         activities.add({
           'title': data['title'] ?? 'Activity',
           'time': timeAgo,
@@ -263,7 +289,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
 
-      // Add pest alerts
+      // 10. Parse and format the pest alerts using the same standardized dictionary structure.
       for (var doc in alertsSnapshot.docs) {
         final data = doc.data() as Map<String, dynamic>? ?? {};
         final timestamp = (data['detectedDate'] as Timestamp?)?.toDate() ?? DateTime.now();
@@ -280,13 +306,11 @@ class _HomePageState extends State<HomePage> {
         });
       }
 
-      // Sort activities by time (most recent first)
-      // We need to extract time for sorting - for now keep insertion order
-      // (notifications are already sorted, alerts are already sorted)
-
-      // Take only top 5
+      // 11. Truncate the combined list to the 5 most relevant items for the UI footprint.
+      // Note: A true chronological sort is skipped here in favor of insertion order (notifications first, then alerts).
       activities = activities.take(5).toList();
 
+      // 12. Safely trigger a rebuild of the dashboard feed.
       if (mounted) {
         setState(() {
           _recentActivities = activities;
@@ -306,7 +330,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Helper to format time ago
+  /// Purpose: Converts a strict Duration object into a human-readable "time ago" string.
+  /// Inputs: [duration] - The difference between the event timestamp and DateTime.now().
+  /// Outputs: A formatted string like "Just now", "5 minutes ago", or "2 days ago".
   String _formatTimeAgo(Duration duration) {
     if (duration.inMinutes < 1) {
       return 'Just now';

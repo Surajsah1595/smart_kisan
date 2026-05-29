@@ -5,8 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification.dart';
 import 'localization_service.dart';
 
-/// Service to manage all notifications in the app
-/// Integrates with Weather, Pest, Water, Crop, and other services
+/// Purpose: A Singleton service to manage all in-app notifications. Integrates with FCM (Firebase Cloud Messaging) and local Firestore collections.
+/// Integrates with Weather, Pest, Water, Crop, and other services.
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -24,18 +24,30 @@ class NotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
+  /// Purpose: Requests iOS/Android permissions for push notifications and initializes the FlutterLocalNotificationsPlugin channels.
+  /// Inputs: None.
+  /// Outputs: Sets up background and foreground message listeners.
   Future<void> initFCM() async {
+    // 1. Request native OS permissions for displaying alerts, updating badges, and playing sounds.
     NotificationSettings settings = await _fcm.requestPermission(alert: true, badge: true, sound: true);
+    
+    // 2. Abort initialization if the user denied notification permissions.
     if (settings.authorizationStatus != AuthorizationStatus.authorized) return;
 
+    // 3. Define the Android launcher icon to use in the system tray.
     const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // 4. Initialize iOS specific settings (default empty parameters suffice for basic pushes).
     const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
+    // 5. Bundle platform settings and initialize the local notifications plugin.
     const InitializationSettings initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
     await _localNotifications.initialize(settings: initSettings);
 
+    // 6. Set up a listener for push payloads received while the app is actively in the foreground.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       if (notification == null) return;
+      
+      // 7. Render a local system tray notification using the received payload.
       _localNotifications.show(
         id: notification.hashCode,
         title: notification.title,
@@ -48,9 +60,14 @@ class NotificationService {
     });
   }
 
+  /// Purpose: Retrieves the unique hardware FCM token and binds it to the user's Firestore profile.
+  /// Inputs: [userId] - The authenticated Firebase UID.
+  /// Outputs: Updates the 'fcmToken' field in the 'users' collection.
   Future<void> saveFcmToken(String userId) async {
+    // 1. Ask the Firebase backend for the device's unique routing token.
     String? token = await _fcm.getToken();
     if (token != null) {
+      // 2. Perform an atomic update on the user's profile document.
       await FirebaseFirestore.instance.collection('users').doc(userId).update({'fcmToken': token});
     }
   }
@@ -120,7 +137,9 @@ class NotificationService {
     await _saveNotification(notification);
   }
 
-  /// Create notification for humidity warnings
+  /// Purpose: Evaluates humidity data and generates a targeted agronomic alert.
+  /// Inputs: [humidity] (double percentage), [location] (optional string).
+  /// Outputs: Calls [_saveNotification] to persist the alert.
   Future<void> notifyHumidityLevel({
     required double humidity,
     String? location,
@@ -129,22 +148,26 @@ class NotificationService {
     String message;
     NotificationPriority priority;
 
+    // 1. Agronomic Logic: Humidity > 80% increases fungal disease risk.
     if (humidity > 80) {
       title = 'High Humidity Alert';
       message =
           'Humidity is ${humidity.toInt()}%. Risk of fungal diseases. Ensure proper ventilation.';
       priority = NotificationPriority.high;
+    // 2. Agronomic Logic: Humidity < 30% increases transpiration stress.
     } else if (humidity < 30) {
       title = 'Low Humidity Alert';
       message =
           'Humidity is ${humidity.toInt()}%. Increase irrigation frequency to maintain soil moisture.';
       priority = NotificationPriority.normal;
+    // 3. Agronomic Logic: 30% - 80% is considered optimal for general crop growth.
     } else {
       title = 'Optimal Humidity';
       message = 'Current humidity ${humidity.toInt()}% is suitable for crop growth.';
       priority = NotificationPriority.low;
     }
 
+    // 4. Construct the standardized data model.
     final notification = NotificationModel(
       id: '',
       title: title,
@@ -153,6 +176,8 @@ class NotificationService {
       type: NotificationType.weather,
       priority: priority,
     );
+    
+    // 5. Persist to Firestore.
     await _saveNotification(notification);
   }
 
@@ -393,17 +418,21 @@ class NotificationService {
   /// SCANNING & ANALYSIS NOTIFICATIONS
   /// ============================================
 
-  /// Create notification for plant scan analysis
+  /// Purpose: Generates an alert summarizing the results of an AI plant scan.
+  /// Inputs: [cropName], [analysisResult], [confidence] (0.0 to 1.0), [recommendations].
+  /// Outputs: Calls [_saveNotification] to persist the alert.
   Future<void> notifyPlantScanAnalysis({
     required String cropName,
     required String analysisResult,
     required double confidence,
     required String recommendations,
   }) async {
+    // 1. Escalate priority only if the AI model is highly confident (> 80%).
     final priority = confidence > 0.8
         ? NotificationPriority.high
         : NotificationPriority.normal;
 
+    // 2. Construct the data model, formatting the confidence decimal to a readable percentage.
     final notification = NotificationModel(
       id: '',
       title: 'Plant Scan Analysis Complete',
@@ -413,6 +442,8 @@ class NotificationService {
       type: NotificationType.crop,
       priority: priority,
     );
+    
+    // 3. Persist to Firestore.
     await _saveNotification(notification);
   }
 
@@ -580,6 +611,9 @@ class NotificationService {
   // HELPER METHODS
   
 
+  /// Purpose: Commits a [NotificationModel] directly into the current authenticated user's `notifications` subcollection in Firestore.
+  /// Inputs: [notification] - The constructed data model.
+  /// Outputs: A Future completing when the document is saved.
   Future<void> _saveNotification(NotificationModel notification) async {
     if (!isAuthenticated) {
       print(' User not authenticated, cannot save notification');
@@ -598,17 +632,22 @@ class NotificationService {
     }
   }
 
-  /// Get unread notification count
+  /// Purpose: Queries Firestore for the total number of unread notifications for the active user.
+  /// Inputs: None.
+  /// Outputs: Returns an integer count. Returns 0 if unauthenticated or on error.
   Future<int> getUnreadCount() async {
+    // 1. Guard against unauthenticated queries to prevent permission crashes.
     if (!isAuthenticated) return 0;
     
     try {
+      // 2. Execute a filtered query specifically searching for the 'isRead' boolean flag.
       final snapshot = await _firestore
           .collection('users')
           .doc(userId)
           .collection('notifications')
           .where('isRead', isEqualTo: false)
           .get();
+      // 3. Count the returned documents.
       return snapshot.docs.length;
     } catch (e) {
       print(' Error getting unread count: $e');
@@ -616,11 +655,14 @@ class NotificationService {
     }
   }
 
-  /// Mark notification as read
+  /// Purpose: Mutates a specific notification document's state to 'read'.
+  /// Inputs: [notificationId] - The Firestore document ID.
+  /// Outputs: Updates the database asynchronously.
   Future<void> markAsRead(String notificationId) async {
     if (!isAuthenticated) return;
     
     try {
+      // 1. Target the specific document using its unique ID and update the boolean flag.
       await _firestore
           .collection('users')
           .doc(userId)
@@ -632,11 +674,14 @@ class NotificationService {
     }
   }
 
-  /// Delete notification
+  /// Purpose: Permanently deletes a specific notification document.
+  /// Inputs: [notificationId] - The Firestore document ID.
+  /// Outputs: Removes the document from the database asynchronously.
   Future<void> deleteNotification(String notificationId) async {
     if (!isAuthenticated) return;
     
     try {
+      // 1. Execute the destructive delete operation on the target document.
       await _firestore
           .collection('users')
           .doc(userId)

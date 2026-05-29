@@ -13,6 +13,9 @@ import 'app_config.dart';
 
 // --- MODELS ---
 
+/// Purpose: Data model representing a physical agricultural plot or zone.
+/// Inputs: JSON map from Firestore.
+/// Outputs: Structured Field object used across the application.
 class Field {
   final String id;
   final String name;
@@ -32,12 +35,14 @@ class Field {
     this.longitude,
   });
 
+  /// Purpose: Deserializes a Firestore document snapshot into a strongly-typed Field object.
   factory Field.fromSnapshot(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Field(
       id: doc.id,
       name: data['name'] ?? '',
       size: data['size'] ?? '',
+      // 1. Default to Loamy Soil as a safe middle-ground if data is missing.
       soilType: data['soilType'] ?? 'Loamy Soil (Ideal)',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       latitude: (data['latitude'] as num?)?.toDouble(),
@@ -46,6 +51,9 @@ class Field {
   }
 }
 
+/// Purpose: Data model representing a specific plant type grown within a Field.
+/// Inputs: JSON map from Firestore.
+/// Outputs: Structured Crop object mapping agronomic characteristics.
 class Crop {
   final String id;
   final String name;
@@ -67,6 +75,7 @@ class Crop {
     this.notes = '',
   });
 
+  /// Purpose: Deserializes a Firestore document snapshot into a strongly-typed Crop object.
   factory Crop.fromSnapshot(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Crop(
@@ -75,6 +84,7 @@ class Crop {
       season: data['season'] ?? '',
       duration: data['duration'] ?? '',
       waterNeed: data['waterNeed'] ?? '',
+      // 1. Default to Seedling stage to ensure the Water Optimization engine doesn't crash on nulls.
       cropStage: data['cropStage'] ?? 'Seedling',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       notes: data['notes'] ?? '',
@@ -84,6 +94,9 @@ class Crop {
 
 // --- SCREEN ---
 
+/// [CropAdvisoryScreen] allows users to manage their agricultural fields and crops.
+/// It interacts with [FirebaseFirestore] to persist field/crop data, displays
+/// seasonal farming tips, and provides AI-powered agricultural recommendations.
 class CropAdvisoryScreen extends StatefulWidget {
   const CropAdvisoryScreen({super.key});
 
@@ -506,6 +519,9 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   // --- ACTIONS (Dialogs & DB Writes) ---
 
+  /// Purpose: Opens a modal dialog allowing the user to create a new agricultural field.
+  /// Inputs: [context] - The widget tree context required to render the dialog.
+  /// Outputs: Modifies Firestore by adding a new field document, and sends a local notification.
   void _showAddFieldDialog(BuildContext context) {
     final nameCtrl = TextEditingController();
     final sizeCtrl = TextEditingController();
@@ -571,16 +587,17 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         const SizedBox(width: 12),
                         Expanded(child: ElevatedButton(
                           onPressed: () async {
+                            // 1. Validate that the field name is not empty.
                             if (nameCtrl.text.isEmpty) return;
                             
-                            // Rate limiting check
+                            // 2. Rate Limiting Check: Prevent spam or double-submissions by comparing against the last creation timestamp.
                             if (_lastFieldCreated != null && DateTime.now().difference(_lastFieldCreated!) < _fieldCreationCooldown) {
                               await _logAuditAction('suspicious_field_spam', reason: 'Attempted to create field too quickly');
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Wait 2 seconds before adding another field'))));
                               return;
                             }
                             
-                            // Check max fields
+                            // 3. Capacity Check: Query Firestore to count existing fields and enforce the max limit per user.
                             final existingFields = await _usersCollection.doc(uid).collection('fields').count().get();
                             if ((existingFields.count ?? 0) >= _maxFieldsPerUser) {
                               await _logAuditAction('suspicious_max_fields_exceeded', reason: 'User attempted to exceed max 10 fields');
@@ -589,6 +606,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             }
 
                             try {
+                              // 4. Commit the new field document to Firestore under the authenticated user's subcollection.
                               await _usersCollection.doc(uid).collection('fields').add({
                                 'name': nameCtrl.text,
                                 'size': sizeCtrl.text,
@@ -596,7 +614,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                                 'createdAt': FieldValue.serverTimestamp(),
                               });
                               
-                              // Send notification
+                              // 5. Trigger a local push notification confirming the successful creation.
                               await _notificationService.notifyFieldCreated(
                                 fieldName: nameCtrl.text,
                                 area: double.tryParse(sizeCtrl.text) ?? 0.0,
@@ -604,10 +622,12 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                                 cropType: 'Multiple',
                               );
                               
+                              // 6. Log the successful action and update the rate-limiting timestamp.
                               await _logAuditAction('field_created', fieldName: nameCtrl.text);
                               _lastFieldCreated = DateTime.now();
-                              Navigator.pop(context);
+                              Navigator.pop(context); // Close the dialog
                             } catch (e) {
+                              // 7. Gracefully handle and log any database write failures.
                               await _logAuditAction('field_creation_failed', fieldName: nameCtrl.text, reason: e.toString());
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${LocalizationService.translate("Error:")} $e')));
                             }
@@ -627,10 +647,16 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     );
   }
 
+  /// Purpose: Opens a bottom sheet allowing the user to select from a predefined list of crops or add a custom one.
+  /// Inputs: [context].
+  /// Outputs: Modifies Firestore by adding a crop to the selected field.
   void _showAddCropDialog(BuildContext context) {
+    // 1. Guard check: Require an active field selection before adding a crop.
     if (selectedFieldId == null) return;
     final nameCtrl = TextEditingController();
     
+    // TODO: Refactor for production - Hardcoded crop database.
+    // Consider migrating this extensive data structure to Firestore or a local JSON asset file.
     // --- 50+ CROPS LIST ---
     List<Map<String, String>> cropDatabase = [
       // Cereals
@@ -694,7 +720,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: true, // Allow the sheet to take up more screen space
       builder: (context) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
@@ -715,14 +741,14 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         onPressed: () async {
                           if (nameCtrl.text.isEmpty) return;
                           
-                          // Rate limiting check
+                          // 2. Rate limiting check: Prevent spam creation.
                           if (_lastCropCreated != null && DateTime.now().difference(_lastCropCreated!) < _cropCreationCooldown) {
                             await _logAuditAction('suspicious_crop_spam', fieldName: selectedFieldName, reason: 'Attempted to create crop too quickly');
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocalizationService.translate('Wait before adding another crop'))));
                             return;
                           }
                           
-                          // Check max crops in field
+                          // 3. Capacity Check: Enforce a limit of 20 crops per specific field.
                           final existingCrops = await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').count().get();
                           if ((existingCrops.count ?? 0) >= _maxCropsPerField) {
                             await _logAuditAction('suspicious_max_crops_exceeded', fieldName: selectedFieldName, reason: 'User attempted to exceed max 20 crops per field');
@@ -730,6 +756,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             return;
                           }
                           
+                          // 4. Save custom crop with generic default traits.
                           await _saveCropToFirebase(nameCtrl.text, 'Custom', 'Unknown', 'Medium');
                           await _logAuditAction('crop_created', fieldName: selectedFieldName, cropName: nameCtrl.text);
                           _lastCropCreated = DateTime.now();
@@ -761,18 +788,22 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     );
   }
 
+  /// Purpose: Persists a newly added crop to the currently selected field in Firestore.
+  /// Inputs: [name], [season], [duration], [water] - Core crop metadata. [cropStage], [notes] - Optional context.
+  /// Outputs: A Future completing when the database write and local notification generation succeed.
   Future<void> _saveCropToFirebase(String name, String season, String duration, String water, {String cropStage = 'Seedling', String notes = ''}) async {
+    // 1. Traverse the Firestore hierarchy: users -> {uid} -> fields -> {selectedFieldId} -> crops -> add()
     await _usersCollection.doc(uid).collection('fields').doc(selectedFieldId).collection('crops').add({
-      'name': name,
-      'season': season,
-      'duration': duration,
-      'waterNeed': water,
-      'cropStage': cropStage,
-      'createdAt': FieldValue.serverTimestamp(),
+      'name': name, // 2. Map the crop name.
+      'season': season, // 3. Map the growing season.
+      'duration': duration, // 4. Map the expected growth duration.
+      'waterNeed': water, // 5. Map the relative water requirement.
+      'cropStage': cropStage, // 6. Set the initial growth stage.
+      'createdAt': FieldValue.serverTimestamp(), // 7. Let the Firestore server dictate the exact creation time for consistency.
       'notes': notes,
     });
     
-    // Send notification
+    // 8. Trigger a local push notification confirming the successful addition of the crop.
     await _notificationService.notifyCropHealth(
       cropName: name,
       healthStatus: 'Good',
@@ -798,6 +829,9 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   }
 
   // --- SMART RECOMMENDATION LOGIC ---
+  /// Purpose: Orchestrates the AI crop recommendation flow, including loading states and rendering the result modal.
+  /// Inputs: [context], [reqSoil], [reqSeason], [reqTemp], [reqPh], [reqRainfall] - Environmental parameters.
+  /// Outputs: A Future completing when the recommendation flow finishes.
   Future<void> _getAiRecommendations(BuildContext context, String reqSoil, String reqSeason, double reqTemp, double reqPh, double reqRainfall) async {
     if (selectedFieldObject == null) return;
 
@@ -1102,8 +1136,11 @@ class MlCropService {
     return 'Winter'; // Oct to Feb
   }
 
-  /// Calls the FastAPI ML model prediction endpoint.
+  /// Purpose: Calls the FastAPI ML model prediction endpoint.
+  /// Inputs: [soilType], [season], [temp], [ph], [rainfall] - Agronomic parameters.
+  /// Outputs: Returns the predicted crop name on success, or an error code ("NETWORK_ERROR", "SERVER_ERROR") on failure.
   Future<String?> getMLPrediction(String soilType, String season, double temp, double ph, double rainfall) async {
+    // 1. Serialize the input parameters into a JSON string payload expected by the FastAPI backend.
     final String requestBody = jsonEncode({
       'soil_type': soilType,
       'season': season,
@@ -1112,39 +1149,50 @@ class MlCropService {
       'rainfall': rainfall
     });
 
+    // 2. Track if a network error occurs across all endpoint attempts to signal fallback logic later.
     bool networkErrorEncountered = false;
 
+    // 3. Iterate through all possible backend URLs (e.g., emulator loopback, real device IP, etc.).
     for (String url in _mlApiUrls) {
-      int maxRetries = 3;
+      int maxRetries = 3; // 4. Define a retry limit for transient network failures.
       
+      // 5. Attempt the HTTP request up to maxRetries times for the current URL.
       for (int attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+          // 6. Execute the POST request with a 20-second timeout to avoid indefinite hanging.
           final response = await http.post(
             Uri.parse(url),
             headers: AppConfig.apiHeaders,
             body: requestBody,
-          ).timeout(const Duration(seconds: 20)); // Increased to 20 seconds
+          ).timeout(const Duration(seconds: 20)); 
 
+          // 7. Check if the server responded with a success status code (200 OK).
           if (response.statusCode == 200) {
+            // 8. Deserialize the JSON response body.
             final data = jsonDecode(response.body);
+            // 9. Extract the 'recommended_crop' string from the parsed JSON.
             final String predictedCrop = data['recommended_crop'];
             print(' ML successful via $url: $predictedCrop');
+            // 10. Return the successfully predicted crop.
             return predictedCrop;
           } else {
+            // 11. If the server is reached but fails (e.g., 500 Internal Server Error), log it and abort further IP attempts.
             print(' ML API Error: Status ${response.statusCode} from $url');
-            // If the server was reached but returned an error (e.g. 500), stop trying IPs.
             return "SERVER_ERROR";
           }
         } on SocketException catch (_) {
+          // 12. Catch connection refused/network errors and apply exponential backoff before retrying.
           networkErrorEncountered = true;
           int delay = (attempt == 1) ? 1 : (attempt == 2) ? 2 : 4;
           await Future.delayed(Duration(seconds: delay));
         } catch (e) {
+          // 13. Catch timeout exceptions or other unexpected errors.
           if (e is TimeoutException) {
             networkErrorEncountered = true;
             int delay = (attempt == 1) ? 1 : (attempt == 2) ? 2 : 4;
             await Future.delayed(Duration(seconds: delay));
           } else {
+            // 14. Hard fail on unknown errors to trigger the Gemini fallback.
             return "SERVER_ERROR";
           }
         }
@@ -1152,20 +1200,28 @@ class MlCropService {
       print(' Connection to $url failed after 3 attempts.');
     }
     
+    // 15. If all URLs failed due to network unreachability, return a specific error flag.
     if (networkErrorEncountered) {
       return "NETWORK_ERROR";
     }
     return null;
   }
 
-  /// Backup recommendation using Gemini via existing AiService.
+  /// Purpose: Provides a fallback recommendation engine using Gemini if the local ML backend is down.
+  /// Inputs: [soilType], [season] - Basic parameters for a simple prompt.
+  /// Outputs: Returns the AI-generated crop name or null on failure.
   Future<String?> getGeminiBackup(String soilType, String season) async {
     try {
+      // 1. Instantiate the generalized AI Service singleton to access Gemini.
       final aiService = AiService();
+      // 2. Construct a highly constrained prompt to force a single-word/short-phrase response.
       final String prompt = 'Based on soil $soilType and $season season, recommend one crop name for South Asia. Reply with just crop name.';
+      // 3. Dispatch the prompt and wait for the AI response.
       final String? response = await aiService.sendMessage(prompt);
       
+      // 4. Validate the response to ensure it is not a framework error string.
       if (response != null && !response.startsWith('Error:')) {
+        // 5. Clean up any trailing whitespace/newlines from the AI output.
         final cropName = response.trim();
         print(' Gemini Backup successful: $cropName');
         return cropName;
@@ -1173,34 +1229,39 @@ class MlCropService {
       return null;
     } catch (e) {
       print(' Gemini Backup failed: $e');
-      return null;
+      return null; // 6. Fail silently so the UI handles the null state gracefully.
     }
   }
 
-  /// Tries ML prediction first, falls back to Gemini if ML fails.
+  /// Purpose: Implements the fallback logic tree for obtaining a crop recommendation.
+  /// Inputs: Soil, Season, Temp, pH, and Rainfall parameters.
+  /// Outputs: The recommended crop string, or an error message if all systems fail.
   Future<String> getRecommendation(String soilType, String season, double temp, double ph, double rainfall) async {
     print(' Getting recommendation for Soil: $soilType, Season: $season, Temp: $temp, pH: $ph, Rainfall: $rainfall');
     
-    // 1. Try ML Model
+    // 1. Primary Strategy: Attempt to reach the local, specialized Machine Learning model first.
     String? crop = await getMLPrediction(soilType, season, temp, ph, rainfall);
     
+    // 2. Check if the ML model returned a valid crop string (not an error flag).
     if (crop != null && crop != "NETWORK_ERROR" && crop != "SERVER_ERROR") {
       return crop;
     }
     
-    // 2. Fallback to Gemini
+    // 3. Fallback Strategy: If the ML server is unreachable (Network Error), rely on the cloud Gemini API.
     if (crop == "NETWORK_ERROR") {
       print(' Falling back to Gemini Backup due to network unreachability');
       String? geminiCrop = await getGeminiBackup(soilType, season);
       
+      // 4. Validate and return the Gemini prediction if successful.
       if (geminiCrop != null && geminiCrop.isNotEmpty) {
         return geminiCrop;
       }
     } else {
+      // 5. If it was a Server Error (500) rather than a Network Error, we skip Gemini as the request was fundamentally flawed.
       print(' ML server responded with an error or invalid state. Skipping Gemini fallback.');
     }
     
-    // 3. Complete Failure
+    // 6. Complete Failure: Both the local ML pipeline and the Cloud AI pipeline failed to produce a result.
     print(' Both ML and Gemini completely failed or were skipped.');
     return 'Error: Could not determine crop';
   }

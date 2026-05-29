@@ -75,79 +75,100 @@ class _WeatherPageState extends State<WeatherPage> {
     {'day': 'Sunday', 'date': '--', 'condition': 'Partly Cloudy', 'high': 30, 'low': 24, 'chance': 20},
   ];
 
+  /// Purpose: Initializes the widget state and triggers the initial data fetch.
+  /// Inputs: None.
+  /// Outputs: Initiates the asynchronous [_fetchWeatherByGPS] workflow.
   @override
   void initState() {
     super.initState();
-    // Automatically fetch weather via GPS when screen opens
+    // 1. Automatically fetch weather via GPS immediately when the screen opens.
     _fetchWeatherByGPS();
   }
 
-  /// 1. Fetch Weather using User's GPS Location
+  /// Purpose: Automatically requests and resolves weather data using the device's hardware GPS coordinates.
+  /// Inputs: None (reads from device).
+  /// Outputs: Updates local component state with fetched data or triggers an error handler.
   Future<void> _fetchWeatherByGPS() async {
+    // 1. Reset UI state to show loading spinners and clear old errors.
     setState(() { _isLoading = true; _errorMessage = ''; });
     try {
+      // 2. Await the response from the abstracted WeatherService layer.
       final data = await _weatherService.getCurrentWeather();
+      // 3. Process the raw JSON payload if successful.
       _updateUI(data);
     } catch (e) {
+      // 4. Catch and process failures (e.g., GPS denied, network timeout).
       _handleError(e);
     }
   }
 
-  /// 2. Fetch Weather using a specific City Name (from Dropdown)
+  /// Purpose: Fetches weather data for a hardcoded, user-selected city.
+  /// Inputs: [cityName] - The name of the target city.
+  /// Outputs: Updates UI state with localized weather data.
   Future<void> _fetchWeatherByCity(String cityName) async {
+    // 1. Update UI state: toggle loader and instantly display the targeted city name.
     setState(() { 
       _isLoading = true; 
       _errorMessage = ''; 
-      _selectedLocation = cityName; // Update display text immediately
+      _selectedLocation = cityName; 
     });
     try {
+      // 2. Delegate the network request to the WeatherService.
       final data = await _weatherService.getWeatherByCity(cityName);
+      // 3. Process the incoming JSON payload.
       _updateUI(data);
     } catch (e) {
       _handleError(e);
     }
   }
 
-  /// 3. Process the API Response and Update UI
+  /// Purpose: Parses the OpenWeatherMap JSON payload and translates it into UI-friendly state variables.
+  /// Inputs: [data] - The raw JSON map from the API.
+  /// Outputs: Mutates the [_currentWeather], [_adviceData], and [_activeAlert] variables, and triggers a UI rebuild.
   void _updateUI(Map<String, dynamic> data) {
     setState(() {
-      // If we used GPS, the API gives us the exact location name
+      // 1. If the request was made via GPS, extract the resolved city name from the API response.
       if (_selectedLocation == 'Locating...') {
         _selectedLocation = data['name'];
       }
 
-      // Extract raw values from JSON
+      // 2. Safely cast incoming numeric values. The API may return Ints or Doubles; `num` handles both gracefully.
       double temp = (data['main']['temp'] as num).toDouble();
       String condition = data['weather'][0]['main'].toString();
-      // Convert Wind from meters/sec to km/h
+      
+      // 3. Convert wind speed from meters/second (API default) to kilometers/hour (User preference).
       double windSpeedKmh = (data['wind']['speed'] as num).toDouble() * 3.6;
       int humidity = data['main']['humidity'];
 
-      // Save to state variables
+      // 4. Construct the sanitized weather object used by the presentation layer.
       _currentWeather = {
         'temp': temp.round(),
         'feelsLike': (data['main']['feels_like'] as num).round(),
         'condition': condition,
         'humidity': humidity,
         'wind': windSpeedKmh.round(),
-        // Convert visibility from meters to km
+        // 5. Convert visibility from meters to kilometers.
         'visibility': (data['visibility'] / 1000).round(),
       };
 
-      // Call our Smart Logic functions to generate text
+      // 6. Execute local logic algorithms to generate agronomic advice and alerts based on the raw metrics.
       _adviceData = _generateSmartAdvice(temp, condition, windSpeedKmh, humidity);
       _activeAlert = _generateSmartAlert(condition, windSpeedKmh);
 
+      // 7. Hide the loading spinner.
       _isLoading = false;
     });
   }
 
-  /// 4. LOGIC: Generate specific advice based on weather parameters
+  /// Purpose: Generates a list of actionable agricultural advice based on localized environmental thresholds.
+  /// Inputs: [temp], [condition], [wind], [humidity].
+  /// Outputs: A List of Maps containing title, description, color, and icon for UI rendering.
   List<Map<String, dynamic>> _generateSmartAdvice(double temp, String condition, double wind, int humidity) {
+    // 1. Initialize an empty list to aggregate multiple advice cards if conditions overlap.
     List<Map<String, dynamic>> list = [];
     String condLower = condition.toLowerCase();
 
-    // -- Rule 1: Rain --
+    // 2. Precipitation Logic: Warn against chemical applications that could wash away.
     if (condLower.contains('rain') || condLower.contains('drizzle')) {
       list.add({
         'title': 'Rain Detected',
@@ -156,7 +177,7 @@ class _WeatherPageState extends State<WeatherPage> {
         'icon': Icons.water_drop
       });
     } else {
-      // If no rain, check if it is too hot (Irrigation needed)
+      // 3. Heat Stress Logic: If it's not raining, check if irrigation is urgently required.
       if (temp > 28) {
          list.add({
           'title': 'Irrigation Needed',
@@ -167,7 +188,7 @@ class _WeatherPageState extends State<WeatherPage> {
       }
     }
 
-    // -- Rule 2: High Wind --
+    // 4. Wind Drift Logic: High winds make spray applications dangerous and ineffective.
     if (wind > 15) {
       list.add({
         'title': 'High Winds (${wind.round()} km/h)',
@@ -177,7 +198,7 @@ class _WeatherPageState extends State<WeatherPage> {
       });
     }
 
-    // -- Rule 3: General Conditions --
+    // 5. Ideal Conditions Logic: Greenlight standard farm operations.
     if (condLower.contains('clear') || condLower.contains('sun')) {
       list.add({
         'title': 'Good Field Conditions',
@@ -186,6 +207,7 @@ class _WeatherPageState extends State<WeatherPage> {
         'icon': Icons.wb_sunny
       });
     } else if (condLower.contains('thunder') || condLower.contains('storm')) {
+      // 6. Lightning Hazard Logic: Prioritize farmer safety over crop management.
        list.add({
         'title': 'Safety Warning',
         'desc': 'Lightning risk. Stay away from open fields and metal equipment.',
@@ -194,7 +216,7 @@ class _WeatherPageState extends State<WeatherPage> {
       });
     }
 
-    // -- Rule 4: Frost/Cold --
+    // 7. Cold Stress Logic: Warn about potential frost damage.
     if (temp < 10) {
       list.add({
         'title': 'Cold Stress Risk',
@@ -204,7 +226,7 @@ class _WeatherPageState extends State<WeatherPage> {
       });
     }
 
-    // Fallback if no specific advice
+    // 8. Fallback Logic: Ensure the UI never displays an empty section if no rules match.
     if (list.isEmpty) {
       list.add({
         'title': 'Stable Conditions',
@@ -217,37 +239,48 @@ class _WeatherPageState extends State<WeatherPage> {
     return list;
   }
 
-  /// 5. LOGIC: Generate Red Alerts for extreme weather
+  /// Purpose: Evaluates weather conditions to surface high-priority danger alerts.
+  /// Inputs: [condition], [wind].
+  /// Outputs: A Map containing alert details, or null if no extreme weather is detected.
   Map<String, dynamic>? _generateSmartAlert(String condition, double wind) {
     String condLower = condition.toLowerCase();
     
+    // 1. Prioritize immediate threats to human life (Lightning).
     if (condLower.contains('thunder') || condLower.contains('storm')) {
       return {
         'title': 'Storm Alert',
         'desc': 'Thunderstorm activity detected. Halt all field work immediately.'
       };
     }
+    // 2. Evaluate infrastructure threats (Flooding).
     if (condLower.contains('rain') && condLower.contains('heavy')) {
        return {
         'title': 'Heavy Rain Alert',
         'desc': 'Heavy precipitation expected. Ensure drainage systems are clear.'
       };
     }
+    // 3. Evaluate property/livestock threats (Gale-force winds).
     if (wind > 30) {
        return {
         'title': 'Gale Warning',
         'desc': 'Damaging winds detected. Secure loose structures and livestock.'
       };
     }
-    return null; // Return null means "No Active Alert"
+    // 4. Return null to signal the UI to hide the alert banner entirely.
+    return null;
   }
 
+  /// Purpose: Handles API failures, updating the UI to reflect the disconnected state.
+  /// Inputs: The thrown Exception [e].
+  /// Outputs: Mutates state to stop loading and display an error banner.
   void _handleError(dynamic e) {
     setState(() {
+      // 1. Fallback to a generic error message indicating network or GPS failure.
       _errorMessage = "Could not load weather. Check internet/GPS.";
       _isLoading = false;
       _currentWeather['condition'] = 'Error';
     });
+    // 2. Log the exact stack trace/error for debugging.
     print(e);
   }
 
@@ -353,6 +386,9 @@ class _WeatherPageState extends State<WeatherPage> {
 
   // --- WIDGET BUILDERS (Keep UI clean) ---
 
+  /// Purpose: Renders the top bar displaying the currently selected city and a dropdown to change it.
+  /// Inputs: None (reads from [_selectedLocation]).
+  /// Outputs: A Container widget with a location icon and dropdown button.
   Widget _buildLocationRow() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -383,6 +419,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders the primary weather card showing the large temperature text and condition icon.
+  /// Inputs: None (reads from [_currentWeather] state).
+  /// Outputs: A large stylized Container widget with gradient background.
   Widget _buildCurrentWeather() {
     return Container(
       width: double.infinity,
@@ -462,6 +501,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders a horizontal scrollable row of secondary weather metrics.
+  /// Inputs: None.
+  /// Outputs: A Column containing multiple [_conditionCard] widgets for wind, humidity, and visibility.
   Widget _buildConditionsRow() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,6 +528,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Helper widget to render a single, uniform card for a secondary weather metric.
+  /// Inputs: [icon] (IconData), [title] (String), [value] (String).
+  /// Outputs: A stylized Container widget.
   Widget _conditionCard(IconData icon, String title, String value) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -506,6 +551,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders a horizontal timeline of hourly weather forecasts.
+  /// Inputs: None (uses static placeholder [_hourlyData]).
+  /// Outputs: A scrollable ListView widget.
   Widget _buildHourlySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,6 +608,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders a vertical list of upcoming weather forecasts for the week.
+  /// Inputs: None (uses static placeholder [_weeklyData]).
+  /// Outputs: A Column widget mapping daily data to list items.
   Widget _buildWeeklySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -622,6 +673,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders the dynamic agricultural advice cards based on current weather thresholds.
+  /// Inputs: None (reads from [_adviceData] state).
+  /// Outputs: A Column containing mapped advice Containers, or a fallback empty state.
   Widget _buildAdviceSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,6 +728,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders a high-visibility warning banner if severe weather is detected.
+  /// Inputs: None (reads from [_activeAlert] state).
+  /// Outputs: A stylized warning Container widget.
   Widget _buildAlertCard() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -701,6 +758,9 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Renders a modal dialog allowing the user to select from a predefined list of Nepali cities or revert to GPS.
+  /// Inputs: None.
+  /// Outputs: Shows an AlertDialog and triggers a fetch operation on selection.
   void _showLocationDialog() {
     showDialog(
       context: context,
@@ -715,8 +775,9 @@ class _WeatherPageState extends State<WeatherPage> {
               title: Text(_locations[index]),
               leading: const Icon(Icons.location_city, color: Colors.orange),
               onTap: () {
-                // Call API with selected city
+                // 1. Trigger the targeted city fetch.
                 _fetchWeatherByCity(_locations[index]); 
+                // 2. Dismiss the dialog.
                 Navigator.pop(context);
               },
             ),
@@ -727,6 +788,7 @@ class _WeatherPageState extends State<WeatherPage> {
             icon: const Icon(Icons.my_location),
             label: Text(LocalizationService.translate('Use Current GPS')),
             onPressed: () {
+              // 3. Revert to hardware GPS.
               _fetchWeatherByGPS();
               Navigator.pop(context);
             },
@@ -736,13 +798,18 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
+  /// Purpose: Maps raw weather condition strings to corresponding Material Icons.
+  /// Inputs: [condition] - The weather description string from OpenWeatherMap.
+  /// Outputs: A single [IconData] object.
   IconData _getWeatherIcon(String condition) {
     condition = condition.toLowerCase();
+    // 1. Fallthrough matching logic.
     if (condition.contains('cloud')) return Icons.cloud;
     if (condition.contains('rain')) return Icons.umbrella;
     if (condition.contains('clear') || condition.contains('sun')) return Icons.wb_sunny;
     if (condition.contains('snow')) return Icons.ac_unit;
     if (condition.contains('thunder')) return Icons.flash_on;
+    // 2. Default fallback icon.
     return Icons.wb_sunny;
   }
 }

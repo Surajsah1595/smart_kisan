@@ -23,7 +23,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// Purpose: Acts as a local router for the onboarding sequence.
+  /// Inputs: None (relies on _currentScreen state variable).
+  /// Outputs: Returns the appropriate Widget for the current onboarding step.
   Widget _buildCurrentScreen() {
+    // 1. Define the linear sequence of onboarding screens.
     final screens = [
       _buildWelcomeScreen(),
       _buildLanguageSelectionScreen(),
@@ -31,11 +35,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       _buildOnboardingScreen(1),
       _buildOnboardingScreen(2),
     ];
+    // 2. Safely clamp the index to prevent out-of-bounds array exceptions during navigation.
     return screens[_currentScreen.clamp(0, screens.length - 1)];
   }
 
+  /// Purpose: Renders the initial splash/welcome screen with branding and entry points.
+  /// Inputs: None.
+  /// Outputs: A Container widget containing the logo, tagline, and call-to-action buttons.
   Widget _buildWelcomeScreen() {
     return Container(
+      // 1. Set the fullscreen agricultural background image with a dark overlay for text contrast.
       decoration: BoxDecoration(
         image: DecorationImage(
           image: const AssetImage('assets/sk.jpg'),
@@ -46,6 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       child: SafeArea(
         child: Stack(
           children: [
+            // 2. Position the logo and branding text at the top left of the screen.
             Positioned(
               left: 34,
               top: 150,
@@ -66,6 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
+            // 3. Position the call-to-action buttons (Get Started, Log In) at the bottom.
             Positioned(
               left: 34,
               right: 34,
@@ -79,8 +90,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     color: (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey,
                   ),
                   const SizedBox(height: 40),
+                  // 4. "Get Started" pushes the local router state to the language selection screen.
                   _buildButton(tr('get_started'), () => setState(() => _currentScreen = 1)),
                   const SizedBox(height: 20),
+                  // 5. "Log In" explicitly routes out of the onboarding flow to the LoginScreen.
                   _buildOutlineButton(tr('log_in'), () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                   }),
@@ -93,7 +106,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// Purpose: Renders the language localization configuration screen.
+  /// Inputs: None.
+  /// Outputs: A Scaffold allowing the user to select and save their preferred UI language.
   Widget _buildLanguageSelectionScreen() {
+    // 1. Define supported localizations.
     final languages = [
       {'name': tr('English'), 'code': 'EN', 'flag': '🇬🇧'},
       {'name': tr('Nepali'), 'code': 'NE', 'flag': '🇳🇵'},
@@ -105,6 +122,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // 2. Allow skipping straight to login, bypassing onboarding.
             Align(alignment: Alignment.topRight, child: Padding(padding: const EdgeInsets.all(20), child: _buildSkipButton())),
             Expanded(
               child: SingleChildScrollView(
@@ -122,6 +140,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: _buildTitle(tr('choose_language'), 284),
                     ),
+                    // 3. Dynamically generate selection cards for each supported language.
                     ...List.generate(3, (index) => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: _buildLanguageCard(languages[index]),
@@ -135,6 +154,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  // 4. Progress indicator dots.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(4, (index) => Padding(
@@ -143,6 +163,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         width: 35,
                         height: 7,
                         decoration: ShapeDecoration(
+                          // Highlight the first dot for the language screen.
                           color: index == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor.withOpacity(0.1),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
@@ -153,16 +174,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // 5. 'Back' button returns to the welcome screen.
                       Expanded(
                         child: _buildNavButton(tr('back'), Theme.of(context).dividerColor.withOpacity(0.1), (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
                             () => setState(() => _currentScreen = 0)),
                       ),
                       const SizedBox(width: 15),
+                      // 6. 'Next' button validates selection and commits the locale choice.
                       Expanded(
                         child: _buildNavButton(tr('next'), _selectedLanguage != null ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor.withOpacity(0.1), 
                             _selectedLanguage != null ? Theme.of(context).cardColor : (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
                             _selectedLanguage != null ? () {
-                              // Map selected language to language code
+                              // 7. Map the UI selection back to strict language codes.
                               String languageCode = 'EN'; // default
                               if (_selectedLanguage == tr('Hindi')) {
                                 languageCode = LocalizationService.HI;
@@ -172,12 +195,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 languageCode = LocalizationService.EN;
                               }
                               
-                              // Set language globally and save preference
+                              // 8. Commit language choice to SharedPreferences via the singleton service.
                               LocalizationService.setLanguage(languageCode);
+                              
+                              // 9. Inform the easy_localization package to instantly rebuild the UI with the new locale.
                               context.setLocale(Locale(languageCode));
                               
+                              // 10. Proceed to the feature-showcase phase of onboarding.
                               setState(() => _currentScreen = 2);
-                            } : () {}),
+                            } : () {}), // Disabled if no language is selected.
                       ),
                     ],
                   ),
@@ -190,7 +216,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// Purpose: Renders one of three sequential feature-showcase screens.
+  /// Inputs: index (int) representing the specific onboarding step (0, 1, or 2).
+  /// Outputs: A Scaffold containing the relevant illustration, title, and description.
   Widget _buildOnboardingScreen(int index) {
+    // 1. Centralized content dictionary for the onboarding carousel.
     final data = [
       {
         'image': 'assets/Onboarding1.png',
@@ -214,6 +244,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // 2. Universal skip button routing immediately to Login.
             Align(alignment: Alignment.topRight, child: Padding(padding: const EdgeInsets.all(20), child: _buildSkipButton())),
             Expanded(
               child: SingleChildScrollView(
@@ -222,6 +253,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: SizedBox(
+                        // 3. Hardcoded dimension adjustments to ensure consistent image aspect ratios.
                         width: index == 1 ? 213.96 : 215,
                         height: index == 1 ? 294.04 : 236,
                         child: Image.asset(data[index]['image']!, fit: BoxFit.contain),
@@ -244,6 +276,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  // 4. Dot indicator logic mapping to `index + 1` because language selection was index 0.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(4, (dotIndex) => Padding(
@@ -262,15 +295,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // 5. Back navigation. Reverts to previous screen.
                       Expanded(
                         child: _buildNavButton(tr('back'), Theme.of(context).dividerColor.withOpacity(0.1), (Theme.of(context).brightness == Brightness.dark ? Theme.of(context).textTheme.bodyMedium?.color : const Color(0xFF9C9C9C)) ?? Colors.grey, 
-                            () => setState(() => _currentScreen = index + 1)),
+                            () => setState(() => _currentScreen = index + 1)), // +1 offset due to Language Selection
                       ),
                       const SizedBox(width: 15),
+                      // 6. Forward navigation. If on the final screen, break out of local routing and push LoginScreen.
                       Expanded(
                         child: _buildNavButton(tr('next'), Theme.of(context).colorScheme.primary, Theme.of(context).cardColor, () => setState(() {
                           if (index < 2) {
-                            _currentScreen = index + 3;
+                            _currentScreen = index + 3; // Step forward (+2 offset for Welcome + Language, +1 for next)
                           } else {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                           }

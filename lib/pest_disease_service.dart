@@ -8,7 +8,8 @@ import 'notification_service.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'localization_service.dart';
 
-/// Product Recommendation Model
+/// Purpose: Data model representing a single agrochemical product recommendation.
+/// Each field maps directly to a key in the in-memory product database or a Firestore document.
 class ProductRecommendation {
   final String id;
   final String productName;
@@ -40,15 +41,18 @@ class ProductRecommendation {
     required this.safetyWarnings,
   });
 
+  /// Purpose: Factory constructor that safely deserializes a raw Map into a typed ProductRecommendation.
+  /// Inputs: [map] - A Map<String, dynamic> from the product database or Firestore.
+  /// Outputs: Returns a fully instantiated ProductRecommendation with null-safe defaults.
   factory ProductRecommendation.fromMap(Map<String, dynamic> map) {
     return ProductRecommendation(
-      id: map['id'] ?? '',
+      id: map['id'] ?? '', // 1. Default to empty string if ID is missing.
       productName: map['productName'] ?? '',
       category: map['category'] ?? '',
       description: map['description'] ?? '',
-      price: (map['price'] as num?)?.toDouble() ?? 0.0,
+      price: (map['price'] as num?)?.toDouble() ?? 0.0, // 2. Safe numeric cast from Firestore's dynamic typing.
       dosage: map['dosage'] ?? '',
-      treatsDisease: List<String>.from(map['treatsDisease'] ?? []),
+      treatsDisease: List<String>.from(map['treatsDisease'] ?? []), // 3. Deep-copy the list to prevent shared-reference mutations.
       availability: map['availability'] ?? 'Available',
       rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
       reviews: map['reviews'] ?? 0,
@@ -58,6 +62,9 @@ class ProductRecommendation {
     );
   }
 
+  /// Purpose: Serializes this model back into a Map for Firestore writes or embedding inside alert documents.
+  /// Inputs: None.
+  /// Outputs: Returns a Map<String, dynamic> matching the Firestore schema.
   Map<String, dynamic> toMap() => {
     'id': id,
     'productName': productName,
@@ -99,16 +106,22 @@ class PestAlertData {
     this.productRecommendations = const [],
   });
 
+  /// Purpose: Deserializes a Firestore document snapshot into a strongly-typed PestAlertData object.
+  /// Inputs: [doc] - The raw DocumentSnapshot.
+  /// Outputs: Returns an instantiated PestAlertData model.
   factory PestAlertData.fromFirestore(DocumentSnapshot doc) {
+    // 1. Extract the raw map payload.
     final data = doc.data() as Map<String, dynamic>;
     List<ProductRecommendation> products = [];
     
+    // 2. Iterate and recursively deserialize any nested product recommendation objects.
     if (data['productRecommendations'] != null) {
       products = (data['productRecommendations'] as List)
           .map((p) => ProductRecommendation.fromMap(p as Map<String, dynamic>))
           .toList();
     }
     
+    // 3. Construct the model with safe default fallbacks for missing fields.
     return PestAlertData(
       id: doc.id,
       pestName: data['pestName'] ?? 'Unknown',
@@ -116,21 +129,25 @@ class PestAlertData {
       description: data['description'] ?? '',
       treatment: data['treatment'] ?? '',
       severity: data['severity'] ?? 'Medium',
+      // 4. Safely cast the Firestore Timestamp to a Dart DateTime object.
       detectedDate: (data['detectedDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       resolved: data['resolved'] ?? false,
       productRecommendations: products,
     );
   }
 
+  /// Purpose: Serializes this PestAlertData model into a Map for writing to Firestore.
+  /// Inputs: None.
+  /// Outputs: Returns a Map<String, dynamic> with DateTime converted to Firestore Timestamp.
   Map<String, dynamic> toMap() => {
     'pestName': pestName,
     'cropName': cropName,
     'description': description,
     'treatment': treatment,
     'severity': severity,
-    'detectedDate': Timestamp.fromDate(detectedDate),
+    'detectedDate': Timestamp.fromDate(detectedDate), // 1. Convert Dart DateTime back to Firestore-native Timestamp.
     'resolved': resolved,
-    'productRecommendations': productRecommendations.map((p) => p.toMap()).toList(),
+    'productRecommendations': productRecommendations.map((p) => p.toMap()).toList(), // 2. Recursively serialize nested models.
   };
 }
 
@@ -151,43 +168,69 @@ class PestScanData {
     required this.aiResponse,
   });
 
+  /// Purpose: Deserializes a Firestore document representing a historical AI scan into a Dart model.
+  /// Inputs: [doc] - The raw DocumentSnapshot.
+  /// Outputs: Returns an instantiated PestScanData model.
   factory PestScanData.fromFirestore(DocumentSnapshot doc) {
+    // 1. Extract the raw map payload.
     final data = doc.data() as Map<String, dynamic>;
+    
+    // 2. Construct the model with safe fallbacks.
     return PestScanData(
       id: doc.id,
       cropName: data['cropName'] ?? 'Unknown',
+      // 3. Cast the Firestore Timestamp to DateTime.
       scanDate: (data['scanDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       status: data['status'] ?? 'Pending',
+      // 4. Safely cast the numeric confidence score.
       confidence: (data['confidence'] as num?)?.toDouble() ?? 0.0,
       aiResponse: data['aiResponse'] ?? '',
     );
   }
 
+  /// Purpose: Serializes this PestScanData model into a Map for Firestore writes.
+  /// Inputs: None.
+  /// Outputs: Returns a Map with the scanDate converted to a Firestore Timestamp.
   Map<String, dynamic> toMap() => {
     'cropName': cropName,
-    'scanDate': Timestamp.fromDate(scanDate),
+    'scanDate': Timestamp.fromDate(scanDate), // 1. Convert DateTime to Firestore Timestamp for server-side querying.
     'status': status,
     'confidence': confidence,
     'aiResponse': aiResponse,
   };
 }
 
-/// Pest & Disease Backend Service
+/// Purpose: Singleton service class that handles the entire pest & disease lifecycle:
+/// AI image analysis, Firestore CRUD for alerts/scans, product recommendations, and push notifications.
+/// Architecture: Uses the Singleton pattern to ensure a single shared instance across the app.
 class PestDiseaseService {
+  // 1. The single static instance — created once and reused for every call to PestDiseaseService().
   static final PestDiseaseService _instance = PestDiseaseService._internal();
+  
+  // 2. Inject the NotificationService for sending device-level push alerts when pests are detected.
   final NotificationService _notificationService = NotificationService();
 
+  /// Purpose: Factory constructor that always returns the same singleton instance.
+  /// Inputs: None.
+  /// Outputs: Returns [_instance].
   factory PestDiseaseService() {
     return _instance;
   }
 
+  // 3. Private named constructor — prevents external instantiation, enforcing the singleton.
   PestDiseaseService._internal();
 
+  // 4. Capture the currently authenticated user's UID for scoping all Firestore queries.
   final String? uid = FirebaseAuth.instance.currentUser?.uid;
+  
+  // 5. Firestore database reference — the central document store for all pest data.
   final db = FirebaseFirestore.instance;
+  
+  // 6. Firebase Cloud Storage reference — used for uploading crop scan images.
   final firebase_storage.FirebaseStorage _storage = firebase_storage.FirebaseStorage.instance;
 
-  // Rate limiting & storage protection
+  // --- Rate Limiting & Storage Protection Constants ---
+  // These constants act as server-side guardrails to prevent abuse and control cloud costs.
   static const int maxScansPerDay = 50; // Max 50 scans per user per day
   static const int maxStorageGB = 5; // Max 5GB per user
   static const Duration scanCooldown = Duration(seconds: 2); // 2 second cooldown between scans
@@ -734,8 +777,11 @@ class PestDiseaseService {
         });
   }
 
-  /// Analyze image with AI and create alert if pest detected
+  /// Purpose: Orchestrates the AI pipeline to analyze a crop image for diseases and triggers subsequent database alerts.
+  /// Inputs: [imagePath] - Local file path. Optional [imageUrl] - Remote storage URL.
+  /// Outputs: Returns a parsed map of the AI's analysis results and potentially creates a Firestore alert.
   Future<Map<String, dynamic>> analyzeImageWithAI(String imagePath, {String? imageUrl}) async {
+    // 1. Enforce security: Ensure a user is actively authenticated before invoking costly AI endpoints.
     if (uid == null) throw Exception('User not authenticated');
 
     try {
@@ -743,9 +789,11 @@ class PestDiseaseService {
       print(' [SERVICE] Image path: $imagePath');
       
       print(' [SERVICE] Calling AiService.analyzeImage...');
+      // 2. Transmit the local image to the Gemini AI via the dedicated AI Service wrapper.
       final textResponse = await AiService().analyzeImage(imagePath);
       print(' [SERVICE] AiService response received');
       
+      // 3. Validate that the AI successfully returned a payload.
       if (textResponse == null || textResponse.isEmpty) {
         throw Exception('AI service failed to analyze the image or returned an empty response.');
       }
@@ -753,12 +801,13 @@ class PestDiseaseService {
       print(' [SERVICE] Parsing response...');
       Map<String, dynamic> analysisData;
       try {
+        // 4. Sanitize the AI's raw text response, removing Markdown formatting ticks (```json ... ```).
         String cleanJson = textResponse.replaceAll('```json', '').replaceAll('```', '').trim();
-        // Try direct parse first
+        // 5. Attempt a direct standard JSON parse of the cleaned string.
         try {
           analysisData = jsonDecode(cleanJson);
         } catch (e) {
-          // Fallback to regex if there's surrounding text
+          // 6. Fallback: Use Regex to extract the first valid JSON object `{...}` if the AI included conversational padding.
           final jsonMatch = RegExp(r'\{[^{}]*\}', dotAll: true).firstMatch(cleanJson);
           if (jsonMatch != null) {
             analysisData = jsonDecode(jsonMatch.group(0)!);
@@ -770,7 +819,7 @@ class PestDiseaseService {
         throw Exception('Failed to parse AI response: $e');
       }
 
-      // Check if it's a wrong object (not a plant)
+      // 7. Agronomic Guardrail: Reject the analysis if the AI determines the image does not contain a plant.
       if (analysisData['status'] == 'Not a Plant') {
         print(' [SERVICE] Wrong object detected - not a plant');
         analysisData['description'] = 'This image does not contain a plant or crop. Please scan a plant or crop image.';
@@ -778,6 +827,7 @@ class PestDiseaseService {
       }
 
       print(' [SERVICE] Saving scan to Firestore...');
+      // 8. Log the raw scan result (healthy or diseased) to the user's history in Firestore.
       await _savePestScan(
         cropName: analysisData['cropName'] ?? 'Unknown',
         status: analysisData['status'] ?? 'Pending',
@@ -787,6 +837,7 @@ class PestDiseaseService {
       );
       print(' [SERVICE] Scan saved');
 
+      // 9. If the plant is diseased, escalate the finding by generating a permanent Actionable Alert.
       if (analysisData['status'] != 'Healthy' && analysisData['status'] != 'Not a Plant' && analysisData['pestName'] != null) {
         print(' [SERVICE] Creating alert...');
         await _createPestAlert(
@@ -807,7 +858,9 @@ class PestDiseaseService {
     }
   }
 
-  /// Save pest scan to Firestore
+  /// Purpose: Persists the results of an AI scan to the user's Firestore history.
+  /// Inputs: [cropName], [status], [confidence], [aiResponse], and optional [imageUrl].
+  /// Outputs: Writes a document to the 'pestScans' subcollection.
   Future<void> _savePestScan({
     required String cropName,
     required String status,
@@ -815,33 +868,45 @@ class PestDiseaseService {
     required String aiResponse,
     String? imageUrl,
   }) async {
+    // 1. Guard against unauthenticated writes.
     if (uid == null) return;
 
     try {
+      // 2. Add a new document with server-side timestamping for accurate temporal querying.
       final docRef = await db.collection('users').doc(uid).collection('pestScans').add({
         'cropName': cropName,
         'scanDate': FieldValue.serverTimestamp(),
         'status': status,
         'confidence': confidence,
         'aiResponse': aiResponse,
+        // 3. Conditionally include the image URL if the upload succeeded.
         if (imageUrl != null) 'imageUrl': imageUrl,
       });
       print(' Pest scan saved with ID: ${docRef.id}');
     } catch (e) {
       print(' Error saving scan: $e');
-      rethrow;
+      rethrow; // 4. Bubble up the error to trigger UI error states.
     }
   }
 
-  /// Upload an image file to Firebase Storage and return its download URL.
+  /// Purpose: Uploads a local image file to Firebase Cloud Storage and retrieves its public URL.
+  /// Inputs: [localPath] - The absolute path to the local image file.
+  /// Outputs: Returns the public download URL as a String.
   Future<String> uploadImageToStorage(String localPath) async {
+    // 1. Verify user authentication.
     if (uid == null) throw Exception('User not authenticated');
 
+    // 2. Generate a unique filename using the current Unix epoch to prevent collisions.
     final fileName = 'pest_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    
+    // 3. Construct the secure storage reference bound to the user's UID.
     final ref = _storage.ref().child('users').child(uid!).child('pest_images').child(fileName);
 
     try {
+      // 4. Execute the binary upload.
       final uploadTask = await ref.putFile(File(localPath));
+      
+      // 5. Retrieve the resolvable web URL for the uploaded asset.
       final downloadUrl = await ref.getDownloadURL();
       print(' Image uploaded to Storage: $downloadUrl');
       return downloadUrl;
@@ -851,7 +916,9 @@ class PestDiseaseService {
     }
   }
 
-  /// Create pest alert in Firestore
+  /// Purpose: Generates an actionable pest alert in Firestore and triggers a push notification.
+  /// Inputs: Agronomic details ([pestName], [cropName], [description], [treatment], [severity]).
+  /// Outputs: Writes to 'pestAlerts' subcollection and invokes NotificationService.
   Future<void> _createPestAlert({
     required String pestName,
     required String cropName,
@@ -862,9 +929,10 @@ class PestDiseaseService {
     if (uid == null) return;
 
     try {
-      // Get product recommendations for this pest
+      // 1. Query the internal product database for recommended agrochemicals based on the pest.
       final productRecommendations = getProductRecommendations(pestName);
       
+      // 2. Persist the alert to the database with an unresolved state flag.
       final docRef = await db.collection('users').doc(uid).collection('pestAlerts').add({
         'pestName': pestName,
         'cropName': cropName,
@@ -873,14 +941,15 @@ class PestDiseaseService {
         'severity': severity,
         'detectedDate': FieldValue.serverTimestamp(),
         'resolved': false,
+        // 3. Embed the top 3 product recommendations directly into the alert document for fast UI rendering.
         'productRecommendations': productRecommendations
-            .take(3) // Limit to top 3 recommendations
+            .take(3) 
             .map((p) => p.toMap())
             .toList(),
       });
       print(' Pest alert created with ID: ${docRef.id}');
       
-      // Send notification
+      // 4. Delegate to the NotificationService to push a device-level alert.
       await _notificationService.notifyPestDetected(
         pestName: pestName,
         cropName: cropName,
@@ -893,11 +962,15 @@ class PestDiseaseService {
     }
   }
 
-  /// Mark alert as resolved
+  /// Purpose: Updates an active pest alert, marking it as resolved so it disappears from the active dashboard.
+  /// Inputs: [alertId] - The Firestore document ID.
+  /// Outputs: Mutates the 'resolved' boolean field in Firestore.
   Future<void> resolveAlert(String alertId) async {
+    // 1. Enforce authentication guardrail.
     if (uid == null) return;
 
     try {
+      // 2. Perform a partial document update to flip the status flag.
       await db.collection('users').doc(uid).collection('pestAlerts').doc(alertId).update({
         'resolved': true,
       });

@@ -15,13 +15,23 @@ class WaterOptimizationService {
 
   String get userId => _auth.currentUser?.uid ?? '';
 
+  /// Purpose: Normalizes a DateTime object into a YYYY-MM-DD string for predictable Firestore queries.
+  /// Inputs: DateTime object.
+  /// Outputs: Formatted date string.
   String _formatDate(DateTime date) {
+    // 1. Pad month and day with leading zeros to maintain string length (e.g., 2026-05-09 instead of 2026-5-9).
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
+  /// Purpose: Standardizes various farm area metrics into Hectares for uniform mathematical processing.
+  /// Inputs: area (double) and unit (String).
+  /// Outputs: The area converted to hectares (double).
   double _convertToHectares(double area, String unit) {
     try {
+      // 1. Guard against invalid user inputs that could corrupt math equations downstream.
       if (area <= 0 || area.isNaN) return 1.0;
+      
+      // 2. Route conversion based on user-selected unit.
       switch (unit.toLowerCase()) {
         case 'acres':
           return area * 0.404686;
@@ -33,6 +43,7 @@ class WaterOptimizationService {
           return area;
       }
     } catch (e) {
+      // 3. Fail gracefully to a safe 1.0 multiplier.
       return 1.0;
     }
   }
@@ -213,6 +224,9 @@ class WaterOptimizationService {
   // Expose the list of available crops for the UI Autocomplete
   List<String> get availableCrops => _cropWaterRequirements.keys.toList();
 
+  /// Purpose: Computes the precise irrigation requirement for a given crop factoring in weather, soil, area, and system efficiency.
+  /// Inputs: Physical parameters (area, crop type), environmental factors (soil, rain), and hardware details (irrigation method).
+  /// Outputs: A Map containing the gross daily and total water requirements, or error status.
   Map<String, dynamic> calculateWaterRequirement({
     required double area,
     required String areaUnit,
@@ -223,57 +237,61 @@ class WaterOptimizationService {
     String irrigationMethod = 'Sprinkler Irrigation',
   }) {
     try {
-      // 4. Robust Error Handling & Edge Cases
+      // 1. Sanitize Inputs: Prevent division by zero, negative values, or NaN inputs.
       double safeArea = (area <= 0 || area.isNaN) ? 1.0 : area;
       int safeDays = (growingDays <= 0) ? 120 : growingDays;
       double safeRain = (forecastRainMm < 0 || forecastRainMm.isNaN) ? 0.0 : forecastRainMm;
 
+      // 2. Normalize Area: Convert all units to standard hectares, then to square meters.
       double areaHectares = _convertToHectares(safeArea, areaUnit);
       double areaSqm = areaHectares * 10000.0;
 
+      // 3. Normalize Crop Name: Ensure dictionary lookup consistency.
       String crop = cropType.toLowerCase().trim();
       
-      // Fallback default for unknown crops
+      // 4. Fallback Dictionary Lookup: Fetch baseline requirements or use a generic default.
       Map<String, double> cropStages = _cropWaterRequirements[crop] ?? 
           {'Seedling': 2.0, 'Mid-Season': 5.0, 'Harvesting': 3.0};
 
-      // 1. Calculate Average Daily Baseline Requirement (L/m²/day) over the season
-      // Assuming typical distribution: 20% Seedling, 60% Mid-Season, 20% Harvesting
+      // 5. Calculate Average Daily Baseline Requirement (L/m²/day) over the season.
+      // Assumes typical temporal distribution: 20% Seedling, 60% Mid-Season, 20% Harvesting.
       double avgDailyBaseline = (cropStages['Seedling']! * 0.2) + 
                                 (cropStages['Mid-Season']! * 0.6) + 
                                 (cropStages['Harvesting']! * 0.2);
 
-      // 3. Fix the Rainfall Logic (Effective Rainfall Subtraction)
-      // P_eff = Measured Rainfall (mm) × 0.7
+      // 6. Effective Rainfall Calculation (P_eff).
+      // Standard agricultural assumption: ~70% of forecast rain actually infiltrates the root zone.
       double pEff = safeRain * 0.7;
 
-      // Net Irrigation Requirement (I_net)
-      // I_net = Baseline - P_eff
+      // 7. Net Irrigation Requirement (I_net).
+      // Formula: I_net = Baseline Evapotranspiration - Effective Rainfall
       double iNet = avgDailyBaseline - pEff;
       if (iNet < 0.0) {
-        iNet = 0.0; // gracefully floor at 0.0
+        iNet = 0.0; // Gracefully floor at 0.0 if rain exceeds demand.
       }
 
-      // 2. Fix the Irrigation System Efficiency Formula
+      // 8. Irrigation System Efficiency (E_a).
       double efficiencyRating;
       if (irrigationMethod.contains('Drip')) {
-        efficiencyRating = 0.90;
+        efficiencyRating = 0.90; // Highly targeted
       } else if (irrigationMethod.contains('Sprinkler')) {
-        efficiencyRating = 0.75;
+        efficiencyRating = 0.75; // Moderate wind drift/evaporation
       } else if (irrigationMethod.contains('Surface') || irrigationMethod.contains('Flood')) {
-        efficiencyRating = 0.50;
+        efficiencyRating = 0.50; // High runoff/deep percolation
       } else {
-        efficiencyRating = 0.75; // safe operational constant
+        efficiencyRating = 0.75; // Safe operational constant
       }
 
-      // I_gross = I_net / Efficiency Rating
+      // 9. Gross Irrigation Requirement (I_gross).
+      // Formula: I_gross = I_net / Efficiency Rating
       double iGross = iNet / efficiencyRating;
 
-      // Calculate Total Liters
-      // I_gross is in L/m²/day.
+      // 10. Volumetric Scaling.
+      // Convert L/m²/day requirement to total liters based on physical farm area.
       double dailyWaterLiters = iGross * areaSqm;
       double totalWaterLiters = dailyWaterLiters * safeDays;
 
+      // 11. Format a readable methodological explanation for the UI.
       String methodMessage = "I_gross = I_net / Efficiency ($efficiencyRating)\n"
           "Crop Baseline: ${avgDailyBaseline.toStringAsFixed(1)} L/m²/day";
       
@@ -281,6 +299,7 @@ class WaterOptimizationService {
         methodMessage += "\nEffective rainfall (${pEff.toStringAsFixed(1)}mm) subtracted.";
       }
 
+      // 12. Return the structured computational payload.
       return {
         'success': true,
         'crop': cropType,
@@ -296,6 +315,7 @@ class WaterOptimizationService {
                    'Method: $methodMessage',
       };
     } catch (e) {
+      // 13. Fallback on mathematical or casting errors.
       return {
         'success': false,
         'message': 'Calculation Error: $e',
@@ -326,22 +346,32 @@ class WaterOptimizationService {
     );
   }
 
+  /// Purpose: Aggregates automated crop zones (from Smart Plot) and manual water zones into a unified stream.
+  /// Inputs: None (Uses authenticated userId).
+  /// Outputs: A Stream emitting a combined list of zone maps for the UI.
   Stream<List<Map<String, dynamic>>> getZonesFromCrops() {
+    // 1. Return an empty stream immediately if the user session is invalid.
     if (userId.isEmpty) return Stream.value([]);
 
+    // 2. Listen to real-time updates on the user's automated 'fields' collection.
     return _firestore
         .collection('users').doc(userId).collection('fields').snapshots()
         .asyncMap((fieldsSnapshot) async {
       List<Map<String, dynamic>> allZones = [];
+      
+      // 3. Iterate through each physical plot (field).
       for (var fieldDoc in fieldsSnapshot.docs) {
         final fieldId = fieldDoc.id;
         final fieldName = fieldDoc.data()['name'] as String? ?? '';
+        
+        // 4. Fetch the nested 'crops' subcollection for this specific plot.
         final cropsSnapshot = await fieldDoc.reference.collection('crops').get();
 
+        // 5. Map each crop to a unified UI structure.
         for (var cropDoc in cropsSnapshot.docs) {
           final cropData = cropDoc.data();
           allZones.add({
-            'id': '${fieldId}_${cropDoc.id}',
+            'id': '${fieldId}_${cropDoc.id}', // Create composite ID to distinguish from manual zones.
             'fieldId': fieldId,
             'cropId': cropDoc.id,
             'name': '${cropData['name'] ?? 'Crop'} - $fieldName',
@@ -352,14 +382,17 @@ class WaterOptimizationService {
             'waterAmount': cropData['waterAmount'] ?? 200,
             'duration': cropData['irrigationDuration'] ?? 60,
             'isRunning': cropData['irrigationStatus'] == 'active',
-            'type': 'crop',
+            'type': 'crop', // Tag as an automated/system zone.
           });
         }
       }
 
       try {
+        // 6. Fetch manually created irrigation zones (non-smart plots).
         final manualSnapshot = await _firestore
             .collection('users').doc(userId).collection('water_zones').get();
+            
+        // 7. Append manual zones to the aggregated list.
         for (var zoneDoc in manualSnapshot.docs) {
           final data = zoneDoc.data();
           allZones.add({
@@ -372,43 +405,65 @@ class WaterOptimizationService {
             'waterAmount': data['waterAmount'] ?? 300,
             'duration': data['duration'] ?? 60,
             'isRunning': data['status'] == 'active',
-            'type': 'manual',
+            'type': 'manual', // Tag as a manually entered zone.
           });
         }
       } catch (e) {
+        // 8. Silently swallow errors fetching manual zones to prevent breaking the automated stream.
       }
+      
+      // 9. Return the fully aggregated payload to the UI.
       return allZones;
     });
   }
 
+  /// Purpose: Estimates current soil moisture based on recorded daily water usage.
+  /// Inputs: zoneId (String) representing the target field/zone.
+  /// Outputs: An integer (0-95) representing the estimated moisture percentage.
   Future<int> calculateRealSoilMoisture(String zoneId) async {
     try {
+      // 1. Guard against unauthenticated requests.
       if (userId.isEmpty) return 0;
+      
+      // 2. Format today's date to query daily usage records.
       final dateStr = _formatDate(DateTime.now());
+      
+      // 3. Query Firestore for all water application logs for this zone today.
       final usageSnapshot = await _firestore
           .collection('users').doc(userId).collection('water_usage')
           .where('zoneId', isEqualTo: zoneId)
           .where('date', isEqualTo: dateStr).get();
 
+      // 4. Sum up the total liters applied across all sessions today.
       double totalWaterApplied = 0;
       for (var doc in usageSnapshot.docs) {
         totalWaterApplied += (doc.data()['liters'] as num?)?.toDouble() ?? 0.0;
       }
 
+      // 5. Establish a baseline target for 100% moisture (heuristic approach).
       const double approximateDailyTarget = 500.0;
       if (totalWaterApplied == 0) return 0;
+      
+      // 6. Calculate ratio and clamp the maximum value to 95% to allow for drainage/evaporation.
       int calculatedMoisture = ((totalWaterApplied / approximateDailyTarget) * 100).toInt();
       return calculatedMoisture > 95 ? 95 : calculatedMoisture;
     } catch (e) {
+      // 7. Fail gracefully to 0% if the calculation crashes.
       return 0;
     }
   }
 
+  /// Purpose: Saves a new manual irrigation zone to Firestore.
+  /// Inputs: Physical parameters (name, location) and schedules (schedule, amount, duration).
+  /// Outputs: None.
   Future<void> addZone({
     required String name, required String location, required String schedule,
     required int waterAmount, required int duration,
   }) async {
+    // 1. Validate session.
     if (userId.isEmpty) return;
+    
+    // 2. Commit the manual zone to the dedicated collection.
     await _firestore.collection('users').doc(userId).collection('water_zones').add({
       'name': name, 'location': location, 'status': 'scheduled', 'moisture': 0,
       'schedule': schedule, 'waterAmount': waterAmount, 'duration': duration,
@@ -416,31 +471,47 @@ class WaterOptimizationService {
     });
   }
 
+  /// Purpose: Removes an irrigation zone, routing correctly based on its type (manual vs automated).
+  /// Inputs: zoneId (String).
+  /// Outputs: None.
   Future<void> deleteZone(String zoneId) async {
+    // 1. Validate session.
     if (userId.isEmpty) return;
+    
+    // 2. Routing logic: If the ID contains an underscore, it's a composite ID indicating an automated crop zone.
     if (zoneId.contains('_') && zoneId.split('_').length == 2) {
       final parts = zoneId.split('_');
+      // 3. Delete the nested crop document within the smart plot structure.
       await _firestore.collection('users').doc(userId).collection('fields')
           .doc(parts[0]).collection('crops').doc(parts[1]).delete();
     } else {
+      // 4. Fallback: Delete from the manual water zones collection.
       await _firestore.collection('users').doc(userId).collection('water_zones')
           .doc(zoneId).delete();
     }
   }
 
+  /// Purpose: Updates the schedule and volume constraints of an existing zone.
+  /// Inputs: zoneId, waterAmount, duration, and cron-like schedule string.
+  /// Outputs: None.
   Future<void> updateZoneDetails({
     required String zoneId, required int waterAmount,
     required int duration, required String schedule,
   }) async {
+    // 1. Validate session.
     if (userId.isEmpty) return;
+    
+    // 2. Routing logic: Check for composite ID.
     if (zoneId.contains('_') && zoneId.split('_').length == 2) {
       final parts = zoneId.split('_');
+      // 3. Update the smart plot sub-document schema.
       await _firestore.collection('users').doc(userId).collection('fields')
           .doc(parts[0]).collection('crops').doc(parts[1]).update({
         'waterAmount': waterAmount, 'irrigationDuration': duration,
         'irrigationSchedule': schedule, 'updatedAt': FieldValue.serverTimestamp(),
       });
     } else {
+      // 4. Update the manual zone document schema.
       await _firestore.collection('users').doc(userId).collection('water_zones')
           .doc(zoneId).update({
         'waterAmount': waterAmount, 'duration': duration,
@@ -449,23 +520,33 @@ class WaterOptimizationService {
     }
   }
 
+  /// Purpose: Polls the WeatherService to determine current conditions and forecast rainfall.
+  /// Inputs: None.
+  /// Outputs: A Map containing the condition string, rainfall in mm, temperature, and humidity.
   Future<Map<String, dynamic>> checkWeatherForWatering() async {
     try {
+      // 1. Await the response from the external weather API (via WeatherService).
       final weather = await _weatherService.getCurrentWeather();
+      
+      // 2. Safely parse the primary weather condition string.
       final weatherList = weather['weather'] as List? ?? [];
       final condition = weatherList.isNotEmpty ? weatherList[0]['main'] ?? '' : '';
       
       double rainMm = 0.0;
+      // 3. Extract precise rain volume if provided in the payload (1h or 3h windows).
       if (weather['rain'] != null) {
         if (weather['rain']['1h'] != null) {
           rainMm = (weather['rain']['1h'] as num).toDouble();
         } else if (weather['rain']['3h'] != null) {
           rainMm = (weather['rain']['3h'] as num).toDouble();
         }
-      } else if (condition.toLowerCase().contains('rain')) {
-        rainMm = 5.0; // fallback if rain is mentioned but no volume provided
+      } 
+      // 4. Fallback: If no volume is given but it's raining, assume a nominal 5.0mm.
+      else if (condition.toLowerCase().contains('rain')) {
+        rainMm = 5.0;
       }
 
+      // 5. Return the normalized weather data.
       return {
         'condition': condition,
         'rainMm': rainMm,
@@ -473,22 +554,29 @@ class WaterOptimizationService {
         'humidity': weather['main']?['humidity'],
       };
     } catch (e) {
+      // 6. Provide a safe fallback object on API failure to prevent app crashes.
       return {'condition': 'Unknown', 'rainMm': 0.0, 'message': ' Weather data unavailable'};
     }
   }
 
+  /// Purpose: Fetches live weather and pipes it into the math engine to generate an actionable irrigation plan.
+  /// Inputs: Physical parameters (area, cropType, soilType, growingDays).
+  /// Outputs: A Map containing a recommendation string and the full calculation details.
   Future<Map<String, dynamic>> getWateringRecommendation({
     required double area, required String areaUnit, required String cropType,
     required String soilType, required int growingDays,
   }) async {
+    // 1. Pre-fetch live weather context.
     final weatherCheck = await checkWeatherForWatering();
     double rainMm = weatherCheck['rainMm'] ?? 0.0;
 
+    // 2. Delegate the heavy lifting to the core mathematical engine, passing the live rain data.
     final calculation = calculateWaterRequirement(
       area: area, areaUnit: areaUnit, cropType: cropType,
       soilType: soilType, growingDays: growingDays, forecastRainMm: rainMm,
     );
 
+    // 3. Format and return the final recommendation object for the UI.
     return {
       'recommendation': calculation['message'],
       'action': 'water',
@@ -496,46 +584,73 @@ class WaterOptimizationService {
     };
   }
 
+  /// Purpose: Persists the results of an irrigation calculation to the user's Firestore history.
+  /// Inputs: All parameters used in and generated by the calculation.
+  /// Outputs: None.
   Future<void> saveCalculation({
     required double area, required String areaUnit, required String cropType,
     required String soilType, required int waterRequired, required int dailyWater,
     required int growingDays, required String weatherCondition,
   }) async {
+    // 1. Validate session to prevent unauthenticated writes.
     if (userId.isEmpty) return;
+    
+    // 2. Create a new document in the dedicated calculations history collection.
     await _firestore.collection('users').doc(userId).collection('irrigation_calculations').add({
       'area': area, 'areaUnit': areaUnit, 'crop': cropType, 'soilType': soilType,
       'water': waterRequired, 'dailyWater': dailyWater, 'growingDays': growingDays,
       'weather': weatherCondition, 'timestamp': FieldValue.serverTimestamp(),
-      'date': DateTime.now().toString().split(' ')[0],
+      'date': DateTime.now().toString().split(' ')[0], // Used for simplified UI filtering.
     });
   }
 
+  /// Purpose: Retrieves the user's past 10 irrigation calculations in descending chronological order.
+  /// Inputs: None.
+  /// Outputs: A Stream emitting a list of calculation maps.
   Stream<List<Map<String, dynamic>>> getCalculationHistory() {
+    // 1. Prevent querying if unauthorized.
     if (userId.isEmpty) return Stream.value([]);
+    
+    // 2. Set up a snapshot listener bounded to the 10 most recent records.
     return _firestore.collection('users').doc(userId)
         .collection('irrigation_calculations').orderBy('timestamp', descending: true)
         .limit(10).snapshots().map((snapshot) {
+      // 3. Map Firestore documents into standard Dart Maps, preserving the doc ID.
       return snapshot.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
     });
   }
 
+  /// Purpose: Deletes a specific calculation record from the history.
+  /// Inputs: id (String).
+  /// Outputs: None.
   Future<void> deleteCalculation(String id) async {
+    // 1. Prevent unauthorized deletes.
     if (userId.isEmpty) return;
     try {
+      // 2. Target and destroy the specified document.
       await _firestore.collection('users').doc(userId)
           .collection('irrigation_calculations').doc(id).delete();
     } catch (e) {
+      // 3. Rethrow for UI handling if needed.
       rethrow;
     }
   }
 
+  /// Purpose: Triggers a local/FCM push notification when an optimization calculation succeeds.
+  /// Inputs: cropName and the recommended water volume.
+  /// Outputs: None.
   Future<void> sendWaterOptimizationNotification({required String cropName, required double recommendedWater}) async {
+    // 1. Delegate notification formatting and dispatching to the NotificationService.
     await _notificationService.notifyWaterOptimization(
       cropName: cropName, recommendedWater: recommendedWater, waterUnit: 'Liters'
     );
   }
 
+  /// Purpose: Triggers a local/FCM push notification when soil moisture drops critically low.
+  /// Inputs: soilMoisture percentage and cropName.
+  /// Outputs: None.
   Future<void> sendLowMoistureAlert({required double soilMoisture, required String cropName}) async {
+    // 1. Delegate urgent alert dispatch to the NotificationService with a 2-hour hardcoded buffer.
     await _notificationService.notifyLowSoilMoisture(
       soilMoisture: soilMoisture, cropName: cropName, hoursToIrrigate: 2
     );
@@ -637,9 +752,13 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
     super.dispose();
   }
 
+  /// Purpose: Orchestrates the water calculation pipeline, bridging UI inputs, AI validation, Weather APIs, and local math.
+  /// Inputs: None (Reads from state variables and controllers).
+  /// Outputs: Updates UI state with calculation results, optionally saves to Firestore.
   Future<void> _calculateWater() async {
+    // 1. Initial UI form validation.
     if (!_formKey.currentState!.validate()) {
-      return; // Form validation will handle showing error messages in red under fields
+      return; 
     }
 
     if (_cropController.text.isEmpty) {
@@ -647,19 +766,20 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
       return;
     }
 
+    // 2. Lock UI and enter processing state.
     setState(() {
       _isLoading = true;
-      _result = null; // clear previous results to avoid showing stale data
+      _result = null; // Clear previous results to avoid showing stale data.
     });
 
     try {
-      // Robust Area Parsing
+      // 3. Robust Area Parsing: Handle malformed inputs safely without crashing.
       double area = 1.0;
       bool areaInvalid = false;
       try {
         area = double.parse(_areaController.text);
         if (area <= 0 || area.isNaN) {
-          area = 1.0; // Safe default operational constant
+          area = 1.0; // Safe default operational constant.
           areaInvalid = true;
         }
       } catch (_) {
@@ -667,7 +787,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         areaInvalid = true;
       }
 
-      // NEW: User-friendly Error Message for Invalid Inputs
+      // 4. Provide non-blocking user feedback if inputs were auto-corrected.
       if (areaInvalid) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -679,7 +799,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
 
       final cropName = _cropController.text.trim();
 
-      // Use AI to validate crop and get details with safe wrapper
+      // 5. AI Crop Validation: Check if the user entered a real crop or gibberish.
       Map<String, dynamic>? cropDetailsFromAi;
       try {
         cropDetailsFromAi = await _getAiCropDetails(cropName);
@@ -689,17 +809,18 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         cropDetailsFromAi = null;
       }
 
-      // If AI explicitly validated the crop as invalid, stop and show a message
+      // 6. Explicit Rejection: Stop if the AI confirms the input is not a real crop.
       if (cropDetailsFromAi != null && cropDetailsFromAi['valid'] == false) {
         _showSnackBar(tr('invalid_crop'));
         setState(() => _isLoading = false);
         return;
       }
 
+      // 7. Fallback Pipeline: Triggered if AI service times out, errors, or fails to parse.
       if (cropDetailsFromAi == null) {
-        // AI validation failed or AI service unavailable — fallback to local calculation
         print('AI validation failed for "$cropName". Falling back to local calculation.');
 
+        // 8. Fetch live weather data to determine Effective Rainfall (P_eff).
         final weatherResult = await _service.checkWeatherForWatering();
         double forecastRainMm = 0.0;
         try {
@@ -709,22 +830,22 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
           forecastRainMm = 0.0;
         }
 
-        // Use the service's built-in accurate calculation
+        // 9. Execute Local Mathematical Engine.
         final waterResultFallback = _service.calculateWaterRequirement(
           area: area,
           areaUnit: _selectedUnit,
           cropType: cropName,
           soilType: _selectedSoil,
-          growingDays: 120, // Default operational constant
+          growingDays: 120, // Default operational constant.
           forecastRainMm: forecastRainMm,
-          irrigationMethod: _selectedIrrigationMethod, // NEW: Irrigation dropdown parameter
+          irrigationMethod: _selectedIrrigationMethod, 
         );
 
         weatherResult['message'] = forecastRainMm > 0 
             ? ' Rain forecast: ${forecastRainMm}mm. Adjusted watering.'
             : ' Clear - Safe to water';
 
-        // Save fallback calculation
+        // 10. Persist Fallback Calculation to Firestore History.
         if (waterResultFallback['success'] == true) {
           try {
             await _service.saveCalculation(
@@ -742,6 +863,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
           }
         }
 
+        // 11. Update UI with Fallback Results.
         setState(() {
           _result = {
             'success': true,
@@ -758,7 +880,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         return;
       }
 
-      // Get weather check
+      // 12. Primary AI-Assisted Pipeline: Get live weather.
       final weatherResult = await _service.checkWeatherForWatering();
       double forecastRainMm = 0.0;
       try {
@@ -772,7 +894,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
           ? ' Rain forecast: ${forecastRainMm}mm. Adjusted watering.'
           : ' Clear - Safe to water';
 
-      // Use AI for water calculation
+      // 13. Execute AI-Augmented Math Calculation.
       final waterResult = await _getAiWaterCalculation(
         cropName: cropName,
         area: area,
@@ -780,12 +902,12 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         soilType: _selectedSoil,
         cropDetails: cropDetailsFromAi,
         forecastRainMm: forecastRainMm,
-        irrigationMethod: _selectedIrrigationMethod, // NEW: Irrigation dropdown parameter
+        irrigationMethod: _selectedIrrigationMethod, 
       );
 
       print('AI water calculation result: $waterResult');
 
-      // Save to history
+      // 14. Persist AI-Assisted Calculation to Firestore and Trigger Notifications.
       if (waterResult != null && waterResult['success'] == true) {
         try {
           print('About to save calculation for $cropName with total ${waterResult['totalWater']}');
@@ -801,7 +923,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
           );
           print('Save returned without exception');
           
-          // Send water optimization notification
+          // 15. Dispatch Cloud Messaging (FCM) via local notification service.
           final notificationService = NotificationService();
           await notificationService.notifyWaterAlertResolved(
             fieldName: cropName,
@@ -812,6 +934,7 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         }
       }
 
+      // 16. Update UI state with Primary Results.
       setState(() {
         _result = waterResult ?? {
           'success': false, 'message': 'Engine Failure: Fallback triggered.'
@@ -824,13 +947,18 @@ class _WaterOptimizationScreenState extends State<WaterOptimizationScreen> {
         _showResultDialog();
       }
     } catch (e) {
+      // 17. Catch-all failsafe to prevent app freezing.
       _showSnackBar('Engine Error: $e');
       setState(() => _isLoading = false);
     }
   }
 
+  /// Purpose: Validates crop names and fetches growing parameters via the generative AI service.
+  /// Inputs: cropName (String).
+  /// Outputs: A JSON-mapped dictionary of crop attributes, or null on failure.
   Future<Map<String, dynamic>?> _getAiCropDetails(String cropName) async {
     try {
+      // 1. Construct a strict, JSON-only prompt to prevent AI hallucinations or markdown wrapping.
       final prompt = '''You are an agriculture expert. Validate if "$cropName" is a real agricultural crop.
 Return ONLY JSON (no markdown, no extra text):
 {
@@ -843,25 +971,32 @@ Return ONLY JSON (no markdown, no extra text):
 }
 RESPOND ONLY WITH JSON.''';
 
+      // 2. Dispatch prompt to the Gemini API.
       final response = await _aiService.sendMessage(prompt);
       print('AI raw crop-details response: $response');
+      
+      // 3. Early exit if the network call failed or timed out.
       if (response == null) return null;
       if (response.toString().startsWith('Error:')) {
         print('AI service error while fetching crop details: $response');
         return null;
       }
 
-      // Safe JSON Parse
+      // 4. Run the raw string through a robust regex-based JSON parser.
       final jsonData = _parseJsonResponse(response);
       if (jsonData != null) {
         return jsonData;
       }
     } catch (e) {
+      // 5. Catch-all for unexpected parsing or network exceptions.
       print('Error getting crop details securely caught: $e');
     }
     return null;
   }
 
+  /// Purpose: Orchestrates the calculation of water requirements, bridging AI parameters with the local math engine.
+  /// Inputs: Farm parameters, AI-derived crop attributes, rain forecast, and hardware method.
+  /// Outputs: A formatted results map, or null if calculation fails.
   Future<Map<String, dynamic>?> _getAiWaterCalculation({
     required String cropName,
     required double area,
@@ -869,18 +1004,20 @@ RESPOND ONLY WITH JSON.''';
     required String soilType,
     required Map<String, dynamic> cropDetails,
     required double forecastRainMm,
-    required String irrigationMethod, // NEW: Irrigation dropdown parameter
+    required String irrigationMethod, 
   }) async {
     try {
-      int days = 120; // safe default
+      // 1. Establish a safe operational constant for growing days.
+      int days = 120; 
       try {
+        // 2. Attempt to parse the AI's suggested lifecycle length.
         if (cropDetails['growingDays'] != null) {
           days = (cropDetails['growingDays'] as num).toInt();
-          if (days <= 0) days = 120;
+          if (days <= 0) days = 120; // Guard against negative or zero AI hallucinations.
         }
       } catch (_) { }
 
-      // Use the service's accurate calculation
+      // 3. Delegate to the deterministic mathematical engine rather than relying on AI math.
       final result = _service.calculateWaterRequirement(
         area: area,
         areaUnit: areaUnit,
@@ -888,11 +1025,12 @@ RESPOND ONLY WITH JSON.''';
         soilType: soilType,
         growingDays: days,
         forecastRainMm: forecastRainMm,
-        irrigationMethod: irrigationMethod, // NEW: Pass irrigation method to engine
+        irrigationMethod: irrigationMethod, 
       );
 
       print(' Water calculation result: $result');
       
+      // 4. Map the engine's output back to the expected UI dictionary structure.
       if (result['success'] == true) {
         return {
           'success': true,
@@ -905,29 +1043,34 @@ RESPOND ONLY WITH JSON.''';
         };
       }
     } catch (e) {
+      // 5. Fail gracefully to trigger the fallback pipeline.
       print(' Error in water calculation caught: $e');
     }
     return null;
   }
 
-  /// Get soil factor for display
+  /// Purpose: Provides an evapotranspiration multiplier based on soil retention characteristics.
+  /// Inputs: soilType string (e.g., 'sandy', 'clay').
+  /// Outputs: A double representing the drainage multiplier.
   double _getSoilFactor(String soilType) {
     final factors = {
-      'sandy': 1.3,
+      'sandy': 1.3,       // High drainage, needs more water
       'sandy-loam': 1.15,
-      'loamy': 1.0,
+      'loamy': 1.0,       // Baseline ideal soil
       'clay-loam': 0.9,
-      'clay': 0.75,
+      'clay': 0.75,      // High retention, needs less water
       'silty': 1.05,
     };
     return factors[soilType.toLowerCase()] ?? 1.0;
   }
 
-  // Removed unused _convertToHectares method
-
+  /// Purpose: Formats raw numbers into comma-separated strings for UI readability.
+  /// Inputs: Numeric value (dynamic) and optional decimal precision.
+  /// Outputs: Formatted string (e.g., 1000000 -> "1,000,000").
   String _formatNum(dynamic n, {int decimals = 0}) {
     if (n == null) return '0';
     double val;
+    // 1. Safely cast or parse the dynamic input.
     if (n is num) {
       val = n.toDouble();
     } else {
@@ -938,50 +1081,64 @@ RESPOND ONLY WITH JSON.''';
         return n.toString();
       }
     }
+    // 2. Apply decimal rounding.
     String str = val.toStringAsFixed(decimals);
+    // 3. Inject commas for thousands separators via regex.
     RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
     String mathFunc(Match match) => '${match[1]},';
     return str.replaceAllMapped(reg, mathFunc);
   }
 
+  /// Purpose: Capitalizes the first letter of a string.
+  /// Inputs: nullable string.
+  /// Outputs: Title-cased string.
   String _capitalize(String? s) {
     if (s == null) return '';
     if (s.isEmpty) return '';
     return '${s[0].toUpperCase()}${s.substring(1)}';
   }
 
+  /// Purpose: Strips markdown wrappers (e.g., ```json) from AI responses.
+  /// Inputs: Raw AI text response.
+  /// Outputs: Parsed Map, or null if invalid.
   Map<String, dynamic>? _parseJsonResponse(String response) {
     try {
+      // 1. Remove markdown backticks.
       String cleanResponse = response.replaceAll('```json', '').replaceAll('```', '').trim();
+      
+      // 2. Isolate the core JSON payload block.
       final startIndex = cleanResponse.indexOf('{');
       final endIndex = cleanResponse.lastIndexOf('}');
 
       if (startIndex == -1 || endIndex == -1) return null;
 
       final jsonString = cleanResponse.substring(startIndex, endIndex + 1);
+      
+      // 3. Delegate to the strict regex parser.
       return _simpleJsonParse(jsonString);
     } catch (e) {
       return null;
     }
   }
 
+  /// Purpose: A resilient, regex-based JSON parser to circumvent dart:convert crashes on malformed AI output.
+  /// Inputs: Cleaned JSON string.
+  /// Outputs: A Map containing explicitly extracted keys.
   Map<String, dynamic> _simpleJsonParse(String jsonString) {
     final result = <String, dynamic>{};
     try {
-      // Parse success
+      // 1. Parse booleans via simple substring matching.
       result['success'] = jsonString.contains('"success": true');
-
-      // Parse valid
       result['valid'] = jsonString.contains('"valid": true');
 
-      // Parse string fields
+      // 2. Parse strings using capturing regex groups.
       final fields = ['cropName', 'season', 'region', 'recommendation'];
       for (final field in fields) {
         final match = RegExp('"$field":\\s*"([^"]+)"').firstMatch(jsonString);
         if (match != null) result[field] = match.group(1);
       }
 
-      // Parse number fields
+      // 3. Parse numerics, casting to double or int based on decimal presence.
       final numberFields = {
         'growingDays': 'growingDays',
         'waterPerDay': 'waterPerDay',
@@ -998,6 +1155,7 @@ RESPOND ONLY WITH JSON.''';
         }
       }
     } catch (e) {
+      // 4. Swallow errors to allow fallback mechanisms to trigger.
       print('Safe JSON Parse failure: $e');
     }
     return result;
@@ -1217,7 +1375,11 @@ RESPOND ONLY WITH JSON.''';
     );
   }
 
+  /// Purpose: Displays a standardized feedback banner at the bottom of the screen.
+  /// Inputs: message (String).
+  /// Outputs: Triggers ScaffoldMessenger UI overlay.
   void _showSnackBar(String message) {
+    // 1. Clear existing snackbars to prevent queuing delays, then display the new message.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -1227,8 +1389,14 @@ RESPOND ONLY WITH JSON.''';
     );
   }
 
+  /// Purpose: Presents a confirmation modal before permanently deleting a history record.
+  /// Inputs: BuildContext and the specific calculation document ID.
+  /// Outputs: None (executes Firestore deletion if confirmed).
   Future<void> _confirmDelete(BuildContext context, String? id) async {
+    // 1. Guard against null IDs.
     if (id == null) return;
+    
+    // 2. Await user response from a standard AlertDialog.
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1241,6 +1409,7 @@ RESPOND ONLY WITH JSON.''';
       ),
     );
 
+    // 3. Execute deletion if the user pressed "Delete" (returned true).
     if (ok == true) {
       try {
         await _service.deleteCalculation(id);

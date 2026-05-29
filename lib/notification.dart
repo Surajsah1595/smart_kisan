@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'localization_service.dart';
 
+/// Purpose: Data class representing a single notification event. Includes factory methods for Firestore serialization.
 // Notification Model
 class NotificationModel {
   final String id;
@@ -23,21 +24,30 @@ class NotificationModel {
     this.priority = NotificationPriority.normal,
   });
 
+  /// Purpose: Deserializes a raw Firestore document snapshot into a strongly-typed Dart [NotificationModel].
+  /// Inputs: [doc] - The raw DocumentSnapshot fetched from Firebase.
+  /// Outputs: Returns an instantiated [NotificationModel].
   factory NotificationModel.fromFirestore(DocumentSnapshot doc) {
+    // 1. Safely extract the raw Map payload, defaulting to an empty map if null.
     final data = doc.data() as Map<String, dynamic>? ?? {};
+    
+    // 2. Extract enum string identifiers with safe defaults.
     String typeStr = (data['type'] as String?) ?? 'system';
     String prioStr = (data['priority'] as String?) ?? 'normal';
 
+    // 3. Parse the type string back into the Dart enum, falling back to 'system' on failure.
     NotificationType parsedType = NotificationType.values.firstWhere(
       (e) => e.toString().split('.').last.toLowerCase() == typeStr.toLowerCase(),
       orElse: () => NotificationType.system,
     );
 
+    // 4. Parse the priority string back into the Dart enum, falling back to 'normal' on failure.
     NotificationPriority parsedPriority = NotificationPriority.values.firstWhere(
       (e) => e.toString().split('.').last.toLowerCase() == prioStr.toLowerCase(),
       orElse: () => NotificationPriority.normal,
     );
 
+    // 5. Construct and return the fully validated data object.
     return NotificationModel(
       id: doc.id,
       title: (data['title'] as String?) ?? 'No title',
@@ -98,10 +108,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   // Filter logic will be applied to the live list from Firestore snapshot in the StreamBuilder
   
 
+  /// Purpose: Renders the notification dashboard. Listens to a realtime Firestore snapshot stream to build the UI dynamically.
+  /// Inputs: [context] - The widget context.
+  /// Outputs: Returns the Scaffold widget containing filter chips and the scrolling notification list.
   @override
   Widget build(BuildContext context) {
+    // 1. Fetch the securely authenticated user ID.
     final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     
+    // 2. Construct the Firestore stream query. It targets the user's specific subcollection and orders chronologically.
     final Stream<QuerySnapshot> notificationsStream = userId.isNotEmpty
         ? FirebaseFirestore.instance
             .collection('users')
@@ -112,24 +127,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
         : Stream.empty();
 
     return Scaffold(
-      
       body: SafeArea(
+        // 3. Wrap the main body in a StreamBuilder to automatically react to database changes in real-time.
         child: StreamBuilder<QuerySnapshot>(
           stream: notificationsStream,
           builder: (context, snapshot) {
+            // 4. Handle stream transport errors gracefully.
             if (snapshot.hasError) {
               return Center(child: Text('${LocalizationService.translate('Error:')} ${snapshot.error}'));
             }
+            // 5. Handle initial loading states while the first websocket payload is downloading.
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
+            // 6. Map the raw Firestore document list into our strongly-typed data models.
             final docs = snapshot.data?.docs ?? [];
             List<NotificationModel> notifications = docs
                 .map((d) => NotificationModel.fromFirestore(d))
                 .toList();
 
-            // Apply filters
+            // 7. Apply client-side UI filters against the synchronized data.
             List<NotificationModel> filtered = notifications;
             if (currentFilter == NotificationFilter.unread) {
               filtered = filtered.where((n) => !n.isRead).toList();
@@ -138,6 +156,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               filtered = filtered.where((n) => n.type == selectedType).toList();
             }
 
+            // 8. Derive aggregated statistics for the UI dashboard header.
             final totalCount = notifications.length;
             final unreadCount = notifications.where((n) => !n.isRead).length;
             final highPriorityCount = notifications.where((n) => n.priority == NotificationPriority.high).length;
@@ -562,11 +581,15 @@ Widget _buildSummaryBox({
     );
   }
   
+  /// Purpose: Updates a specific notification document in Firestore, marking its `isRead` flag to true.
+  /// Inputs: [id] - The unique Firestore document ID of the notification.
+  /// Outputs: Mutates the Firestore database asynchronously.
   void _markAsRead(String id) {
-    // Update Firestore document
+    // 1. Re-verify the active user session.
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
     
+    // 2. Execute the targeted update transaction.
     FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -574,15 +597,20 @@ Widget _buildSummaryBox({
         .doc(id)
         .update({'isRead': true})
         .catchError((e) {
+          // 3. Catch missing permission errors.
           print('Error marking as read: $e');
         });
   }
   
+  /// Purpose: Uses a Firestore Batch transaction to mark all notifications as read simultaneously.
+  /// Inputs: None.
+  /// Outputs: Commits a batch write to Firestore.
   void _markAllAsRead() {
-    // Batch update all notifications to read
+    // 1. Re-verify the active user session.
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
     
+    // 2. Initialize a Firestore batch to group multiple writes into a single atomic network request.
     final batch = FirebaseFirestore.instance.batch();
     FirebaseFirestore.instance
         .collection('users')
@@ -590,9 +618,11 @@ Widget _buildSummaryBox({
         .collection('notifications')
         .get()
         .then((snap) {
+          // 3. Iterate through every document and queue the update instruction.
           for (var doc in snap.docs) {
             batch.update(doc.reference, {'isRead': true});
           }
+          // 4. Commit all changes simultaneously.
           return batch.commit();
         })
         .catchError((e) {
@@ -600,10 +630,15 @@ Widget _buildSummaryBox({
         });
   }
   
+  /// Purpose: Permanently deletes a specific notification from the database.
+  /// Inputs: [id] - The targeted document ID.
+  /// Outputs: Mutates the Firestore collection.
   void _deleteNotification(String id) {
+    // 1. Re-verify the active user session.
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
     
+    // 2. Execute the remote deletion.
     FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -615,22 +650,27 @@ Widget _buildSummaryBox({
         });
   }
   
+  /// Purpose: Purges all notification history for the current user using a batch delete transaction.
+  /// Inputs: None.
+  /// Outputs: Clears the 'notifications' subcollection.
   void _clearAllNotifications() {
-    // Delete all documents in notifications collection (batched)
+    // 1. Re-verify the active user session.
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
     
+    // 2. Fetch the complete collection payload.
     FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('notifications')
         .get()
         .then((snap) async {
+          // 3. Initialize a Firestore batch to circumvent individual API rate limits.
           final batch = FirebaseFirestore.instance.batch();
           for (var doc in snap.docs) {
-            batch.delete(doc.reference);
+            batch.delete(doc.reference); // 4. Queue the deletion.
           }
-          await batch.commit();
+          await batch.commit(); // 5. Execute the atomic purge.
         })
         .catchError((e) {
           print('Error clearing notifications: $e');
