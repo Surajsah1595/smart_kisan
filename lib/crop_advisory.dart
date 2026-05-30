@@ -1122,7 +1122,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
 class MlCropService {
   /// Returns a list of potential API URLs to try, covering emulator, simulator, and real devices.
-  /// Returns a list of potential API URLs to try.
   List<String> get _mlApiUrls {
     const String endpoint = '/predict';
     return ['${AppConfig.baseUrl}$endpoint'];

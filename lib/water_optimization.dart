@@ -1424,9 +1424,9 @@ RESPOND ONLY WITH JSON.''';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade700,
-        boxShadow: const [
+      decoration: const BoxDecoration(
+        color: Color(0xFF2C7C48),
+        boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 4,
@@ -1755,7 +1755,7 @@ RESPOND ONLY WITH JSON.''';
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: EdgeInsets.symmetric(vertical: 16),
                           disabledBackgroundColor: Colors.grey,
                           shape: RoundedRectangleBorder(

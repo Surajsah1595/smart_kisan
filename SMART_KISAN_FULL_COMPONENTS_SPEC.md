@@ -1,6 +1,8 @@
 # SMART KISAN: COMPREHENSIVE SYSTEM COMPONENTS SPECIFICATION
 **Student Name:** Suraj Sah (Student ID: 2408185)
 **Supervisor:** Mr. Rahul Parajuli
+**Reader:** Mr. Siman Giri
+**Submitted to:** HERALD COLLEGE
 
 ---
 
